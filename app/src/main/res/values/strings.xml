@@ -1,3 +1,21 @@
 <resources>
-    <string name="app_name">Learning-App</string>
+    <string name="app_name">Learning App</string>
+
+    <string name="get_started">GET STARTED</string>
+    <string name="already_have_account">I ALREADY HAVE AN ACCOUNT</string>
+    <string name="slogan">Learn for free. Forever.</string>
+    <string name="logo_name">duolingo</string>
+    <string name="content_desc_logo">Duolingo characters illustration</string>
+    <string name="choose_your_path">Choose your path</string>
+    <string name="desc_back_button">Back</string>
+    <string name="desc_owl_basic">New learner icon</string>
+    <string name="desc_owl_academic">Existing learner icon</string>
+    <string name="path_new_title">Learning English for the first time?</string>
+    <string name="path_new_subtitle">Start from scratch!</string>
+    <string name="path_existing_title">Already know some English?</string>
+    <string name="path_existing_subtitle">Check your level here!</string>
+    <string name="all_done">All done!</string>
+    <string name="welcome_message">Chào mừng bạn! Chúc bạn học tiếng Anh chăm chỉ.</string>
+    <string name="lets_start">LET\'S START</string>
+    <string name="login">LOGIN</string>
 </resources>

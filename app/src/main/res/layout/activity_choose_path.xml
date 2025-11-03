@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:padding="16dp"
+    tools:context=".ChoosePathActivity">
+
+    <LinearLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="8dp">
+
+        <ImageView
+            android:id="@+id/ivBack"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_back_arrow"
+            android:contentDescription="@string/desc_back_button" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="12dp"
+            android:layout_weight="1"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:max="100"
+            android:progress="33" android:progressDrawable="@drawable/custom_progress_bar" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/topBar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="32dp"
+        android:text="@string/choose_your_path"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:id="@+id/card_new_learner"
+            style="@style/OnboardingCard"> <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/ic_owl_basic"
+            android:contentDescription="@string/desc_owl_basic" />
+
+            <TextView
+                style="@style/OnboardingCardTitle"
+                android:text="@string/path_new_title" />
+
+            <TextView
+                style="@style/OnboardingCardSubtitle"
+                android:text="@string/path_new_subtitle" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/card_existing_learner"
+            style="@style/OnboardingCard"
+            android:layout_marginTop="24dp"> <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/ic_owl_academic"
+            android:contentDescription="@string/desc_owl_academic" />
+
+            <TextView
+                style="@style/OnboardingCardTitle"
+                android:text="@string/path_existing_title" />
+
+            <TextView
+                style="@style/OnboardingCardSubtitle"
+                android:text="@string/path_existing_subtitle" />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

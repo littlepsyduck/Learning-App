@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:padding="16dp"
+    tools:context=".LoginActivity">
+
+    <ImageView
+        android:id="@+id/ivBack"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="8dp"
+        android:src="@drawable/ic_back_arrow"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:contentDescription="@string/desc_back_button" />
+
+    <Button
+        android:id="@+id/btnLogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/button_background_disabled"
+        android:enabled="false"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:text="@string/login"
+        android:textColor="#AFAFAF"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/ivBack"
+        android:layout_above="@id/btnLogin"
+        android:layout_marginTop="24dp"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/RegistrationLabel"
+                android:text="Username" /> <RelativeLayout style="@style/InputContainer">
+            <EditText
+                android:id="@+id/etUsername"
+                style="@style/RegistrationEditText"
+                android:hint="Username"
+                android:inputType="text" />
+            <ImageView
+                android:id="@+id/iconUsernameError"
+                style="@style/RegistrationErrorIcon" />
+        </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tvUsernameError"
+                style="@style/RegistrationErrorText"
+                android:text="Username không tồn tại!" />
+
+            <TextView
+                style="@style/RegistrationLabel"
+                android:text="Password" /> <RelativeLayout style="@style/InputContainer">
+            <EditText
+                android:id="@+id/etPassword"
+                style="@style/RegistrationEditText"
+                android:hint="Password"
+                android:inputType="textPassword" />
+            <ImageView
+                android:id="@+id/iconPasswordError"
+                style="@style/RegistrationErrorIcon" />
+        </RelativeLayout>
+            <TextView
+                android:id="@+id/tvPasswordError"
+                style="@style/RegistrationErrorText"
+                android:text="Mật khẩu không đúng!" />
+
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

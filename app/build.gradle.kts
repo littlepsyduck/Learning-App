@@ -4,17 +4,18 @@ plugins {
 
 android {
     namespace = "com.example.learning_app"
-    compileSdk {
-        version = release(36)
-    }
+    // SỬA Ở ĐÂY: Cú pháp đúng là gán số trực tiếp.
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.learning_app"
         minSdk = 24
+
+        // SỬA Ở ĐÂY: Đổi từ 34 thành 36
         targetSdk = 36
+
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -34,6 +35,14 @@ android {
 }
 
 dependencies {
+    // SỬA Ở ĐÂY: Dùng ("...") thay vì '...' trong file .kts
+    //Thư viện cho BottomNavigationView
+    implementation("com.google.android.material:material:1.10.0")
+
+    // SỬA Ở ĐÂY: Dùng ("...") thay vì '...' trong file .kts
+    // Thư viện cho Avatar (ảnh tròn)
+    implementation("de.hdodenhof:circleimageview:3.1.0")
+
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
