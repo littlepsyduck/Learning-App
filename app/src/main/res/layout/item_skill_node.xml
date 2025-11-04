@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="110dp"
+    android:layout_height="110dp"
+    android:gravity="center"
+    android:padding="4dp">
+
+    <!-- Circle background -->
+    <ImageView
+        android:id="@+id/imgCircle"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+        android:background="@drawable/bg_skill_node_locked"
+        android:scaleType="centerInside"/>
+
+    <!-- Inner icon -->
+    <ImageView
+        android:id="@+id/imgIcon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/ic_placeholder"
+        android:layout_gravity="center"/>
+
+</FrameLayout>

@@ -7,7 +7,7 @@ android {
     compileSdk {
         version = release(36)
     }
-
+    buildFeatures { viewBinding = true }
     defaultConfig {
         applicationId = "com.example.learning_app"
         minSdk = 24
@@ -38,7 +38,11 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+    implementation(libs.room.compiler)
+    implementation(libs.room.common.jvm)
+    implementation(libs.room.runtime)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    annotationProcessor(libs.room.compiler)
 }
