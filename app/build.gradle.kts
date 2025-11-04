@@ -37,11 +37,11 @@ android {
 dependencies {
     // SỬA Ở ĐÂY: Dùng ("...") thay vì '...' trong file .kts
     //Thư viện cho BottomNavigationView
-    implementation("com.google.android.material:material:1.10.0")
+    implementation(libs.material)
 
     // SỬA Ở ĐÂY: Dùng ("...") thay vì '...' trong file .kts
     // Thư viện cho Avatar (ảnh tròn)
-    implementation("de.hdodenhof:circleimageview:3.1.0")
+    implementation(libs.circleimageview)
 
     implementation(libs.appcompat)
     implementation(libs.material)
