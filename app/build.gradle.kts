@@ -38,6 +38,7 @@ dependencies {
     // SỬA Ở ĐÂY: Dùng ("...") thay vì '...' trong file .kts
     //Thư viện cho BottomNavigationView
     implementation("com.google.android.material:material:1.10.0")
+    implementation("com.github.bumptech.glide:glide:4.12.0")
 
     // SỬA Ở ĐÂY: Dùng ("...") thay vì '...' trong file .kts
     // Thư viện cho Avatar (ảnh tròn)

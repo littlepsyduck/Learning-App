@@ -29,6 +29,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_ACHIEVEMENT = "achievement";
     public static final String COLUMN_STREAK = "streak";
     public static final String COLUMN_XP = "xp";
+    public static final String COLUMN_AVATAR_PATH = "avatar_path";
 
     private static final String TABLE_CREATE =
             "CREATE TABLE " + TABLE_USERS + " (" +
@@ -44,7 +45,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     COLUMN_FRIENDS + " INTEGER DEFAULT 0, " +
                     COLUMN_ACHIEVEMENT + " INTEGER DEFAULT 0, " +
                     COLUMN_STREAK + " INTEGER DEFAULT 0, " +
-                    COLUMN_XP + " INTEGER DEFAULT 0" +
+                    COLUMN_XP + " INTEGER DEFAULT 0," +
+                    COLUMN_AVATAR_PATH + " TEXT" +
                     ");";
 
     public DatabaseHelper(@Nullable Context context) {
@@ -111,5 +113,37 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Cursor getUserDetails(String username) {
         SQLiteDatabase db = this.getReadableDatabase();
         return db.query(TABLE_USERS, null, COLUMN_USERNAME + " = ?", new String[]{username}, null, null, null);
+    }
+
+    // Hàm SỬA (Update) thông tin user
+    // Chúng ta dùng oldUsername để tìm đúng user
+    public boolean updateUser(String oldUsername, String newFullName, String newUsername, String newPassword, int newAge, String newEmail) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_FULL_NAME, newFullName);
+        cv.put(COLUMN_USERNAME, newUsername);
+        cv.put(COLUMN_PASSWORD, newPassword); // Cần mã hóa trong thực tế
+        cv.put(COLUMN_AGE, newAge);
+        cv.put(COLUMN_EMAIL, newEmail);
+
+        // Cập nhật hàng (row) có username = oldUsername
+        int rowsAffected = db.update(TABLE_USERS, cv, COLUMN_USERNAME + " = ?", new String[]{oldUsername});
+        return rowsAffected > 0;
+    }
+
+    // Hàm XÓA (Delete) user
+    public boolean deleteUser(String username) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int rowsAffected = db.delete(TABLE_USERS, COLUMN_USERNAME + " = ?", new String[]{username});
+        return rowsAffected > 0;
+    }
+    // Thêm hàm này vào cuối file DatabaseHelper.java
+    public boolean updateAvatarPath(String username, String avatarPath) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_AVATAR_PATH, avatarPath);
+
+        int rowsAffected = db.update(TABLE_USERS, cv, COLUMN_USERNAME + " = ?", new String[]{username});
+        return rowsAffected > 0;
     }
 }
