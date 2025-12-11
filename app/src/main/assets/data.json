@@ -1,0 +1,228 @@
+[
+  {
+    "name": "Countries: Basics 1",
+    "imageRes": "ic_pet",
+    "sectionId": 1,
+    "isLocked": false,
+    "questions": [
+      {
+        "type": 4,
+        "questionText": "Tap the matching pairs",
+        "optionsData": "",
+        "correctAnswer": "[{\"en\":\"Country\",\"vn\":\"Quốc gia\"},{\"en\":\"Flag\",\"vn\":\"Lá cờ\"},{\"en\":\"City\",\"vn\":\"Thành phố\"},{\"en\":\"Sea\",\"vn\":\"Biển\"}]"
+      },
+      {
+        "type": 4,
+        "questionText": "Tap the matching pairs",
+        "optionsData": "",
+        "correctAnswer": "[{\"en\":\"Sea\",\"vn\":\"Biển\"},{\"en\":\"Island\",\"vn\":\"Hòn đảo\"},{\"en\":\"Asia\",\"vn\":\"Châu Á\"},{\"en\":\"River\",\"vn\":\"Dòng sông\"}]"
+      },
+      {
+        "type": 4,
+        "questionText": "Tap the matching pairs",
+        "optionsData": "",
+        "correctAnswer": "[{\"en\":\"Capital\",\"vn\":\"Thủ đô\"},{\"en\":\"Map\",\"vn\":\"Bản đồ\"},{\"en\":\"Travel\",\"vn\":\"Du lịch\"},{\"en\":\"Passport\",\"vn\":\"Hộ chiếu\"}]"
+      },
+      {
+        "type": 4,
+        "questionText": "Tap the matching pairs",
+        "optionsData": "",
+        "correctAnswer": "[{\"en\":\"Hotel\",\"vn\":\"Khách sạn\"},{\"en\":\"Tourist\",\"vn\":\"Khách du lịch\"},{\"en\":\"Beach\",\"vn\":\"Bãi biển\"},{\"en\":\"Mountain\",\"vn\":\"Ngọn núi\"}]"
+      }
+    ]
+  },
+  {
+    "name": "Countries: Basics 2",
+    "imageRes": "ic_pet",
+    "sectionId": 1,
+    "isLocked": true,
+    "questions": [
+      {
+        "type": 1,
+        "questionText": "The ____ of France is Paris.",
+        "optionsData": "water|capital|mountain|driver",
+        "correctAnswer": "capital"
+      },
+      {
+        "type": 3,
+        "questionText": "Flag",
+        "optionsData": "Ngọn núi|Lá cờ|Thành phố|Giày",
+        "correctAnswer": "Lá cờ"
+      },
+      {
+        "type": 2,
+        "questionText": "Sắp xếp thành câu đúng",
+        "optionsData": "flag|This|my|is",
+        "correctAnswer": "This is my flag"
+      },
+      {
+        "type": 4,
+        "questionText": "Nối các cặp từ tương ứng",
+        "optionsData": "",
+        "correctAnswer": "[{\"en\":\"Passport\",\"vn\":\"Hộ chiếu\"},{\"en\":\"Travel\",\"vn\":\"Du lịch\"},{\"en\":\"Map\",\"vn\":\"Bản đồ\"},{\"en\":\"Hotel\",\"vn\":\"Khách sạn\"}]"
+      },
+      {
+        "type": 1,
+        "questionText": "Vietnam is in ____ .",
+        "optionsData": "Europe|Africa|Asia|America",
+        "correctAnswer": "Asia"
+      },
+      {
+        "type": 3,
+        "questionText": "Thành phố",
+        "optionsData": "Country|Food|City|Book",
+        "correctAnswer": "City"
+      },
+      {
+        "type": 2,
+        "questionText": "Sắp xếp thành câu đúng",
+        "optionsData": "is|Paris|France|in",
+        "correctAnswer": "Paris is in France"
+      }
+    ]
+  },
+  {
+    "name": "Countries: Interm 1",
+    "imageRes": "ic_food",
+    "sectionId": 2,
+    "isLocked": true,
+    "questions": [
+      {
+        "type": 1,
+        "questionText": "Canada has two official languages: English and ____ .",
+        "optionsData": "German|Hindi|French|Thai",
+        "correctAnswer": "French"
+      },
+      {
+        "type": 3,
+        "questionText": "Population",
+        "optionsData": "Thành thị|Dân số|Thời gian|Tôn giáo",
+        "correctAnswer": "Dân số"
+      },
+      {
+        "type": 2,
+        "questionText": "Sắp xếp thành câu đúng",
+        "optionsData": "cities|Vietnam|many|has",
+        "correctAnswer": "Vietnam has many cities"
+      },
+      {
+        "type": 4,
+        "questionText": "Nối các cặp từ tương ứng",
+        "optionsData": "",
+        "correctAnswer": "[{\"en\":\"Population\",\"vn\":\"Dân số\"},{\"en\":\"Tradition\",\"vn\":\"Truyền thống\"},{\"en\":\"Culture\",\"vn\":\"Văn hoá\"},{\"en\":\"Climate\",\"vn\":\"Khí hậu\"}]"
+      },
+      {
+        "type": 1,
+        "questionText": "Brazil is the largest country in ____ .",
+        "optionsData": "South America|Europe|Africa|Oceania",
+        "correctAnswer": "South America"
+      },
+      {
+        "type": 3,
+        "questionText": "Truyền thống",
+        "optionsData": "Tradition|Translation|Station|River",
+        "correctAnswer": "Tradition"
+      }
+    ]
+  },
+  {
+    "name": "Countries: Interm 2",
+    "imageRes": "ic_food",
+    "sectionId": 2,
+    "isLocked": true,
+    "questions": [
+      {
+        "type": 1,
+        "questionText": "The ____ River is the longest river in the world.",
+        "optionsData": "Amazon|Nile|Mekong|Red",
+        "correctAnswer": "Nile"
+      },
+      {
+        "type": 3,
+        "questionText": "Climate",
+        "optionsData": "Lửa|Cành cây|Đá|Khí hậu",
+        "correctAnswer": "Khí hậu"
+      },
+      {
+        "type": 2,
+        "questionText": "Sắp xếp thành câu đúng",
+        "optionsData": "technology|Japan|for|is|famous",
+        "correctAnswer": "Japan is famous for technology"
+      },
+      {
+        "type": 4,
+        "questionText": "Nối các cặp từ tương ứng",
+        "optionsData": "",
+        "correctAnswer": "[{\"en\":\"Immigrant\",\"vn\":\"Người nhập cư\"},{\"en\":\"Citizen\",\"vn\":\"Công dân\"},{\"en\":\"Tourist\",\"vn\":\"Khách du lịch\"},{\"en\":\"Worker\",\"vn\":\"Người lao động\"}]"
+      },
+      {
+        "type": 3,
+        "questionText": "Government",
+        "optionsData": "Công việc|Hòn đá|Chính phủ|Sự kiện",
+        "correctAnswer": "Chính phủ"
+      },
+      {
+        "type": 2,
+        "questionText": "Sắp xếp thành câu đúng",
+        "optionsData": "tourists|visit|Many|Thailand",
+        "correctAnswer": "Many tourists visit Thailand"
+      }
+    ]
+  },
+  {
+    "name": "Countries: Advanced",
+    "imageRes": "ic_travel",
+    "sectionId": 3,
+    "isLocked": true,
+    "questions": [
+      {
+        "type": 1,
+        "questionText": "Switzerland has ____ official languages.",
+        "optionsData": "four|one|two|three",
+        "correctAnswer": "four"
+      },
+      {
+        "type": 3,
+        "questionText": "Sovereignty",
+        "optionsData": "Chủ quyền|Quyền lực|Lãnh đạo|Kinh nghiệm",
+        "correctAnswer": "Chủ quyền"
+      },
+      {
+        "type": 2,
+        "questionText": "Sắp xếp thành câu đúng",
+        "optionsData": "the|controls|government|the|country|whole",
+        "correctAnswer": "The government controls the whole country"
+      },
+      {
+        "type": 4,
+        "questionText": "Nối các cặp từ tương ứng",
+        "optionsData": "",
+        "correctAnswer": "[{\"en\":\"Sovereignty\",\"vn\":\"Chủ quyền\"},{\"en\":\"Diplomacy\",\"vn\":\"Ngoại giao\"},{\"en\":\"Geography\",\"vn\":\"Địa lý\"},{\"en\":\"Infrastructure\",\"vn\":\"Cơ sở hạ tầng\"}]"
+      },
+      {
+        "type": 1,
+        "questionText": "The smallest country in the world by area is ____ .",
+        "optionsData": "Vatican City|Monaco|Malta|Iceland",
+        "correctAnswer": "Vatican City"
+      },
+      {
+        "type": 3,
+        "questionText": "Ngoại giao",
+        "optionsData": "Economy|Diplomacy|History|Strategy",
+        "correctAnswer": "Diplomacy"
+      },
+      {
+        "type": 2,
+        "questionText": "Sắp xếp thành câu đúng",
+        "optionsData": "relations|politics|shape|global|International",
+        "correctAnswer": "International relations shape global politics"
+      },
+      {
+        "type": 4,
+        "questionText": "Nối các cặp từ tương ứng",
+        "optionsData": "",
+        "correctAnswer": "[{\"en\":\"Diplomatic mission\",\"vn\":\"Phái đoàn ngoại giao\"},{\"en\":\"Foreign policy\",\"vn\":\"Chính sách đối ngoại\"},{\"en\":\"National security\",\"vn\":\"An ninh quốc gia\"},{\"en\":\"Border control\",\"vn\":\"Kiểm soát biên giới\"}]"
+      }
+    ]
+  }
+]
