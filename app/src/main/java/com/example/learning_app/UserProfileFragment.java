@@ -112,6 +112,7 @@ public class UserProfileFragment extends Fragment {
         tvFriends.setText(user.getFriendsCount() + " Friends");
 
         // Xử lý Avatar (Base64)
+        //comment
         String avatarCode = user.getAvatarUrl(); // Lúc này là chuỗi mã hóa
 
         if (avatarCode != null && !avatarCode.isEmpty()) {
