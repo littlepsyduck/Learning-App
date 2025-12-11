@@ -5,14 +5,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class HomeActivity extends AppCompatActivity {
+public class UserDashboardActivity extends AppCompatActivity {
 
     private String loggedInUsername;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+        setContentView(R.layout.activity_user_dashboard);
 
         // Nhận username
         loggedInUsername = getIntent().getStringExtra("USERNAME");
@@ -49,7 +49,7 @@ public class HomeActivity extends AppCompatActivity {
 
     // Hàm helper để tạo ProfileFragment và gửi data (USERNAME)
     private Fragment createProfileFragment() {
-        ProfileFragment fragment = new ProfileFragment();
+        UserProfileFragment fragment = new UserProfileFragment();
         Bundle args = new Bundle();
         args.putString("USERNAME", loggedInUsername);
         fragment.setArguments(args);

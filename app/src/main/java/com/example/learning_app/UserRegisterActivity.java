@@ -13,23 +13,23 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
-public class RegistrationActivity extends AppCompatActivity {
+public class UserRegisterActivity extends AppCompatActivity {
 
     private EditText etUsername, etPassword, etFullName, etAge, etEmail;
     private TextView tvUsernameError, tvPasswordError, tvEmailError;
     private ImageView iconUsernameError, iconPasswordError, iconEmailError, ivBack;
     private Button btnContinue;
-    private DatabaseHelper dbHelper; // Biến Database
+    private UserDatabaseHelper dbHelper; // Biến Database
     private String whyLearn; // Biến lưu data được truyền
     private String status;   // Biến lưu data được truyền
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_registration);
+        setContentView(R.layout.activity_user_register);
 
         // Khởi tạo DB Helper
-        dbHelper = new DatabaseHelper(this);
+        dbHelper = new UserDatabaseHelper(this);
 
         // Nhận data từ ChoosePathActivity
         whyLearn = getIntent().getStringExtra("WHY_LEARN");
@@ -75,7 +75,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
                 if (success) {
                     // Mở AllDoneActivity
-                    Intent intent = new Intent(RegistrationActivity.this, AllDoneActivity.class);
+                    Intent intent = new Intent(UserRegisterActivity.this, UserAllDoneActivity.class);
                     // Gửi USERNAME cho màn hình tiếp theo
                     intent.putExtra("USERNAME", username);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

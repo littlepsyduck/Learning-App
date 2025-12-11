@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@android:color/white"
     android:padding="24dp"
-    tools:context=".MainActivity">
+    tools:context=".UserWelcomeActivity">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="@string/logo_name"
+            android:text="Learning-App"
             android:textColor="@color/duo_green"
             android:textSize="36sp"
             android:textStyle="bold"

@@ -27,7 +27,7 @@ import java.io.OutputStream;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class SettingsActivity extends AppCompatActivity {
+public class UserSettingsActivity extends AppCompatActivity {
 
     // ... (các biến cũ)
     private EditText etFullName, etUsername, etPassword, etAge, etEmail;
@@ -41,7 +41,7 @@ public class SettingsActivity extends AppCompatActivity {
     private String newAvatarPath = null; // Đường dẫn ảnh mới (nếu user chọn)
     private String currentAvatarPath = null; // Đường dẫn ảnh cũ (từ DB)
 
-    private DatabaseHelper dbHelper;
+    private UserDatabaseHelper dbHelper;
     private String loggedInUsername;
     private String currentPassword;
 
@@ -52,9 +52,9 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
+        setContentView(R.layout.activity_user_settings);
 
-        dbHelper = new DatabaseHelper(this);
+        dbHelper = new UserDatabaseHelper(this);
         loggedInUsername = getIntent().getStringExtra("USERNAME");
 
         // Ánh xạ (Map) các views cũ
@@ -112,14 +112,14 @@ public class SettingsActivity extends AppCompatActivity {
         Cursor cursor = dbHelper.getUserDetails(loggedInUsername);
         if (cursor != null && cursor.moveToFirst()) {
             // ... (set text cho etFullName, etUsername...)
-            etFullName.setText(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_FULL_NAME)));
-            etUsername.setText(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_USERNAME)));
-            etEmail.setText(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_EMAIL)));
-            etAge.setText(String.valueOf(cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_AGE))));
-            currentPassword = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_PASSWORD));
+            etFullName.setText(cursor.getString(cursor.getColumnIndexOrThrow(UserDatabaseHelper.COLUMN_FULL_NAME)));
+            etUsername.setText(cursor.getString(cursor.getColumnIndexOrThrow(UserDatabaseHelper.COLUMN_USERNAME)));
+            etEmail.setText(cursor.getString(cursor.getColumnIndexOrThrow(UserDatabaseHelper.COLUMN_EMAIL)));
+            etAge.setText(String.valueOf(cursor.getInt(cursor.getColumnIndexOrThrow(UserDatabaseHelper.COLUMN_AGE))));
+            currentPassword = cursor.getString(cursor.getColumnIndexOrThrow(UserDatabaseHelper.COLUMN_PASSWORD));
 
             // == LOAD AVATAR HIỆN TẠI ==
-            currentAvatarPath = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_AVATAR_PATH));
+            currentAvatarPath = cursor.getString(cursor.getColumnIndexOrThrow(UserDatabaseHelper.COLUMN_AVATAR_PATH));
             if (currentAvatarPath != null && !currentAvatarPath.isEmpty()) {
                 Glide.with(this).load(new File(currentAvatarPath)).into(ivAvatarPreview);
                 ivAvatarPreview.setVisibility(View.VISIBLE);
@@ -183,7 +183,7 @@ public class SettingsActivity extends AppCompatActivity {
     // ... (code handleLogout() và handleDelete() giữ nguyên) ...
     private void handleLogout() {
         // Quay về màn hình MainActivity và xóa tất cả Activity
-        Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
+        Intent intent = new Intent(UserSettingsActivity.this, UserWelcomeActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
@@ -198,7 +198,7 @@ public class SettingsActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         // Ti hành xóa
                         dbHelper.deleteUser(loggedInUsername);
-                        Toast.makeText(SettingsActivity.this, "Tài khoản đã bị xóa.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(UserSettingsActivity.this, "Tài khoản đã bị xóa.", Toast.LENGTH_SHORT).show();
                         // Quay về màn hình chính (giống Logout)
                         handleLogout();
                     }

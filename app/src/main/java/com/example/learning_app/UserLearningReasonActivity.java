@@ -16,7 +16,7 @@ import androidx.core.content.ContextCompat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LearningReasonActivity extends AppCompatActivity {
+public class UserLearningReasonActivity extends AppCompatActivity {
 
     private ProgressBar progressBar;
     private Button btnContinue;
@@ -30,7 +30,7 @@ public class LearningReasonActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_learning_reason);
+        setContentView(R.layout.activity_user_learning_reason);
 
         progressBar = findViewById(R.id.progressBar);
         btnContinue = findViewById(R.id.btnContinue);
@@ -80,7 +80,7 @@ public class LearningReasonActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // SỬA Ở ĐÂY:
                 // Chuyển sang màn hình chọn "Choose your path"
-                Intent intent = new Intent(LearningReasonActivity.this, ChoosePathActivity.class);
+                Intent intent = new Intent(UserLearningReasonActivity.this, UserChoosePathActivity.class);
                 String selectedReason = ((TextView) selectedItem.getChildAt(1)).getText().toString();
                 intent.putExtra("WHY_LEARN", selectedReason);
                 startActivity(intent);

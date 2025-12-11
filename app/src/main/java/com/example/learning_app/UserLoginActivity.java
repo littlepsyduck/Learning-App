@@ -12,21 +12,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
-public class LoginActivity extends AppCompatActivity {
+public class UserLoginActivity extends AppCompatActivity {
 
     private EditText etUsername, etPassword;
     private TextView tvUsernameError, tvPasswordError;
     private ImageView iconUsernameError, iconPasswordError, ivBack;
     private Button btnLogin;
-    private DatabaseHelper dbHelper; // Biến Database
+    private UserDatabaseHelper dbHelper; // Biến Database
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_user_login);
 
         // Khởi tạo DB Helper
-        dbHelper = new DatabaseHelper(this);
+        dbHelper = new UserDatabaseHelper(this);
 
         // Lấy IDs
         ivBack = findViewById(R.id.ivBack);
@@ -54,7 +54,7 @@ public class LoginActivity extends AppCompatActivity {
                     hideError(etPassword, tvPasswordError, iconPasswordError);
 
                     // Mở màn hình Home
-                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                    Intent intent = new Intent(UserLoginActivity.this, UserDashboardActivity.class);
                     intent.putExtra("USERNAME", username); // Gửi username
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);

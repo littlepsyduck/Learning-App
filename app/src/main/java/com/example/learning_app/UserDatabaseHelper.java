@@ -10,7 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class DatabaseHelper extends SQLiteOpenHelper {
+public class UserDatabaseHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "HocTiengAnh.db";
     public static final int DATABASE_VERSION = 1;
@@ -30,6 +30,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_STREAK = "streak";
     public static final String COLUMN_XP = "xp";
     public static final String COLUMN_AVATAR_PATH = "avatar_path";
+    public static final String TABLE_FRIENDSHIPS = "friendships";
+    public static final String COLUMN_F_ID = "id";
+    public static final String COLUMN_USER_ID_1 = "user_id";
+    public static final String COLUMN_USER_ID_2 = "friend_id";
 
     private static final String TABLE_CREATE =
             "CREATE TABLE " + TABLE_USERS + " (" +
@@ -49,7 +53,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     COLUMN_AVATAR_PATH + " TEXT" +
                     ");";
 
-    public DatabaseHelper(@Nullable Context context) {
+
+    public UserDatabaseHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 

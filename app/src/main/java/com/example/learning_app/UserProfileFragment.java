@@ -18,10 +18,10 @@ import com.bumptech.glide.Glide;
 import java.io.File;
 import de.hdodenhof.circleimageview.CircleImageView; // Import CircleImageView
 
-public class ProfileFragment extends Fragment {
+public class UserProfileFragment extends Fragment {
 
     private TextView tvFullName, tvUsername, tvJoinDate, tvFriends, tvAvatarLetter;
-    private DatabaseHelper dbHelper;
+    private UserDatabaseHelper dbHelper;
     private String loggedInUsername;
     private ImageView ivSettings; // Biến nút settings
 
@@ -31,7 +31,7 @@ public class ProfileFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        return inflater.inflate(R.layout.fragment_user_profile, container, false);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class ProfileFragment extends Fragment {
             loggedInUsername = getArguments().getString("USERNAME");
         }
 
-        dbHelper = new DatabaseHelper(getContext());
+        dbHelper = new UserDatabaseHelper(getContext());
 
         // Ánh xạ (Map) các view
         tvFullName = view.findViewById(R.id.tvFullName);
@@ -58,7 +58,7 @@ public class ProfileFragment extends Fragment {
         ivSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), SettingsActivity.class);
+                Intent intent = new Intent(getActivity(), UserSettingsActivity.class);
                 intent.putExtra("USERNAME", loggedInUsername);
                 startActivity(intent);
             }
@@ -80,11 +80,11 @@ public class ProfileFragment extends Fragment {
         Cursor cursor = dbHelper.getUserDetails(loggedInUsername);
         if (cursor != null && cursor.moveToFirst()) {
 
-            String fullName = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_FULL_NAME));
-            String username = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_USERNAME));
-            String joinDate = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_JOIN_DATE));
-            int friendsCount = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_FRIENDS));
-            String avatarPath = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_AVATAR_PATH));
+            String fullName = cursor.getString(cursor.getColumnIndexOrThrow(UserDatabaseHelper.COLUMN_FULL_NAME));
+            String username = cursor.getString(cursor.getColumnIndexOrThrow(UserDatabaseHelper.COLUMN_USERNAME));
+            String joinDate = cursor.getString(cursor.getColumnIndexOrThrow(UserDatabaseHelper.COLUMN_JOIN_DATE));
+            int friendsCount = cursor.getInt(cursor.getColumnIndexOrThrow(UserDatabaseHelper.COLUMN_FRIENDS));
+            String avatarPath = cursor.getString(cursor.getColumnIndexOrThrow(UserDatabaseHelper.COLUMN_AVATAR_PATH));
 
             // Set data cho các TextView
             tvFullName.setText(fullName);

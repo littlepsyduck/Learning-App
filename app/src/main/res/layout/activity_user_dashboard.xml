@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HomeActivity">
+    tools:context=".UserDashboardActivity">
 
     <FrameLayout
         android:id="@+id/fragment_container"
@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="?android:attr/windowBackground"
-        app:menu="@menu/bottom_nav_menu"
+        app:menu="@menu/menu_user_bottom_nav"
         app:itemIconTint="@null"/>
 
 </RelativeLayout>

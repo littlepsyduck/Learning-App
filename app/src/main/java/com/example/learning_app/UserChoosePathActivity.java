@@ -8,7 +8,7 @@ import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class ChoosePathActivity extends AppCompatActivity {
+public class UserChoosePathActivity extends AppCompatActivity {
 
     private ImageView ivBack;
     private LinearLayout cardNewLearner;
@@ -17,7 +17,7 @@ public class ChoosePathActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_choose_path);
+        setContentView(R.layout.activity_user_choose_path);
 
         // Lấy IDs
         ivBack = findViewById(R.id.ivBack);
@@ -38,7 +38,7 @@ public class ChoosePathActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // SỬA Ở ĐÂY: Mở màn hình Đăng ký
-                Intent intent = new Intent(ChoosePathActivity.this, RegistrationActivity.class);
+                Intent intent = new Intent(UserChoosePathActivity.this, UserRegisterActivity.class);
                 // 1. Gửi tiếp data đã nhận
                 intent.putExtra("WHY_LEARN", whyLearn);
                 // 2. Gửi data "status" mới

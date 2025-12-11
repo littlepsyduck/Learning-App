@@ -7,12 +7,12 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class MainActivity extends AppCompatActivity {
+public class UserWelcomeActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main); // Layout từ câu hỏi trước
+        setContentView(R.layout.activity_user_welcome); // Layout từ câu hỏi trước
 
         Button btnGetStarted = findViewById(R.id.btnGetStarted);
         Button btnAlreadyHaveAccount = findViewById(R.id.btnAlreadyHaveAccount);
@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // Tạo một Intent để mở Activity mới
                 // Chúng ta sẽ gọi Activity mới là LearningReasonActivity
-                Intent intent = new Intent(MainActivity.this, LearningReasonActivity.class);
+                Intent intent = new Intent(UserWelcomeActivity.this, UserLearningReasonActivity.class);
                 startActivity(intent);
             }
         });
@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Mở Activity Đăng nhập mới
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                Intent intent = new Intent(UserWelcomeActivity.this, UserLoginActivity.class);
                 startActivity(intent);
             }
         });
