@@ -10,6 +10,11 @@ constraintlayout = "2.2.1"
 roomCompiler = "2.8.3"
 roomCommonJvm = "2.8.3"
 roomRuntime = "2.8.3"
+room = "2.6.1"
+gson = "2.13.2"
+lifecycle = "2.8.7"
+cardview = "1.0.0"
+flexbox = "3.0.0"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -22,6 +27,12 @@ constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayo
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }
 room-common-jvm = { group = "androidx.room", name = "room-common-jvm", version.ref = "roomCommonJvm" }
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomRuntime" }
+gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+lifecycle-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "lifecycle" }
+lifecycle-livedata = { group = "androidx.lifecycle", name = "lifecycle-livedata", version.ref = "lifecycle" }
+lifecycle-runtime = { group = "androidx.lifecycle", name = "lifecycle-runtime", version.ref = "lifecycle" }
+cardview = { group = "androidx.cardview", name = "cardview", version.ref = "cardview" }
+flexbox = { group = "com.google.android.flexbox", name = "flexbox", version.ref = "flexbox" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
