@@ -1,4 +1,4 @@
-package com.example.learning_app; // Thay bằng package của bạn
+package com.example.learning_app; // Đảm bảo đúng package của bạn
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -11,7 +11,23 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+// Firebase Import
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class UserRegisterActivity extends AppCompatActivity {
 
@@ -19,23 +35,48 @@ public class UserRegisterActivity extends AppCompatActivity {
     private TextView tvUsernameError, tvPasswordError, tvEmailError;
     private ImageView iconUsernameError, iconPasswordError, iconEmailError, ivBack;
     private Button btnContinue;
-    private UserDatabaseHelper dbHelper; // Biến Database
-    private String whyLearn; // Biến lưu data được truyền
-    private String status;   // Biến lưu data được truyền
+
+    private String whyLearn;
+    private String status;
+
+    // Firebase
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_register);
+        setContentView(R.layout.activity_user_register); // Đảm bảo tên layout XML đúng
 
-        // Khởi tạo DB Helper
-        dbHelper = new UserDatabaseHelper(this);
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
-        // Nhận data từ ChoosePathActivity
-        whyLearn = getIntent().getStringExtra("WHY_LEARN");
-        status = getIntent().getStringExtra("STATUS");
+        // Nhận dữ liệu
+        Intent intent = getIntent();
+        if (intent != null) {
+            whyLearn = intent.getStringExtra("WHY_LEARN");
+            status = intent.getStringExtra("STATUS");
+        }
 
-        // Lấy tất cả ID từ layout
+        initViews();
+
+        ivBack.setOnClickListener(v -> finish());
+
+        etUsername.addTextChangedListener(validationWatcher);
+        etPassword.addTextChangedListener(validationWatcher);
+        etFullName.addTextChangedListener(validationWatcher);
+        etAge.addTextChangedListener(validationWatcher);
+        etEmail.addTextChangedListener(validationWatcher);
+
+        btnContinue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                registerUserOnFirebase();
+            }
+        });
+    }
+
+    private void initViews() {
         ivBack = findViewById(R.id.ivBack);
         btnContinue = findViewById(R.id.btnContinue);
         etUsername = findViewById(R.id.etUsername);
@@ -49,42 +90,89 @@ public class UserRegisterActivity extends AppCompatActivity {
         iconUsernameError = findViewById(R.id.iconUsernameError);
         iconPasswordError = findViewById(R.id.iconPasswordError);
         iconEmailError = findViewById(R.id.iconEmailError);
+    }
 
-        ivBack.setOnClickListener(v -> finish());
+    private void registerUserOnFirebase() {
+        btnContinue.setEnabled(false);
+        btnContinue.setText("Đang tạo..."); // Hoặc "Creating..."
 
-        // Thêm TextWatcher
-        etUsername.addTextChangedListener(validationWatcher);
-        etPassword.addTextChangedListener(validationWatcher);
-        etFullName.addTextChangedListener(validationWatcher);
-        etAge.addTextChangedListener(validationWatcher);
-        etEmail.addTextChangedListener(validationWatcher);
+        String email = etEmail.getText().toString().trim();
+        String password = etPassword.getText().toString().trim();
 
-        // Sửa OnClick của btnContinue
-        btnContinue.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Lấy data từ EditText
-                String fullName = etFullName.getText().toString().trim();
-                String username = etUsername.getText().toString().trim();
-                String password = etPassword.getText().toString().trim();
-                String email = etEmail.getText().toString().trim();
-                int age = Integer.parseInt(etAge.getText().toString().trim()); // Cần xử lý lỗi nếu rỗng
+        // 1. Tạo User Authentication
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            FirebaseUser firebaseUser = mAuth.getCurrentUser();
+                            if (firebaseUser != null) {
+                                // 2. Lưu thông tin vào Firestore
+                                saveUserInfoToFirestore(firebaseUser.getUid());
+                            }
+                        } else {
+                            btnContinue.setEnabled(true);
+                            btnContinue.setText("CONTINUE");
+                            if (task.getException() instanceof FirebaseAuthUserCollisionException) {
+                                showError(etEmail, tvEmailError, iconEmailError, "Email này đã tồn tại!");
+                            } else {
+                                Toast.makeText(UserRegisterActivity.this, "Lỗi: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    }
+                });
+    }
 
-                // Thêm user vào DB
-                boolean success = dbHelper.addUser(fullName, username, password, age, email, whyLearn, status);
+    private void saveUserInfoToFirestore(String uid) {
+        String fullName = etFullName.getText().toString().trim();
+        String username = etUsername.getText().toString().trim();
+        String email = etEmail.getText().toString().trim();
+        // Lưu cả password vào Firestore (theo yêu cầu của bạn)
+        String passwordRaw = etPassword.getText().toString().trim();
 
-                if (success) {
-                    // Mở AllDoneActivity
-                    Intent intent = new Intent(UserRegisterActivity.this, UserAllDoneActivity.class);
-                    // Gửi USERNAME cho màn hình tiếp theo
-                    intent.putExtra("USERNAME", username);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-                } else {
-                    // Xử lý lỗi (ví dụ: hiển thị Toast "Đăng ký thất bại")
-                }
-            }
-        });
+        int age = 0;
+        try {
+            age = Integer.parseInt(etAge.getText().toString().trim());
+        } catch (NumberFormatException e) { age = 0; }
+
+        // Ngày hiện tại
+        String currentDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
+
+        // == KHỞI TẠO USER MODEL VỚI CÁC TRƯỜNG MỚI ==
+        UserModel newUser = new UserModel(
+                uid,
+                fullName,
+                username,
+                email,
+                passwordRaw, // Lưu password
+                age,
+                whyLearn,
+                status,
+                currentDate, // joinDate (ngày tham gia)
+                currentDate  // lastDate (ngày đăng nhập cuối cũng là hôm nay)
+        );
+
+        // Các chỉ số streak, xp, freeze, friendsCount đã được set = 0 trong Constructor
+
+        // Lưu lên Firestore
+        db.collection("users").document(uid)
+                .set(newUser)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Intent intent = new Intent(UserRegisterActivity.this, UserAllDoneActivity.class);
+                            intent.putExtra("USERNAME", username);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            btnContinue.setEnabled(true);
+                            btnContinue.setText("CONTINUE");
+                            Toast.makeText(UserRegisterActivity.this, "Lỗi lưu data: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 
     private TextWatcher validationWatcher = new TextWatcher() {
@@ -92,14 +180,11 @@ public class UserRegisterActivity extends AppCompatActivity {
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
         @Override
-        public void afterTextChanged(Editable s) {
-            validateForm();
-        }
+        public void afterTextChanged(Editable s) { validateForm(); }
     };
 
-    private boolean validateForm() {
+    private void validateForm() {
         boolean isUsernameValid = validateUsername();
         boolean isPasswordValid = validatePassword();
         boolean isEmailValid = validateEmail();
@@ -108,47 +193,39 @@ public class UserRegisterActivity extends AppCompatActivity {
 
         if (isUsernameValid && isPasswordValid && isEmailValid && isFullNameValid && isAgeValid) {
             activateContinueButton();
-            return true;
         } else {
             deactivateContinueButton();
-            return false;
         }
     }
 
-    // Sửa hàm validateUsername (dùng DB)
     private boolean validateUsername() {
         String username = etUsername.getText().toString().trim();
-        if (dbHelper.checkUsernameExists(username)) { // KIỂM TRA DB
-            showError(etUsername, tvUsernameError, iconUsernameError, "Username không hợp lệ!");
+        if (username.length() < 4) {
+            if (!username.isEmpty()) {
+                showError(etUsername, tvUsernameError, iconUsernameError, "Username phải có ít nhất 4 ký tự!");
+            }
             return false;
-        } else if (username.length() < 4) {
-            showError(etUsername, tvUsernameError, iconUsernameError, "Username phải có ít nhất 4 ký tự!");
-            return false;
-        } else {
-            hideError(etUsername, tvUsernameError, iconUsernameError);
-            return true;
         }
+        hideError(etUsername, tvUsernameError, iconUsernameError);
+        return true;
     }
 
     private boolean validatePassword() {
         String password = etPassword.getText().toString().trim();
-        if (password.length() < 8) {
-            showError(etPassword, tvPasswordError, iconPasswordError, "Password phải có ít nhất 8 ký tự!");
+        if (password.length() < 6) {
+            if (!password.isEmpty()) {
+                showError(etPassword, tvPasswordError, iconPasswordError, "Mật khẩu quá ngắn!");
+            }
             return false;
-        } else {
-            hideError(etPassword, tvPasswordError, iconPasswordError);
-            return true;
         }
+        hideError(etPassword, tvPasswordError, iconPasswordError);
+        return true;
     }
 
-    // Sửa hàm validateEmail (dùng DB)
     private boolean validateEmail() {
         String email = etEmail.getText().toString().trim();
-        if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            showError(etEmail, tvEmailError, iconEmailError, "Email không đúng định dạng!");
-            return false;
-        }
-        if (dbHelper.checkEmailExists(email)) { // KIỂM TRA DB
+        if (email.isEmpty()) return false;
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             showError(etEmail, tvEmailError, iconEmailError, "Email không hợp lệ!");
             return false;
         }
@@ -156,25 +233,32 @@ public class UserRegisterActivity extends AppCompatActivity {
         return true;
     }
 
-    // (Các hàm showError, hideError, activate/deactivate Button giữ nguyên)
+    // == SỬA TÊN DRAWABLE Ở ĐÂY CHO KHỚP VỚI FILE CŨ CỦA BẠN ==
     private void showError(EditText et, TextView tv, ImageView icon, String message) {
+        // Dùng tên file cũ: edit_text_background_light_error
         et.setBackgroundResource(R.drawable.edit_text_background_light_error);
         tv.setText(message);
         tv.setVisibility(View.VISIBLE);
         icon.setVisibility(View.VISIBLE);
     }
+
     private void hideError(EditText et, TextView tv, ImageView icon) {
+        // Dùng tên file cũ: edit_text_background_light
         et.setBackgroundResource(R.drawable.edit_text_background_light);
         tv.setVisibility(View.GONE);
         icon.setVisibility(View.GONE);
     }
+
     private void activateContinueButton() {
         btnContinue.setEnabled(true);
+        // Dùng tên file cũ: button_background_green
         btnContinue.setBackgroundResource(R.drawable.button_background_green);
         btnContinue.setTextColor(Color.WHITE);
     }
+
     private void deactivateContinueButton() {
         btnContinue.setEnabled(false);
+        // Dùng tên file cũ: button_background_disabled
         btnContinue.setBackgroundResource(R.drawable.button_background_disabled);
         btnContinue.setTextColor(Color.parseColor("#AFAFAF"));
     }

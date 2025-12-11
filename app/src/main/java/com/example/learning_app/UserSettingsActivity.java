@@ -1,11 +1,11 @@
-package com.example.learning_app; // Thay bằng package của bạn
+package com.example.learning_app;
 
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,47 +19,61 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class UserSettingsActivity extends AppCompatActivity {
 
-    // ... (các biến cũ)
     private EditText etFullName, etUsername, etPassword, etAge, etEmail;
-    private Button btnSave, btnLogout, btnDelete;
+    private Button btnSave, btnLogout, btnDelete, btnChooseFile;
     private ImageView ivBack;
-
-    // == THÊM CÁC BIẾN MỚI ==
-    private Button btnChooseFile;
     private TextView tvFileSelected;
     private CircleImageView ivAvatarPreview;
-    private String newAvatarPath = null; // Đường dẫn ảnh mới (nếu user chọn)
-    private String currentAvatarPath = null; // Đường dẫn ảnh cũ (từ DB)
 
-    private UserDatabaseHelper dbHelper;
-    private String loggedInUsername;
-    private String currentPassword;
+    // Firebase (Chỉ cần Auth và Firestore, bỏ Storage)
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
+    private FirebaseUser currentUser;
 
-    // Trình khởi chạy để chọn ảnh
     private ActivityResultLauncher<String> mGetContent;
-
+    private String encodedImageBase64 = null; // Biến lưu chuỗi ảnh
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_settings);
 
-        dbHelper = new UserDatabaseHelper(this);
-        loggedInUsername = getIntent().getStringExtra("USERNAME");
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+        currentUser = mAuth.getCurrentUser();
 
-        // Ánh xạ (Map) các views cũ
+        if (currentUser == null) {
+            finish();
+            return;
+        }
+
+        initViews();
+        setupImagePicker();
+        loadUserDataFromFirebase();
+
+        ivBack.setOnClickListener(v -> finish());
+        btnSave.setOnClickListener(v -> handleSave());
+        btnLogout.setOnClickListener(v -> handleLogout());
+        btnDelete.setOnClickListener(v -> handleDelete());
+
+        btnChooseFile.setOnClickListener(v -> mGetContent.launch("image/*"));
+    }
+
+    private void initViews() {
         ivBack = findViewById(R.id.ivBack);
-        // ... (etFullName, etUsername, ... btnDelete) ...
         etFullName = findViewById(R.id.etFullName);
         etUsername = findViewById(R.id.etUsername);
         etPassword = findViewById(R.id.etPassword);
@@ -68,142 +82,149 @@ public class UserSettingsActivity extends AppCompatActivity {
         btnSave = findViewById(R.id.btnSave);
         btnLogout = findViewById(R.id.btnLogout);
         btnDelete = findViewById(R.id.btnDelete);
-
-        // == ÁNH XẠ VIEWS MỚI ==
         btnChooseFile = findViewById(R.id.btnChooseFile);
         tvFileSelected = findViewById(R.id.tvFileSelected);
         ivAvatarPreview = findViewById(R.id.ivAvatarPreview);
+    }
 
-        // Đăng ký trình chọn ảnh
-        mGetContent = registerForActivityResult(new ActivityResultContracts.GetContent(),
-                uri -> {
-                    // Callback: Khi ảnh đã được chọn
-                    if (uri != null) {
-                        // 1. Copy ảnh vào thư mục riêng của app
-                        newAvatarPath = saveImageToInternalStorage(uri, loggedInUsername);
+    private void setupImagePicker() {
+        mGetContent = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
+            if (uri != null) {
+                // Xử lý nén ảnh và chuyển thành Base64
+                encodedImageBase64 = encodeImageToBase64(uri);
+                if (encodedImageBase64 != null) {
+                    // Hiển thị ảnh vừa chọn lên màn hình
+                    byte[] imageBytes = Base64.decode(encodedImageBase64, Base64.DEFAULT);
+                    Glide.with(this).load(imageBytes).into(ivAvatarPreview);
 
-                        // 2. Hiển thị ảnh xem trước
-                        Glide.with(this).load(newAvatarPath).into(ivAvatarPreview);
-                        ivAvatarPreview.setVisibility(View.VISIBLE);
-                        tvFileSelected.setText(loggedInUsername + ".jpg"); // Tên file
-                    }
-                });
-
-        // Load data hiện tại (bao gồm cả avatar)
-        loadCurrentData();
-
-        // ---- XỬ LÝ SỰ KIỆN CLICK ----
-        ivBack.setOnClickListener(v -> finish());
-        btnSave.setOnClickListener(v -> handleSave());
-        btnLogout.setOnClickListener(v -> handleLogout());
-        btnDelete.setOnClickListener(v -> handleDelete());
-
-        // Click nút "Choose File"
-        btnChooseFile.setOnClickListener(v -> {
-            // Yêu cầu quyền trước khi mở (nếu cần - Android 6.0+)
-            // ... (Code xin quyền có thể thêm ở đây) ...
-
-            // Mở thư viện ảnh
-            mGetContent.launch("image/*");
+                    ivAvatarPreview.setVisibility(View.VISIBLE);
+                    tvFileSelected.setText("Đã chọn ảnh xong! Bấm SAVE.");
+                } else {
+                    Toast.makeText(this, "Ảnh quá lớn hoặc lỗi!", Toast.LENGTH_SHORT).show();
+                }
+            }
         });
     }
 
-    private void loadCurrentData() {
-        Cursor cursor = dbHelper.getUserDetails(loggedInUsername);
-        if (cursor != null && cursor.moveToFirst()) {
-            // ... (set text cho etFullName, etUsername...)
-            etFullName.setText(cursor.getString(cursor.getColumnIndexOrThrow(UserDatabaseHelper.COLUMN_FULL_NAME)));
-            etUsername.setText(cursor.getString(cursor.getColumnIndexOrThrow(UserDatabaseHelper.COLUMN_USERNAME)));
-            etEmail.setText(cursor.getString(cursor.getColumnIndexOrThrow(UserDatabaseHelper.COLUMN_EMAIL)));
-            etAge.setText(String.valueOf(cursor.getInt(cursor.getColumnIndexOrThrow(UserDatabaseHelper.COLUMN_AGE))));
-            currentPassword = cursor.getString(cursor.getColumnIndexOrThrow(UserDatabaseHelper.COLUMN_PASSWORD));
+    // == HÀM MỚI: Nén ảnh và chuyển thành chuỗi Base64 ==
+    private String encodeImageToBase64(Uri imageUri) {
+        try {
+            InputStream inputStream = getContentResolver().openInputStream(imageUri);
+            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
 
-            // == LOAD AVATAR HIỆN TẠI ==
-            currentAvatarPath = cursor.getString(cursor.getColumnIndexOrThrow(UserDatabaseHelper.COLUMN_AVATAR_PATH));
-            if (currentAvatarPath != null && !currentAvatarPath.isEmpty()) {
-                Glide.with(this).load(new File(currentAvatarPath)).into(ivAvatarPreview);
-                ivAvatarPreview.setVisibility(View.VISIBLE);
-                tvFileSelected.setText(new File(currentAvatarPath).getName());
-            }
+            // Nén ảnh xuống kích thước nhỏ (quan trọng để lưu vào Firestore)
+            // Resize ảnh về tối đa 300x300
+            bitmap = getResizedBitmap(bitmap, 300);
 
-            cursor.close();
-        }
-    }
-
-    private void handleSave() {
-        // ... (code lấy newFullName, newUsername, newPassword... của bạn)
-        String newFullName = etFullName.getText().toString().trim();
-        String newUsername = etUsername.getText().toString().trim();
-        String newEmail = etEmail.getText().toString().trim();
-        int newAge = Integer.parseInt(etAge.getText().toString().trim());
-        String newPassword = etPassword.getText().toString().trim();
-        if (newPassword.isEmpty()) {
-            newPassword = currentPassword;
-        }
-
-        // 1. Cập nhật thông tin (Tên, pass, email, v.v.)
-        dbHelper.updateUser(loggedInUsername, newFullName, newUsername, newPassword, newAge, newEmail);
-
-        // 2. Cập nhật Avatar (nếu người dùng chọn ảnh mới)
-        if (newAvatarPath != null) {
-            dbHelper.updateAvatarPath(newUsername, newAvatarPath); // Dùng newUsername vì user có thể đổi cả username
-        }
-
-        Toast.makeText(this, "Cập nhật thành công!", Toast.LENGTH_SHORT).show();
-        finish();
-    }
-
-    // == THÊM HÀM HELPER NÀY ==
-    // Hàm này copy ảnh từ thư viện vào thư mục "avatars" riêng của app
-    private String saveImageToInternalStorage(Uri uri, String username) {
-        // Tạo thư mục "avatars" nếu chưa có
-        File directory = getDir("avatars", Context.MODE_PRIVATE);
-
-        // Tạo file đích (ví dụ: /data/data/com.example.learning_app/app_avatars/username.jpg)
-        File destinationFile = new File(directory, username + ".jpg");
-
-        try (InputStream in = getContentResolver().openInputStream(uri);
-             OutputStream out = new FileOutputStream(destinationFile)) {
-
-            byte[] buf = new byte[1024];
-            int len;
-            while ((len = in.read(buf)) > 0) {
-                out.write(buf, 0, len);
-            }
-
-            // Trả về đường dẫn tuyệt đối của file đã lưu
-            return destinationFile.getAbsolutePath();
-
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            // Nén thành JPEG chất lượng 80%
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, byteArrayOutputStream);
+            byte[] byteArray = byteArrayOutputStream.toByteArray();
+            return Base64.encodeToString(byteArray, Base64.DEFAULT);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    // ... (code handleLogout() và handleDelete() giữ nguyên) ...
+    // Hàm phụ trợ resize ảnh
+    private Bitmap getResizedBitmap(Bitmap image, int maxSize) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+        float bitmapRatio = (float) width / (float) height;
+        if (bitmapRatio > 1) {
+            width = maxSize;
+            height = (int) (width / bitmapRatio);
+        } else {
+            height = maxSize;
+            width = (int) (height * bitmapRatio);
+        }
+        return Bitmap.createScaledBitmap(image, width, height, true);
+    }
+
+    private void loadUserDataFromFirebase() {
+        String uid = currentUser.getUid();
+        etEmail.setEnabled(false);
+        etUsername.setEnabled(true);
+
+        db.collection("users").document(uid).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        UserModel user = documentSnapshot.toObject(UserModel.class);
+                        if (user != null) {
+                            etFullName.setText(user.getFullName());
+                            etUsername.setText(user.getUsername());
+                            etEmail.setText(user.getEmail());
+                            etAge.setText(String.valueOf(user.getAge()));
+
+                            // Load Avatar (giải mã Base64)
+                            if (user.getAvatarUrl() != null && !user.getAvatarUrl().isEmpty()) {
+                                try {
+                                    byte[] imageBytes = Base64.decode(user.getAvatarUrl(), Base64.DEFAULT);
+                                    Glide.with(this).load(imageBytes).into(ivAvatarPreview);
+                                    ivAvatarPreview.setVisibility(View.VISIBLE);
+                                    tvFileSelected.setText("Avatar hiện tại");
+                                } catch (Exception e) {
+                                    // Bỏ qua lỗi nếu ảnh cũ là link http
+                                }
+                            }
+                        }
+                    }
+                });
+    }
+
+    private void handleSave() {
+        String newFullName = etFullName.getText().toString().trim();
+        String newUsername = etUsername.getText().toString().trim();
+        int newAge = 0;
+        try { newAge = Integer.parseInt(etAge.getText().toString().trim()); } catch (Exception e) {}
+
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("fullName", newFullName);
+        updates.put("age", newAge);
+        updates.put("username", newUsername);
+
+        // Lưu chuỗi ảnh Base64 vào cột avatarUrl
+        if (encodedImageBase64 != null) {
+            updates.put("avatarUrl", encodedImageBase64);
+        }
+
+        String newPass = etPassword.getText().toString().trim();
+        if (!newPass.isEmpty()) {
+            currentUser.updatePassword(newPass);
+            updates.put("password", newPass);
+        }
+
+        db.collection("users").document(currentUser.getUid())
+                .update(updates)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(this, "Đã lưu thay đổi!", Toast.LENGTH_SHORT).show();
+                    finish();
+                })
+                .addOnFailureListener(e -> Toast.makeText(this, "Lỗi lưu: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+    }
+
     private void handleLogout() {
-        // Quay về màn hình MainActivity và xóa tất cả Activity
-        Intent intent = new Intent(UserSettingsActivity.this, UserWelcomeActivity.class);
+        mAuth.signOut();
+        Intent intent = new Intent(this, UserWelcomeActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
+        finish();
     }
 
     private void handleDelete() {
-        // Hiển thị hộp thoại xác nhận
         new AlertDialog.Builder(this)
-                .setTitle("Xóa tài khoản")
-                .setMessage("Bạn có chắc chắn muốn xóa tài khoản này? Toàn bộ dữ liệu sẽ bị mất vĩnh viễn.")
-                .setPositiveButton("XÓA", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Ti hành xóa
-                        dbHelper.deleteUser(loggedInUsername);
-                        Toast.makeText(UserSettingsActivity.this, "Tài khoản đã bị xóa.", Toast.LENGTH_SHORT).show();
-                        // Quay về màn hình chính (giống Logout)
-                        handleLogout();
-                    }
+                .setTitle("Cảnh báo")
+                .setMessage("Xóa tài khoản vĩnh viễn?")
+                .setPositiveButton("XÓA", (dialog, which) -> {
+                    db.collection("users").document(currentUser.getUid()).delete();
+                    currentUser.delete().addOnCompleteListener(task -> {
+                        Toast.makeText(this, "Đã xóa!", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(this, UserWelcomeActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                    });
                 })
-                .setNegativeButton("HỦY", null) // Không làm gì cả
-                .show();
+                .setNegativeButton("HỦY", null).show();
     }
 }

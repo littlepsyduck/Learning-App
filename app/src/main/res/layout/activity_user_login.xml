@@ -47,11 +47,11 @@
 
             <TextView
                 style="@style/RegistrationLabel"
-                android:text="Username" /> <RelativeLayout style="@style/InputContainer">
+                android:text="Email" /> <RelativeLayout style="@style/InputContainer">
             <EditText
                 android:id="@+id/etUsername"
                 style="@style/RegistrationEditText"
-                android:hint="Username"
+                android:hint="a@gmail.com"
                 android:inputType="text" />
             <ImageView
                 android:id="@+id/iconUsernameError"
@@ -61,7 +61,7 @@
             <TextView
                 android:id="@+id/tvUsernameError"
                 style="@style/RegistrationErrorText"
-                android:text="Username không tồn tại!" />
+                android:text="Email không tồn tại!" />
 
             <TextView
                 style="@style/RegistrationLabel"

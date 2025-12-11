@@ -1,32 +1,37 @@
-package com.example.learning_app; // Thay bằng package của bạn
+package com.example.learning_app; // Đảm bảo đúng package
 
-import android.database.Cursor;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView; // Import ImageView
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.content.Intent; // Import Intent
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-// == THÊM IMPORT ==
+// Import Glide & CircleImageView
 import com.bumptech.glide.Glide;
-import java.io.File;
-import de.hdodenhof.circleimageview.CircleImageView; // Import CircleImageView
+import de.hdodenhof.circleimageview.CircleImageView;
+
+// Import Firebase
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class UserProfileFragment extends Fragment {
 
     private TextView tvFullName, tvUsername, tvJoinDate, tvFriends, tvAvatarLetter;
-    private UserDatabaseHelper dbHelper;
-    private String loggedInUsername;
-    private ImageView ivSettings; // Biến nút settings
-
-    // == THÊM BIẾN AVATAR ==
     private CircleImageView ivAvatar;
+    private ImageView ivSettings;
+
+    // Firebase
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
 
     @Nullable
     @Override
@@ -38,74 +43,100 @@ public class UserProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        if (getArguments() != null) {
-            loggedInUsername = getArguments().getString("USERNAME");
-        }
+        // 1. Khởi tạo Firebase
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
-        dbHelper = new UserDatabaseHelper(getContext());
-
-        // Ánh xạ (Map) các view
+        // 2. Ánh xạ View
         tvFullName = view.findViewById(R.id.tvFullName);
         tvUsername = view.findViewById(R.id.tvUsername);
         tvJoinDate = view.findViewById(R.id.tvJoinDate);
         tvFriends = view.findViewById(R.id.tvFriends);
         tvAvatarLetter = view.findViewById(R.id.tvAvatarLetter);
-
-        // == ÁNH XẠ AVATAR VÀ SETTINGS ==
         ivAvatar = view.findViewById(R.id.ivAvatar);
         ivSettings = view.findViewById(R.id.ivSettings);
 
-        ivSettings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), UserSettingsActivity.class);
-                intent.putExtra("USERNAME", loggedInUsername);
-                startActivity(intent);
-            }
+        // 3. Sự kiện nút Settings
+        ivSettings.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), UserSettingsActivity.class); // Tên cũ SettingsActivity
+            startActivity(intent);
         });
 
-        loadUserProfile();
+        // 4. Tải dữ liệu
+        loadUserProfileFromFirebase();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        loadUserProfile(); // Tự động load lại khi quay về từ Settings
+        // Load lại dữ liệu khi quay lại từ màn hình Settings
+        loadUserProfileFromFirebase();
     }
 
-    // == SỬA LẠI HÀM NÀY ==
-    private void loadUserProfile() {
-        if (loggedInUsername == null) return;
+    private void loadUserProfileFromFirebase() {
+        // Lấy user đang đăng nhập
+        FirebaseUser currentUser = mAuth.getCurrentUser();
 
-        Cursor cursor = dbHelper.getUserDetails(loggedInUsername);
-        if (cursor != null && cursor.moveToFirst()) {
+        if (currentUser == null) {
+            // Chưa đăng nhập -> Có thể chuyển về màn hình Login
+            return;
+        }
 
-            String fullName = cursor.getString(cursor.getColumnIndexOrThrow(UserDatabaseHelper.COLUMN_FULL_NAME));
-            String username = cursor.getString(cursor.getColumnIndexOrThrow(UserDatabaseHelper.COLUMN_USERNAME));
-            String joinDate = cursor.getString(cursor.getColumnIndexOrThrow(UserDatabaseHelper.COLUMN_JOIN_DATE));
-            int friendsCount = cursor.getInt(cursor.getColumnIndexOrThrow(UserDatabaseHelper.COLUMN_FRIENDS));
-            String avatarPath = cursor.getString(cursor.getColumnIndexOrThrow(UserDatabaseHelper.COLUMN_AVATAR_PATH));
+        String uid = currentUser.getUid();
 
-            // Set data cho các TextView
-            tvFullName.setText(fullName);
-            tvUsername.setText(username);
-            tvJoinDate.setText("Joined " + joinDate);
-            tvFriends.setText(friendsCount + " Friends");
+        // Truy vấn Firestore vào collection "users", document = uid
+        db.collection("users").document(uid).get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            // Chuyển đổi document thành object UserModel
+                            UserModel user = document.toObject(UserModel.class);
 
-            // Xử lý hiển thị Avatar
-            if (avatarPath != null && !avatarPath.isEmpty()) {
-                // Nếu có đường dẫn ảnh -> Load ảnh bằng Glide
-                Glide.with(this).load(new File(avatarPath)).into(ivAvatar);
-                tvAvatarLetter.setVisibility(View.GONE); // Ẩn chữ cái
-            } else {
-                // Nếu không có ảnh -> Hiển thị chữ cái đầu
-                ivAvatar.setImageResource(R.color.duo_green); // (Bạn có thể đổi màu này)
-                tvAvatarLetter.setVisibility(View.VISIBLE); // Hiện chữ cái
-                if (fullName != null && !fullName.isEmpty()) {
-                    tvAvatarLetter.setText(String.valueOf(fullName.charAt(0)));
+                            if (user != null) {
+                                updateUI(user);
+                            }
+                        } else {
+                            Toast.makeText(getContext(), "Không tìm thấy thông tin user", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(getContext(), "Lỗi tải dữ liệu: " + task.getException(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void updateUI(UserModel user) {
+        tvFullName.setText(user.getFullName());
+        tvUsername.setText(user.getUsername());
+        tvJoinDate.setText("Joined " + user.getJoinDate());
+        tvFriends.setText(user.getFriendsCount() + " Friends");
+
+        // Xử lý Avatar (Base64)
+        String avatarCode = user.getAvatarUrl(); // Lúc này là chuỗi mã hóa
+
+        if (avatarCode != null && !avatarCode.isEmpty()) {
+            try {
+                // Giải mã chuỗi thành ảnh
+                byte[] imageBytes = android.util.Base64.decode(avatarCode, android.util.Base64.DEFAULT);
+
+                // Dùng Glide load ảnh từ byte[]
+                if (isAdded()) {
+                    Glide.with(this).load(imageBytes).into(ivAvatar);
                 }
+                tvAvatarLetter.setVisibility(View.GONE);
+            } catch (Exception e) {
+                // Nếu lỗi giải mã (ví dụ dữ liệu cũ), hiện mặc định
+                showDefaultAvatar(user.getFullName());
             }
-            cursor.close();
+        } else {
+            showDefaultAvatar(user.getFullName());
+        }
+    }
+    private void showDefaultAvatar(String name) {
+        ivAvatar.setImageResource(R.color.duo_green); // Màu mặc định
+        tvAvatarLetter.setVisibility(View.VISIBLE);
+        if (name != null && !name.isEmpty()) {
+            tvAvatarLetter.setText(String.valueOf(name.charAt(0)).toUpperCase());
         }
     }
 }
