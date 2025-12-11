@@ -1,4 +1,4 @@
-package com.example.learning_app; // Đảm bảo đúng package của bạn
+package com.example.learning_app;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -16,7 +16,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-// Firebase Import
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -39,19 +38,17 @@ public class UserRegisterActivity extends AppCompatActivity {
     private String whyLearn;
     private String status;
 
-    // Firebase
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_register); // Đảm bảo tên layout XML đúng
+        setContentView(R.layout.activity_user_register);
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        // Nhận dữ liệu
         Intent intent = getIntent();
         if (intent != null) {
             whyLearn = intent.getStringExtra("WHY_LEARN");
@@ -68,12 +65,7 @@ public class UserRegisterActivity extends AppCompatActivity {
         etAge.addTextChangedListener(validationWatcher);
         etEmail.addTextChangedListener(validationWatcher);
 
-        btnContinue.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                registerUserOnFirebase();
-            }
-        });
+        btnContinue.setOnClickListener(v -> registerUserOnFirebase());
     }
 
     private void initViews() {
@@ -94,12 +86,12 @@ public class UserRegisterActivity extends AppCompatActivity {
 
     private void registerUserOnFirebase() {
         btnContinue.setEnabled(false);
-        btnContinue.setText("Đang tạo..."); // Hoặc "Creating..."
+        btnContinue.setText("Đang tạo...");
 
         String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
 
-        // 1. Tạo User Authentication
+        // 1. Tạo tài khoản Authentication
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -107,7 +99,12 @@ public class UserRegisterActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             FirebaseUser firebaseUser = mAuth.getCurrentUser();
                             if (firebaseUser != null) {
-                                // 2. Lưu thông tin vào Firestore
+                                // 2. Gửi Email xác thực
+                                firebaseUser.sendEmailVerification()
+                                        .addOnSuccessListener(aVoid -> Toast.makeText(UserRegisterActivity.this, "Email xác thực đã được gửi! Vui lòng kiểm tra hộp thư.", Toast.LENGTH_LONG).show())
+                                        .addOnFailureListener(e -> Toast.makeText(UserRegisterActivity.this, "Không thể gửi email xác thực: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+
+                                // 3. Lưu thông tin vào Firestore
                                 saveUserInfoToFirestore(firebaseUser.getUid());
                             }
                         } else {
@@ -127,7 +124,7 @@ public class UserRegisterActivity extends AppCompatActivity {
         String fullName = etFullName.getText().toString().trim();
         String username = etUsername.getText().toString().trim();
         String email = etEmail.getText().toString().trim();
-        // Lưu cả password vào Firestore (theo yêu cầu của bạn)
+        // Lưu pass nếu cần (không khuyến khích)
         String passwordRaw = etPassword.getText().toString().trim();
 
         int age = 0;
@@ -135,32 +132,22 @@ public class UserRegisterActivity extends AppCompatActivity {
             age = Integer.parseInt(etAge.getText().toString().trim());
         } catch (NumberFormatException e) { age = 0; }
 
-        // Ngày hiện tại
         String currentDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
 
-        // == KHỞI TẠO USER MODEL VỚI CÁC TRƯỜNG MỚI ==
+        // Sử dụng UserModel mới có đầy đủ cột
         UserModel newUser = new UserModel(
-                uid,
-                fullName,
-                username,
-                email,
-                passwordRaw, // Lưu password
-                age,
-                whyLearn,
-                status,
-                currentDate, // joinDate (ngày tham gia)
-                currentDate  // lastDate (ngày đăng nhập cuối cũng là hôm nay)
+                uid, fullName, username, email, passwordRaw, age,
+                whyLearn, status, currentDate, currentDate // joinDate & lastDate
         );
 
-        // Các chỉ số streak, xp, freeze, friendsCount đã được set = 0 trong Constructor
-
-        // Lưu lên Firestore
         db.collection("users").document(uid)
                 .set(newUser)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
+                            // Chuyển sang màn hình All Done
+                            mAuth.signOut();
                             Intent intent = new Intent(UserRegisterActivity.this, UserAllDoneActivity.class);
                             intent.putExtra("USERNAME", username);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -233,9 +220,7 @@ public class UserRegisterActivity extends AppCompatActivity {
         return true;
     }
 
-    // == SỬA TÊN DRAWABLE Ở ĐÂY CHO KHỚP VỚI FILE CŨ CỦA BẠN ==
     private void showError(EditText et, TextView tv, ImageView icon, String message) {
-        // Dùng tên file cũ: edit_text_background_light_error
         et.setBackgroundResource(R.drawable.edit_text_background_light_error);
         tv.setText(message);
         tv.setVisibility(View.VISIBLE);
@@ -243,7 +228,6 @@ public class UserRegisterActivity extends AppCompatActivity {
     }
 
     private void hideError(EditText et, TextView tv, ImageView icon) {
-        // Dùng tên file cũ: edit_text_background_light
         et.setBackgroundResource(R.drawable.edit_text_background_light);
         tv.setVisibility(View.GONE);
         icon.setVisibility(View.GONE);
@@ -251,14 +235,12 @@ public class UserRegisterActivity extends AppCompatActivity {
 
     private void activateContinueButton() {
         btnContinue.setEnabled(true);
-        // Dùng tên file cũ: button_background_green
         btnContinue.setBackgroundResource(R.drawable.button_background_green);
         btnContinue.setTextColor(Color.WHITE);
     }
 
     private void deactivateContinueButton() {
         btnContinue.setEnabled(false);
-        // Dùng tên file cũ: button_background_disabled
         btnContinue.setBackgroundResource(R.drawable.button_background_disabled);
         btnContinue.setTextColor(Color.parseColor("#AFAFAF"));
     }
