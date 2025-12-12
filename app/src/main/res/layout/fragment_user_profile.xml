@@ -133,7 +133,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/divider2"
-        android:padding="24dp">
+        android:paddingStart="24dp"
+        android:paddingTop="24dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="12dp">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -142,14 +145,65 @@
             android:textColor="@color/black"
             android:textSize="18sp"
             android:textStyle="bold" />
-        <Button
-            android:id="@+id/btnAddFriends"
-            style="@style/Widget.AppCompat.Button.Borderless"
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:text="ADD FRIENDS"
-            android:textColor="@color/duo_green"
-            android:textStyle="bold" />
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp">
+                <Button
+                    android:id="@+id/btnFriendRequests"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="REQUESTS"
+                    android:textColor="@color/duo_green"
+                    android:textStyle="bold" />
+                <View
+                    android:id="@+id/viewRequestBadge"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:layout_alignTop="@id/btnFriendRequests"
+                    android:layout_alignEnd="@id/btnFriendRequests"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/button_background_red"
+                    android:visibility="gone"/>
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/btnAddFriends"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ADD FRIENDS"
+                android:textColor="@color/duo_green"
+                android:textStyle="bold" />
+        </LinearLayout>
     </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tvYourFriends"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/duo_grey"
+        android:textStyle="bold"
+        android:layout_below="@id/friends_section"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="12dp"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvFriendsList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvYourFriends"
+        android:layout_marginTop="-31dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp" />
+
 </RelativeLayout>

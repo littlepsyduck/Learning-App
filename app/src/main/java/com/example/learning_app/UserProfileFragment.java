@@ -1,4 +1,4 @@
-package com.example.learning_app; // Đảm bảo đúng package
+package com.example.learning_app;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,26 +13,38 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-// Import Glide & CircleImageView
 import com.bumptech.glide.Glide;
-import de.hdodenhof.circleimageview.CircleImageView;
-
-// Import Firebase
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.Query;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class UserProfileFragment extends Fragment {
 
     private TextView tvFullName, tvUsername, tvJoinDate, tvFriends, tvAvatarLetter;
     private CircleImageView ivAvatar;
     private ImageView ivSettings;
+    private View viewRequestBadge;
+    private Button btnFriendRequests, btnAddFriends;
+    private RecyclerView rvFriendsList;
+    private CurrentFriendsAdapter friendsAdapter;
+    private List<UserModel> friendList;
 
-    // Firebase
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
+    private ListenerRegistration friendRequestRegistration;
+    private ListenerRegistration friendsCountRegistration;
+
 
     @Nullable
     @Override
@@ -44,11 +56,10 @@ public class UserProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // 1. Khởi tạo Firebase
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        // 2. Ánh xạ View
+        // Standard Views
         tvFullName = view.findViewById(R.id.tvFullName);
         tvUsername = view.findViewById(R.id.tvUsername);
         tvJoinDate = view.findViewById(R.id.tvJoinDate);
@@ -56,94 +67,146 @@ public class UserProfileFragment extends Fragment {
         tvAvatarLetter = view.findViewById(R.id.tvAvatarLetter);
         ivAvatar = view.findViewById(R.id.ivAvatar);
         ivSettings = view.findViewById(R.id.ivSettings);
-        
-        Button btnAddFriends = view.findViewById(R.id.btnAddFriends);
+
+        // Friend-related Views
+        viewRequestBadge = view.findViewById(R.id.viewRequestBadge);
+        btnFriendRequests = view.findViewById(R.id.btnFriendRequests);
+        btnAddFriends = view.findViewById(R.id.btnAddFriends);
+        rvFriendsList = view.findViewById(R.id.rvFriendsList);
+
+        setupRecyclerView();
+        setupClickListeners();
+        loadUserProfileFromFirebase();
+    }
+
+    private void setupRecyclerView() {
+        friendList = new ArrayList<>();
+        friendsAdapter = new CurrentFriendsAdapter(getContext(), friendList);
+        rvFriendsList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        rvFriendsList.setAdapter(friendsAdapter);
+    }
+
+    private void setupClickListeners() {
         btnAddFriends.setOnClickListener(v -> {
             getParentFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, new FriendsFragment())
-                    .addToBackStack(null) // Optional: add to back stack so back button works natively
+                    .addToBackStack(null)
                     .commit();
         });
 
-        // 3. Sự kiện nút Settings
-        ivSettings.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), UserSettingsActivity.class); // Tên cũ SettingsActivity
-            startActivity(intent);
+        btnFriendRequests.setOnClickListener(v -> {
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new FriendRequestsFragment())
+                    .addToBackStack(null)
+                    .commit();
         });
 
-        // 4. Tải dữ liệu
-        loadUserProfileFromFirebase();
+        ivSettings.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), UserSettingsActivity.class);
+            startActivity(intent);
+        });
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        // Load lại dữ liệu khi quay lại từ màn hình Settings
-        loadUserProfileFromFirebase();
+    public void onStart() {
+        super.onStart();
+        listenForFriendRequests();
+        listenForFriendListChanges();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (friendRequestRegistration != null) {
+            friendRequestRegistration.remove();
+        }
+        if (friendsCountRegistration != null) {
+            friendsCountRegistration.remove();
+        }
+    }
+
+    private void listenForFriendRequests() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) return;
+
+        Query query = db.collection("friend_requests")
+                .whereEqualTo("receiverId", currentUser.getUid())
+                .whereEqualTo("status", "PENDING");
+
+        friendRequestRegistration = query.addSnapshotListener((snapshots, e) -> {
+            if (e != null) return;
+            viewRequestBadge.setVisibility(snapshots != null && !snapshots.isEmpty() ? View.VISIBLE : View.GONE);
+        });
+    }
+
+    private void listenForFriendListChanges() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) return;
+
+        friendsCountRegistration = db.collection("users").document(currentUser.getUid()).collection("friends")
+                .addSnapshotListener((snapshots, e) -> {
+                    if (e != null) return;
+
+                    if (snapshots != null) {
+                        int count = snapshots.size();
+                        tvFriends.setText(count + " Friends");
+                        // Also update the friends list
+                        friendList.clear();
+                        for (DocumentSnapshot doc : snapshots.getDocuments()) {
+                            UserModel friend = doc.toObject(UserModel.class);
+                            friendList.add(friend);
+                        }
+                        friendsAdapter.notifyDataSetChanged();
+                    }
+                });
     }
 
     private void loadUserProfileFromFirebase() {
-        // Lấy user đang đăng nhập
         FirebaseUser currentUser = mAuth.getCurrentUser();
-
-        if (currentUser == null) {
-            // Chưa đăng nhập -> Có thể chuyển về màn hình Login
-            return;
-        }
+        if (currentUser == null) return;
 
         String uid = currentUser.getUid();
-
-        // Truy vấn Firestore vào collection "users", document = uid
         db.collection("users").document(uid).get()
                 .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
+                    if (task.isSuccessful() && task.getResult() != null) {
                         DocumentSnapshot document = task.getResult();
                         if (document.exists()) {
-                            // Chuyển đổi document thành object UserModel
                             UserModel user = document.toObject(UserModel.class);
-
                             if (user != null) {
                                 updateUI(user);
                             }
                         } else {
-                            Toast.makeText(getContext(), "Không tìm thấy thông tin user", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "User profile not found", Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(getContext(), "Lỗi tải dữ liệu: " + task.getException(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Failed to load data: " + task.getException(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
     private void updateUI(UserModel user) {
+        if (!isAdded() || getContext() == null) return;
+
         tvFullName.setText(user.getFullName());
         tvUsername.setText(user.getUsername());
         tvJoinDate.setText("Joined " + user.getJoinDate());
-        tvFriends.setText(user.getFriendsCount() + " Friends");
 
-        // Xử lý Avatar (Base64)
-        //comment
-        String avatarCode = user.getAvatarUrl(); // Lúc này là chuỗi mã hóa
-
+        String avatarCode = user.getAvatarUrl();
         if (avatarCode != null && !avatarCode.isEmpty()) {
             try {
-                // Giải mã chuỗi thành ảnh
                 byte[] imageBytes = android.util.Base64.decode(avatarCode, android.util.Base64.DEFAULT);
-
-                // Dùng Glide load ảnh từ byte[]
-                if (isAdded()) {
-                    Glide.with(this).load(imageBytes).into(ivAvatar);
-                }
+                Glide.with(this).load(imageBytes).into(ivAvatar);
                 tvAvatarLetter.setVisibility(View.GONE);
             } catch (Exception e) {
-                // Nếu lỗi giải mã (ví dụ dữ liệu cũ), hiện mặc định
                 showDefaultAvatar(user.getFullName());
             }
         } else {
             showDefaultAvatar(user.getFullName());
         }
     }
+
     private void showDefaultAvatar(String name) {
-        ivAvatar.setImageResource(R.color.duo_green); // Màu mặc định
+        ivAvatar.setImageResource(R.color.duo_green);
         tvAvatarLetter.setVisibility(View.VISIBLE);
         if (name != null && !name.isEmpty()) {
             tvAvatarLetter.setText(String.valueOf(name.charAt(0)).toUpperCase());

@@ -1,95 +1,121 @@
 package com.example.learning_app;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
-
 import java.util.List;
+import java.util.Set;
 
-public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHolder> {
+import de.hdodenhof.circleimageview.CircleImageView;
 
-    private Context context;
-    private List<UserModel> friendsList;
-    private boolean isFollowersTab; // True if displaying Followers, False for Following
+public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.UserViewHolder> {
 
-    public FriendsAdapter(Context context, List<UserModel> friendsList, boolean isFollowersTab) {
+    private final List<UserModel> userList;
+    private final Set<String> friendIds;
+    private final Set<String> pendingRequestIds;
+    private final Context context;
+    private final OnAddFriendClickListener listener;
+
+    public interface OnAddFriendClickListener {
+        void onAddFriendClick(UserModel user);
+    }
+
+    public FriendsAdapter(Context context, List<UserModel> userList, Set<String> friendIds, Set<String> pendingRequestIds, OnAddFriendClickListener listener) {
         this.context = context;
-        this.friendsList = friendsList;
-        this.isFollowersTab = isFollowersTab;
+        this.userList = userList;
+        this.friendIds = friendIds;
+        this.pendingRequestIds = pendingRequestIds;
+        this.listener = listener;
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_friend_user, parent, false);
-        return new ViewHolder(view);
+    public UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_user_search, parent, false);
+        return new UserViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        UserModel user = friendsList.get(position);
-
-        String displayName = user.getFullName();
-        if (displayName == null || displayName.isEmpty()) {
-            displayName = user.getUsername();
-        }
-        holder.tvName.setText(displayName);
-        holder.tvSubtitle.setText(user.getXp() + " XP");
-
-        // Avatar
-        String avatarCode = user.getAvatarUrl();
-        boolean loadDefault = true;
-        if (avatarCode != null && !avatarCode.isEmpty()) {
-            try {
-                byte[] imageBytes = Base64.decode(avatarCode, Base64.DEFAULT);
-                Glide.with(context)
-                        .load(imageBytes)
-                        .placeholder(android.R.drawable.sym_def_app_icon)
-                        .into(holder.ivAvatar);
-                loadDefault = false;
-            } catch (Exception e) {
-                // Fallback
-            }
-        }
-        if (loadDefault) {
-            holder.ivAvatar.setImageResource(R.drawable.ic_owl_basic); // Or any default
-        }
-
-        // Action Button
-        if (isFollowersTab) {
-            // For followers tab, maybe show "Add back" or nothing?
-            // For now let's just use the add icon as generic action or hide it
-             holder.ivAction.setVisibility(View.GONE);
-        } else {
-            // For Following tab
-             holder.ivAction.setVisibility(View.GONE);
-        }
+    public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
+        UserModel user = userList.get(position);
+        holder.bind(user);
     }
 
     @Override
     public int getItemCount() {
-        return friendsList.size();
+        return userList.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView ivAvatar, ivAction;
-        TextView tvName, tvSubtitle;
+    class UserViewHolder extends RecyclerView.ViewHolder {
+        private final CircleImageView ivAvatar;
+        private final TextView tvFullName, tvUsername, tvAvatarLetter;
+        private final ImageView btnAdd, ivSent, ivIsFriend;
 
-        public ViewHolder(@NonNull View itemView) {
+        UserViewHolder(@NonNull View itemView) {
             super(itemView);
             ivAvatar = itemView.findViewById(R.id.ivAvatar);
-            ivAction = itemView.findViewById(R.id.ivAction);
-            tvName = itemView.findViewById(R.id.tvName);
-            tvSubtitle = itemView.findViewById(R.id.tvSubtitle);
+            tvFullName = itemView.findViewById(R.id.tvFullName);
+            tvUsername = itemView.findViewById(R.id.tvUsername);
+            tvAvatarLetter = itemView.findViewById(R.id.tvAvatarLetter);
+            btnAdd = itemView.findViewById(R.id.btnAdd);
+            ivSent = itemView.findViewById(R.id.ivSent);
+            ivIsFriend = itemView.findViewById(R.id.ivIsFriend);
+        }
+
+        void bind(final UserModel user) {
+            tvFullName.setText(user.getFullName());
+            tvUsername.setText(user.getUsername());
+
+            // Avatar
+            if (user.getAvatarUrl() != null && !user.getAvatarUrl().isEmpty()) {
+                try {
+                    byte[] imageBytes = Base64.decode(user.getAvatarUrl(), Base64.DEFAULT);
+                    Glide.with(context).load(imageBytes).into(ivAvatar);
+                    tvAvatarLetter.setVisibility(View.GONE);
+                } catch (Exception e) {
+                    showDefaultAvatar(user.getFullName());
+                }
+            } else {
+                showDefaultAvatar(user.getFullName());
+            }
+
+            // Reset visibility
+            btnAdd.setVisibility(View.GONE);
+            ivSent.setVisibility(View.GONE);
+            ivIsFriend.setVisibility(View.GONE);
+
+            // Button state
+            if (friendIds.contains(user.getUid())) {
+                ivIsFriend.setVisibility(View.VISIBLE);
+            } else if (pendingRequestIds.contains(user.getUid())) {
+                ivSent.setVisibility(View.VISIBLE);
+            } else {
+                btnAdd.setVisibility(View.VISIBLE);
+            }
+
+            btnAdd.setOnClickListener(v -> {
+                listener.onAddFriendClick(user);
+                btnAdd.setVisibility(View.GONE);
+                ivSent.setVisibility(View.VISIBLE);
+                pendingRequestIds.add(user.getUid()); // Update state locally
+            });
+        }
+
+        private void showDefaultAvatar(String name) {
+            ivAvatar.setImageDrawable(new ColorDrawable(Color.parseColor("#A020F0"))); // Default color
+            tvAvatarLetter.setVisibility(View.VISIBLE);
+            if (name != null && !name.isEmpty()) {
+                tvAvatarLetter.setText(String.valueOf(name.charAt(0)).toUpperCase());
+            }
         }
     }
 }

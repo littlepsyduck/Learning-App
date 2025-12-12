@@ -11,4 +11,7 @@
     <color name="reg_text_primary">#FFFFFF</color>
     <color name="reg_error_red">#FF4B4B</color>
     <color name="reg_button_disabled">#4A5B64</color>
+
+    <!-- Add this line -->
+    <color name="duo_purple">#673AB7</color>
 </resources>
