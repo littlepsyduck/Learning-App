@@ -34,7 +34,7 @@ public class UserDashboardActivity extends AppCompatActivity {
             } else if (itemId == R.id.nav_home) {
                 // selectedFragment = new HomeFragment(); // (Fragment cho tab 1)
             } else if (itemId == R.id.nav_shield) {
-                // selectedFragment = new ShieldFragment(); // (Fragment cho tab 2)
+                selectedFragment = new LeaderboardFragment();
             }
             // ... (thêm 2 else if cho 2 icon còn lại)
 

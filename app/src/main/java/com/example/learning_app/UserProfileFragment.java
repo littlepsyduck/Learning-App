@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,6 +56,14 @@ public class UserProfileFragment extends Fragment {
         tvAvatarLetter = view.findViewById(R.id.tvAvatarLetter);
         ivAvatar = view.findViewById(R.id.ivAvatar);
         ivSettings = view.findViewById(R.id.ivSettings);
+        
+        Button btnAddFriends = view.findViewById(R.id.btnAddFriends);
+        btnAddFriends.setOnClickListener(v -> {
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new FriendsFragment())
+                    .addToBackStack(null) // Optional: add to back stack so back button works natively
+                    .commit();
+        });
 
         // 3. Sự kiện nút Settings
         ivSettings.setOnClickListener(v -> {
