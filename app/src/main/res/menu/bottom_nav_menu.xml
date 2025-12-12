@@ -11,8 +11,9 @@
         android:id="@+id/nav_chest"
         android:icon="@drawable/ic_chest" android:title="Chest"/>
     <item
-        android:id="@+id/nav_shop"
-        android:icon="@drawable/ic_shop" android:title="Shop"/>
+        android:id="@+id/nav_speech" 
+        android:icon="@drawable/ic_speech" 
+        android:title="Speech"/>
     <item
         android:id="@+id/nav_profile"
         android:icon="@drawable/ic_profile" android:title="Profile"/>

@@ -20,9 +20,8 @@
 
         <activity android:name=".ui.StreakActivity" android:theme="@style/Theme.AppCompat.NoActionBar"/>
         
-        <!-- Khai báo LessonCompleteActivity -->
         <activity 
-            android:name=".ui.LessonCompleteActivity"
+            android:name=".ui.DailyStreakActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar"/>
 
     </application>

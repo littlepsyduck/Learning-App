@@ -6,11 +6,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-
 import com.example.learning_app.R;
 import com.example.learning_app.ui.fragment.HomeFragment;
 import com.example.learning_app.ui.fragment.LessonCompleteFragment;
@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
         View topBar = findViewById(R.id.topBar);
 
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
+
         viewModel.getUserStats().observe(this, user -> {
             if (user != null) {
                 if (txtStreak != null) txtStreak.setText(String.valueOf(user.streak));
@@ -43,9 +44,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Updated observer to listen for streak value
+        viewModel.getFirstLessonOfDayStreak().observe(this, streakValue -> {
+            if (streakValue != null && streakValue > -1) {
+                viewModel.resetFirstLessonFlag();
+                Intent intent = new Intent(this, DailyStreakActivity.class);
+                intent.putExtra("currentStreak", streakValue); // Pass the correct streak value
+                startActivity(intent);
+            }
+        });
+
         if (streakContainer != null) {
             streakContainer.setOnClickListener(v -> {
-                // Giả sử StreakActivity nằm trong package ui
                 Intent intent = new Intent(MainActivity.this, StreakActivity.class);
                 startActivity(intent);
             });
@@ -69,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
                     selectedFragment = new QuestFragment();
                     if (topBar != null) topBar.setVisibility(View.GONE);
                     updateStatusBarColor("#8761D6", false);
-                } else if (itemId == R.id.nav_shop) {
+                } else if (itemId == R.id.nav_speech) { 
                     selectedFragment = new HomeFragment();
                     if (topBar != null) topBar.setVisibility(View.VISIBLE);
                     updateStatusBarColor("#FFFFFF", true);
@@ -98,18 +108,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (viewModel != null) {
-            viewModel.reloadUserStats();
-        }
-    }
-
-    // Hiển thị màn hình hoàn thành bài học (toàn màn hình)
     public void showLessonCompleteScreen(int xp, int accuracy, String timeSpent) {
-        LessonCompleteFragment dialogFragment = LessonCompleteFragment.newInstance(xp, accuracy, timeSpent);
-        dialogFragment.show(getSupportFragmentManager(), "LessonCompleteFragment");
+        LessonCompleteFragment.newInstance(xp, accuracy, timeSpent).show(getSupportFragmentManager(), "LessonCompleteFragment");
     }
 
     private void updateStatusBarColor(String colorHex, boolean isLightIcon) {

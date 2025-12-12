@@ -14,6 +14,7 @@ public class UserEntity {
     public String lastLessonDate;
     public int streakFreezes;
     public int lessonsWithHighAccuracy;
+    public String lastFreezeDate; // New field to track when a freeze was used
 
     public UserEntity() {
         this.xp = 0;
@@ -21,6 +22,7 @@ public class UserEntity {
         this.hearts = 5;
         this.lastLoginDate = System.currentTimeMillis();
         this.lessonsWithHighAccuracy = 0;
-        this.lastLessonDate = ""; // Initialize as empty string
+        this.lastLessonDate = "";
+        this.lastFreezeDate = "";
     }
 }

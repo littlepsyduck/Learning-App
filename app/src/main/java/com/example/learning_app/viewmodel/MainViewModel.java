@@ -13,19 +13,22 @@ import com.example.learning_app.db.UserEntity;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class MainViewModel extends AndroidViewModel {
 
     private AppDatabase db;
     private MutableLiveData<UserEntity> userStats = new MutableLiveData<>();
+    // Changed to Integer: will hold the new streak value, or -1 if not the first lesson
+    private MutableLiveData<Integer> firstLessonOfDayStreak = new MutableLiveData<>(-1);
     private ExecutorService executor = Executors.newSingleThreadExecutor();
     private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
     private static final String USER_ID = "user_01";
@@ -40,11 +43,18 @@ public class MainViewModel extends AndroidViewModel {
         return userStats;
     }
 
+    public LiveData<Integer> getFirstLessonOfDayStreak() {
+        return firstLessonOfDayStreak;
+    }
+
+    public void resetFirstLessonFlag() {
+        firstLessonOfDayStreak.postValue(-1);
+    }
+
     public void reloadUserStats() {
         loadUserStats();
     }
 
-    // Simplified: Just loads the user data without modifying it.
     private void loadUserStats() {
         executor.execute(() -> {
             UserEntity user = db.userDao().getUser();
@@ -72,7 +82,6 @@ public class MainViewModel extends AndroidViewModel {
         });
     }
 
-    // All date and streak logic is now centralized here.
     public void claimLessonRewards(int xpGained, int accuracy, @Nullable Runnable onComplete) {
         executor.execute(() -> {
             UserEntity user = db.userDao().getUser();
@@ -80,23 +89,36 @@ public class MainViewModel extends AndroidViewModel {
                 user.xp += xpGained;
                 String todayStr = sdf.format(new Date());
 
-                // Check if the last lesson was on a different day
-                if (user.lastLessonDate == null || user.lastLessonDate.isEmpty() || !todayStr.equals(user.lastLessonDate)) {
-                    // It's a new day for learning.
-                    Calendar cal = Calendar.getInstance();
-                    cal.add(Calendar.DATE, -1);
-                    String yesterdayStr = sdf.format(cal.getTime());
-
-                    // If last lesson was yesterday, increment streak. Otherwise, reset it to 1.
-                    if (yesterdayStr.equals(user.lastLessonDate)) {
-                        user.streak += 1;
+                if (!todayStr.equals(user.lastLessonDate)) {
+                    boolean isFirstLessonEver = user.lastLessonDate == null || user.lastLessonDate.isEmpty();
+                    
+                    if (isFirstLessonEver) {
+                        user.streak = 1;
                     } else {
-                        user.streak = 1; // Start a new streak
+                        try {
+                            Date lastDate = sdf.parse(user.lastLessonDate);
+                            Date today = sdf.parse(todayStr);
+                            long diffInMillis = today.getTime() - lastDate.getTime();
+                            long diffInDays = TimeUnit.MILLISECONDS.toDays(diffInMillis);
+
+                            if (diffInDays == 1) {
+                                user.streak += 1;
+                            } else if (diffInDays > 1) {
+                                if (user.streakFreezes > 0) {
+                                    user.streakFreezes--; 
+                                    user.lastFreezeDate = user.lastLessonDate;
+                                } else {
+                                    user.streak = 1; 
+                                }
+                            }
+                        } catch (ParseException e) {
+                            user.streak = 1; 
+                        }
                     }
                     
-                    // Reset daily quests
                     user.lessonsWithHighAccuracy = 0;
                     user.lastLessonDate = todayStr;
+                    firstLessonOfDayStreak.postValue(user.streak); // Post the new streak value
                 }
 
                 if (accuracy >= 90) {
@@ -117,10 +139,12 @@ public class MainViewModel extends AndroidViewModel {
         executor.execute(() -> {
             UserEntity user = db.userDao().getUser();
             if (user != null) {
-                user.streakFreezes += 1;
-                db.userDao().update(user);
-                syncToFirebase(user);
-                userStats.postValue(user);
+                if (user.streakFreezes < 2) {
+                    user.streakFreezes += 1;
+                    db.userDao().update(user);
+                    syncToFirebase(user);
+                    userStats.postValue(user);
+                }
             }
         });
     }
@@ -133,6 +157,7 @@ public class MainViewModel extends AndroidViewModel {
         data.put("lastLessonDate", user.lastLessonDate);
         data.put("hearts", user.hearts);
         data.put("lessonsWithHighAccuracy", user.lessonsWithHighAccuracy);
+        data.put("lastFreezeDate", user.lastFreezeDate);
 
         FirebaseFirestore.getInstance()
                 .collection("users")

@@ -33,39 +33,41 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
     public void onBindViewHolder(@NonNull CalendarViewHolder holder, int position) {
         String fullDate = days.get(position);
 
-        // 1. Xử lý ô trống (Padding đầu tháng)
         if (fullDate == null || fullDate.isEmpty()) {
-            holder.tvDay.setText("");
             holder.tvDay.setVisibility(View.INVISIBLE);
             holder.imgBackground.setVisibility(View.INVISIBLE);
             return;
         }
 
-        // 2. Xử lý ngày thật
         holder.tvDay.setVisibility(View.VISIBLE);
         holder.imgBackground.setVisibility(View.INVISIBLE);
-        holder.tvDay.setTextColor(Color.parseColor("#B0BEC5")); // Màu xám
+        holder.tvDay.setTextColor(Color.parseColor("#B0BEC5")); // Default grey color
 
         try {
-            // Cắt chuỗi lấy ngày: "2025-12-01" -> "01"
             String dayNumber = fullDate.substring(fullDate.lastIndexOf("-") + 1);
             holder.tvDay.setText(dayNumber);
         } catch (Exception e) {
             holder.tvDay.setText("?");
         }
 
-        // 3. Kiểm tra trạng thái Streak/Freeze
         if (statusMap != null && statusMap.containsKey(fullDate)) {
             Integer status = statusMap.get(fullDate);
             if (status != null) {
-                if (status == 1) { // STREAK
-                    holder.imgBackground.setVisibility(View.VISIBLE);
-                    holder.imgBackground.setImageResource(R.drawable.bg_orange_circle); // File hình tròn cam
-                    holder.tvDay.setTextColor(Color.WHITE);
-                } else if (status == 2) { // FREEZE
-                    holder.imgBackground.setVisibility(View.VISIBLE);
-                    holder.imgBackground.setImageResource(R.drawable.ic_freeze_blue); // File hình tròn xanh
-                    holder.tvDay.setTextColor(Color.WHITE);
+                switch (status) {
+                    case 0: // Today
+                        holder.tvDay.setTextColor(Color.parseColor("#FFC107")); // Yellow color for today's text
+                        holder.imgBackground.setVisibility(View.INVISIBLE);
+                        break;
+                    case 1: // Streaked
+                        holder.imgBackground.setVisibility(View.VISIBLE);
+                        holder.imgBackground.setImageResource(R.drawable.bg_orange_circle);
+                        holder.tvDay.setTextColor(Color.WHITE);
+                        break;
+                    case 2: // Frozen
+                        holder.imgBackground.setVisibility(View.VISIBLE);
+                        holder.imgBackground.setImageResource(R.drawable.bg_blue_ice); // Blue circle for frozen day
+                        holder.tvDay.setTextColor(Color.WHITE);
+                        break;
                 }
             }
         }

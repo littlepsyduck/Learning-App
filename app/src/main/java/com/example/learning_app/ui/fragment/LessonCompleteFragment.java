@@ -38,7 +38,7 @@ public class LessonCompleteFragment extends DialogFragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             totalXP = getArguments().getInt("totalXP");
-            accuracy = getArguments().getInt("accuracy"); // Get accuracy
+            accuracy = getArguments().getInt("accuracy"); 
         }
         viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
     }
@@ -85,17 +85,18 @@ public class LessonCompleteFragment extends DialogFragment {
         tvTime.setText(timeSpent);
 
         btnClaimXP.setOnClickListener(v -> {
-            btnClaimXP.setEnabled(false); // Prevent multiple clicks
+            btnClaimXP.setEnabled(false);
 
-            // Use a counter to close the dialog only when all tasks are complete
             AtomicInteger tasksCompleted = new AtomicInteger(0);
             Runnable onTaskComplete = () -> {
                 if (tasksCompleted.incrementAndGet() == 2) {
-                    dismiss(); // Close the dialog
+                    // Use dismissAllowingStateLoss() to prevent crash
+                    if (isAdded()) { // Check if fragment is still added to the activity
+                        dismissAllowingStateLoss(); 
+                    }
                 }
             };
 
-            // Pass accuracy and callback to ViewModel
             viewModel.claimLessonRewards(totalXP, accuracy, onTaskComplete);
             viewModel.decrementHeart(onTaskComplete);
         });

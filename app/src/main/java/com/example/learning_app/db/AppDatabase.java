@@ -5,8 +5,8 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-// Tăng phiên bản database lên 3
-@Database(entities = {UserEntity.class}, version = 3, exportSchema = false)
+// Tăng phiên bản database lên 4
+@Database(entities = {UserEntity.class}, version = 4, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     private static volatile AppDatabase INSTANCE;
     public abstract UserDao userDao();
