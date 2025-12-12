@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/ic_home" android:title="Home"/>
+    <item
+        android:id="@+id/nav_shield"
+        android:icon="@drawable/ic_shield" android:title="League"/>
+    <item
+        android:id="@+id/nav_chest"
+        android:icon="@drawable/ic_chest" android:title="Chest"/>
+    <item
+        android:id="@+id/nav_shop"
+        android:icon="@drawable/ic_shop" android:title="Shop"/>
+    <item
+        android:id="@+id/nav_profile"
+        android:icon="@drawable/ic_profile" android:title="Profile"/>
+</menu>
