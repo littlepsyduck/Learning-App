@@ -79,9 +79,10 @@
                     android:textStyle="bold"
                     android:textColor="#4B4B4B"/>
                 <TextView
+                    android:id="@+id/tvTimeRemaining"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="🕒 3 GIỜ"
+                    android:text="🕒 23:59:59"
                     android:textColor="#FFC107"
                     android:textStyle="bold"/>
             </LinearLayout>
@@ -182,6 +183,57 @@
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:src="@drawable/ic_chest2"
+                        android:layout_marginStart="12dp"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Nhiệm vụ mới: Độ chính xác -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="#FFFFFF">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:gravity="center_vertical">
+
+                    <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/ic_target" />
+
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
+                        <TextView
+                            android:text="Hoàn hảo"
+                            android:textStyle="bold"
+                            android:textSize="16sp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+                        <TextView
+                            android:id="@+id/txtProgressAccuracy"
+                            android:text="Hoàn thành 2 bài với độ chính xác >90%"
+                            android:textColor="#757575"
+                            android:textSize="14sp"
+                            android:layout_marginTop="2dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+                        <ProgressBar
+                            android:id="@+id/progressBarAccuracy"
+                            style="?android:attr/progressBarStyleHorizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="10dp"
+                            android:progress="0"
+                            android:max="2"
+                            android:progressTint="#4CAF50"
+                            android:layout_marginTop="8dp"/>
+                    </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/imgChestAccuracy"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/ic_chest3" 
                         android:layout_marginStart="12dp"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>

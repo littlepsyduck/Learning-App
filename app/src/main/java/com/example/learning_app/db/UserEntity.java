@@ -12,12 +12,15 @@ public class UserEntity {
     public int hearts;
     public long lastLoginDate;
     public String lastLessonDate;
-
     public int streakFreezes;
+    public int lessonsWithHighAccuracy;
+
     public UserEntity() {
         this.xp = 0;
         this.streak = 0;
         this.hearts = 5;
         this.lastLoginDate = System.currentTimeMillis();
+        this.lessonsWithHighAccuracy = 0;
+        this.lastLessonDate = ""; // Initialize as empty string
     }
 }

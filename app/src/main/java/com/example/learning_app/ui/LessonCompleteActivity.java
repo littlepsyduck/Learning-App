@@ -10,6 +10,8 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.learning_app.R;
 import com.example.learning_app.viewmodel.MainViewModel;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class LessonCompleteActivity extends AppCompatActivity {
 
     private MainViewModel viewModel;
@@ -19,43 +21,41 @@ public class LessonCompleteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_lesson_complete);
 
-        // Khởi tạo ViewModel
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
-        // Lấy dữ liệu từ Intent
         int totalXP = getIntent().getIntExtra("totalXP", 0);
         int accuracy = getIntent().getIntExtra("accuracy", 0);
         String timeSpent = getIntent().getStringExtra("timeSpent");
 
-        // Ánh xạ Views
         ImageView ivCharacterFinish = findViewById(R.id.ivCharacterFinish);
         TextView tvTotalXP = findViewById(R.id.tvTotalXP);
         TextView tvAccuracy = findViewById(R.id.tvAccuracy);
         TextView tvTime = findViewById(R.id.tvTime);
         Button btnClaimXP = findViewById(R.id.btnClaimXP);
 
-        // Set character image
         int characterFinishResId = getResources().getIdentifier("character_duo_1", "drawable", getPackageName());
         if (characterFinishResId != 0) {
             ivCharacterFinish.setImageResource(characterFinishResId);
         }
 
-        // Hiển thị dữ liệu
         tvTotalXP.setText(String.valueOf(totalXP));
         tvAccuracy.setText(accuracy + "%");
         tvTime.setText(timeSpent);
 
-        // Xử lý sự kiện click
         btnClaimXP.setOnClickListener(v -> {
-            // 1. Cập nhật dữ liệu thông qua ViewModel
-            viewModel.claimLessonRewards(totalXP);
-            viewModel.decrementHeart();
+            btnClaimXP.setEnabled(false); // Disable button to prevent double-clicking
 
-            // 2. Đặt kết quả thành công
-            setResult(RESULT_OK);
+            // Use a counter to close the activity only when all tasks are complete
+            AtomicInteger tasksCompleted = new AtomicInteger(0);
+            Runnable onTaskComplete = () -> {
+                if (tasksCompleted.incrementAndGet() == 2) {
+                    setResult(RESULT_OK);
+                    finish();
+                }
+            };
 
-            // 3. Đóng Activity
-            finish();
+            viewModel.claimLessonRewards(totalXP, accuracy, onTaskComplete);
+            viewModel.decrementHeart(onTaskComplete);
         });
     }
 }

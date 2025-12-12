@@ -15,10 +15,13 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.learning_app.R;
 import com.example.learning_app.viewmodel.MainViewModel;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class LessonCompleteFragment extends DialogFragment {
 
     private MainViewModel viewModel;
     private int totalXP;
+    private int accuracy;
 
     public static LessonCompleteFragment newInstance(int totalXP, int accuracy, String timeSpent) {
         LessonCompleteFragment fragment = new LessonCompleteFragment();
@@ -35,6 +38,7 @@ public class LessonCompleteFragment extends DialogFragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             totalXP = getArguments().getInt("totalXP");
+            accuracy = getArguments().getInt("accuracy"); // Get accuracy
         }
         viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
     }
@@ -47,7 +51,6 @@ public class LessonCompleteFragment extends DialogFragment {
             int width = ViewGroup.LayoutParams.MATCH_PARENT;
             int height = ViewGroup.LayoutParams.MATCH_PARENT;
             dialog.getWindow().setLayout(width, height);
-            // Tùy chọn: làm cho nền trong suốt nếu layout của bạn có góc bo tròn
             dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         }
     }
@@ -64,7 +67,6 @@ public class LessonCompleteFragment extends DialogFragment {
 
         if (getArguments() == null) return;
 
-        int accuracy = getArguments().getInt("accuracy");
         String timeSpent = getArguments().getString("timeSpent");
 
         ImageView ivCharacterFinish = view.findViewById(R.id.ivCharacterFinish);
@@ -83,9 +85,19 @@ public class LessonCompleteFragment extends DialogFragment {
         tvTime.setText(timeSpent);
 
         btnClaimXP.setOnClickListener(v -> {
-            viewModel.claimLessonRewards(totalXP);
-            viewModel.decrementHeart();
-            dismiss();
+            btnClaimXP.setEnabled(false); // Prevent multiple clicks
+
+            // Use a counter to close the dialog only when all tasks are complete
+            AtomicInteger tasksCompleted = new AtomicInteger(0);
+            Runnable onTaskComplete = () -> {
+                if (tasksCompleted.incrementAndGet() == 2) {
+                    dismiss(); // Close the dialog
+                }
+            };
+
+            // Pass accuracy and callback to ViewModel
+            viewModel.claimLessonRewards(totalXP, accuracy, onTaskComplete);
+            viewModel.decrementHeart(onTaskComplete);
         });
     }
 }
