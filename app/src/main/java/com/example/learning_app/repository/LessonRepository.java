@@ -31,7 +31,6 @@ public class LessonRepository {
         mAllLessons = mLearningDao.getAllLessons();
     }
 
-    // LiveData automatically runs on a background thread
     public LiveData<List<Lesson>> getAllLessons() {
         return mAllLessons;
     }
@@ -40,7 +39,6 @@ public class LessonRepository {
         return mLearningDao.getQuestionsByLesson(lessonId);
     }
 
-    // Insert operations must be executed on a background thread
     public void insertLesson(Lesson lesson) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             mLearningDao.insertLesson(lesson);
@@ -59,6 +57,12 @@ public class LessonRepository {
         });
     }
 
+    public void deleteAllQuestions() {
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            mLearningDao.deleteAllQuestions();
+        });
+    }
+
     public void updateLessonCompleted(int lessonId, boolean isCompleted) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             mLearningDao.updateLessonCompleted(lessonId, isCompleted);
@@ -71,36 +75,31 @@ public class LessonRepository {
         });
     }
 
-    // Method to import data from JSON file
     public void importDataFromJson() {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             try {
-                // Check if database is empty
-                int lessonCount = mLearningDao.getLessonCount();
-                if (lessonCount > 0) {
-                    return; // Data already exists
-                }
-
-                // 1. Delete old data (Reset)
+                mLearningDao.deleteAllQuestions();
                 mLearningDao.deleteAllLessons();
 
-                // 2. Read JSON file from assets
                 String jsonFileString = getJsonFromAssets();
-                if (jsonFileString == null) return;
+                if (jsonFileString == null) {
+                    return;
+                }
 
-                // 3. Parse JSON to List of LessonJson
                 Gson gson = new Gson();
                 Type listLessonType = new TypeToken<List<LessonJson>>() {}.getType();
                 List<LessonJson> lessonsJson = gson.fromJson(jsonFileString, listLessonType);
 
-                // 4. Insert lessons and questions
+                if (lessonsJson == null || lessonsJson.isEmpty()) {
+                    return;
+                }
+
                 for (LessonJson lessonJson : lessonsJson) {
-                    // A. Insert Lesson first
                     Lesson lesson = new Lesson(lessonJson.name, lessonJson.imageRes, 
+                            lessonJson.topic != null ? lessonJson.topic : "", 
                             lessonJson.sectionId, lessonJson.isLocked);
                     long lessonId = mLearningDao.insertLesson(lesson);
 
-                    // B. Insert questions for this lesson
                     if (lessonJson.questions != null) {
                         for (Question q : lessonJson.questions) {
                             q.lessonId = (int) lessonId;
@@ -109,15 +108,12 @@ public class LessonRepository {
                     }
                 }
 
-                System.out.println("DATA_IMPORT: Đã nhập thành công " + lessonsJson.size() + " bài học.");
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
     }
 
-    // Helper method to read JSON from assets
     private String getJsonFromAssets() {
         String jsonString;
         try {

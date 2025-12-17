@@ -27,6 +27,9 @@ public interface LearningDao {
     @Query("DELETE FROM lessons")
     void deleteAllLessons();
 
+    @Query("DELETE FROM questions")
+    void deleteAllQuestions();
+
     @Query("SELECT COUNT(*) FROM lessons")
     int getLessonCount();
 

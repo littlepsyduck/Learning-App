@@ -5,30 +5,14 @@
     "sectionId": 1,
     "isLocked": false,
     "questions": [
-      {
-        "type": 4,
-        "questionText": "Tap the matching pairs",
-        "optionsData": "",
-        "correctAnswer": "[{\"en\":\"Country\",\"vn\":\"Quốc gia\"},{\"en\":\"Flag\",\"vn\":\"Lá cờ\"},{\"en\":\"City\",\"vn\":\"Thành phố\"},{\"en\":\"Sea\",\"vn\":\"Biển\"}]"
-      },
-      {
-        "type": 4,
-        "questionText": "Tap the matching pairs",
-        "optionsData": "",
-        "correctAnswer": "[{\"en\":\"Sea\",\"vn\":\"Biển\"},{\"en\":\"Island\",\"vn\":\"Hòn đảo\"},{\"en\":\"Asia\",\"vn\":\"Châu Á\"},{\"en\":\"River\",\"vn\":\"Dòng sông\"}]"
-      },
-      {
-        "type": 4,
-        "questionText": "Tap the matching pairs",
-        "optionsData": "",
-        "correctAnswer": "[{\"en\":\"Capital\",\"vn\":\"Thủ đô\"},{\"en\":\"Map\",\"vn\":\"Bản đồ\"},{\"en\":\"Travel\",\"vn\":\"Du lịch\"},{\"en\":\"Passport\",\"vn\":\"Hộ chiếu\"}]"
-      },
-      {
-        "type": 4,
-        "questionText": "Tap the matching pairs",
-        "optionsData": "",
-        "correctAnswer": "[{\"en\":\"Hotel\",\"vn\":\"Khách sạn\"},{\"en\":\"Tourist\",\"vn\":\"Khách du lịch\"},{\"en\":\"Beach\",\"vn\":\"Bãi biển\"},{\"en\":\"Mountain\",\"vn\":\"Ngọn núi\"}]"
-      }
+      { "type": 1, "questionText": "My ____ is Vietnam.", "optionsData": "country|animal|city|color", "correctAnswer": "country" },
+      { "type": 2, "questionText": "Sắp xếp thành câu đúng", "optionsData": "Vietnam|best|is|the|country", "correctAnswer": "Vietnam is the best country" },
+      { "type": 3, "questionText": "Country", "optionsData": "Quốc gia|Cái bút|Núi|Biển", "correctAnswer": "Quốc gia" },
+      { "type": 4, "questionText": "Nối các cặp từ tương ứng", "optionsData": "", "correctAnswer": "[{\"en\":\"Country\",\"vn\":\"Quốc gia\"},{\"en\":\"Flag\",\"vn\":\"Lá cờ\"},{\"en\":\"City\",\"vn\":\"Thành phố\"},{\"en\":\"Sea\",\"vn\":\"Biển\"}]" },
+      { "type": 1, "questionText": "Japan is an ____ country.", "optionsData": "island|apple|chair|winter", "correctAnswer": "island" },
+      { "type": 2, "questionText": "Sắp xếp thành câu đúng", "optionsData": "country|a|is|Vietnam", "correctAnswer": "Vietnam is a country" },
+      { "type": 3, "questionText": "Thủ đô", "optionsData": "Capital|River|Table|Island", "correctAnswer": "Capital" },
+      { "type": 4, "questionText": "Nối các cặp từ tương ứng", "optionsData": "", "correctAnswer": "[{\"en\":\"Country\",\"vn\":\"Quốc gia\"},{\"en\":\"City\",\"vn\":\"Thành phố\"},{\"en\":\"Flag\",\"vn\":\"Lá cờ\"},{\"en\":\"Map\",\"vn\":\"Bản đồ\"}]" }
     ]
   },
   {
@@ -37,92 +21,79 @@
     "sectionId": 1,
     "isLocked": true,
     "questions": [
-      {
-        "type": 1,
-        "questionText": "The ____ of France is Paris.",
-        "optionsData": "water|capital|mountain|driver",
-        "correctAnswer": "capital"
-      },
-      {
-        "type": 3,
-        "questionText": "Flag",
-        "optionsData": "Ngọn núi|Lá cờ|Thành phố|Giày",
-        "correctAnswer": "Lá cờ"
-      },
-      {
-        "type": 2,
-        "questionText": "Sắp xếp thành câu đúng",
-        "optionsData": "flag|This|my|is",
-        "correctAnswer": "This is my flag"
-      },
-      {
-        "type": 4,
-        "questionText": "Nối các cặp từ tương ứng",
-        "optionsData": "",
-        "correctAnswer": "[{\"en\":\"Passport\",\"vn\":\"Hộ chiếu\"},{\"en\":\"Travel\",\"vn\":\"Du lịch\"},{\"en\":\"Map\",\"vn\":\"Bản đồ\"},{\"en\":\"Hotel\",\"vn\":\"Khách sạn\"}]"
-      },
-      {
-        "type": 1,
-        "questionText": "Vietnam is in ____ .",
-        "optionsData": "Europe|Africa|Asia|America",
-        "correctAnswer": "Asia"
-      },
-      {
-        "type": 3,
-        "questionText": "Thành phố",
-        "optionsData": "Country|Food|City|Book",
-        "correctAnswer": "City"
-      },
-      {
-        "type": 2,
-        "questionText": "Sắp xếp thành câu đúng",
-        "optionsData": "is|Paris|France|in",
-        "correctAnswer": "Paris is in France"
-      }
+      { "type": 1, "questionText": "The ____ of France is Paris.", "optionsData": "water|capital|mountain|driver", "correctAnswer": "capital" },
+      { "type": 2, "questionText": "Sắp xếp thành câu đúng", "optionsData": "is|Japan|island|an", "correctAnswer": "Japan is an island" },
+      { "type": 3, "questionText": "Flag", "optionsData": "Ngọn núi|Lá cờ|Thành phố|Giày", "correctAnswer": "Lá cờ" },
+      { "type": 4, "questionText": "Nối các cặp từ tương ứng", "optionsData": "", "correctAnswer": "[{\"en\":\"Sea\",\"vn\":\"Biển\"},{\"en\":\"Island\",\"vn\":\"Hòn đảo\"},{\"en\":\"Asia\",\"vn\":\"Châu Á\"},{\"en\":\"River\",\"vn\":\"Dòng sông\"}]" },
+      { "type": 1, "questionText": "The USA is ____ than Singapore.", "optionsData": "closer|cheaper|smaller|larger", "correctAnswer": "larger" },
+      { "type": 2, "questionText": "Sắp xếp thành câu đúng", "optionsData": "flag|This|my|is", "correctAnswer": "This is my flag" },
+      { "type": 3, "questionText": "Thành phố", "optionsData": "Country|Food|City|Book", "correctAnswer": "City" },
+      { "type": 4, "questionText": "Nối các cặp từ tương ứng", "optionsData": "", "correctAnswer": "[{\"en\":\"Japan\",\"vn\":\"Nhật Bản\"},{\"en\":\"Vietnam\",\"vn\":\"Việt Nam\"},{\"en\":\"France\",\"vn\":\"Pháp\"},{\"en\":\"China\",\"vn\":\"Trung Quốc\"}]" }
     ]
   },
+  {
+    "name": "Countries: Basics 3",
+    "imageRes": "ic_pet",
+    "sectionId": 1,
+    "isLocked": true,
+    "questions": [
+      { "type": 1, "questionText": "Vietnam is in ____ .", "optionsData": "Europe|Africa|Asia|America", "correctAnswer": "Asia" },
+      { "type": 2, "questionText": "Sắp xếp thành câu đúng", "optionsData": "is|Paris|France|in", "correctAnswer": "Paris is in France" },
+      { "type": 3, "questionText": "Island", "optionsData": "Hồ|Bàn|Mèo|Đảo", "correctAnswer": "Đảo" },
+      { "type": 4, "questionText": "Nối các cặp từ tương ứng", "optionsData": "", "correctAnswer": "[{\"en\":\"Capital\",\"vn\":\"Thủ đô\"},{\"en\":\"Country\",\"vn\":\"Quốc gia\"},{\"en\":\"Language\",\"vn\":\"Ngôn ngữ\"},{\"en\":\"Tourist\",\"vn\":\"Khách du lịch\"}]" },
+      { "type": 1, "questionText": "People in Japan speak ____ .", "optionsData": "French|Japanese|Arabic|Spanish", "correctAnswer": "Japanese" },
+      { "type": 2, "questionText": "Sắp xếp thành câu đúng", "optionsData": "my|I|country|love", "correctAnswer": "I love my country" },
+      { "type": 3, "questionText": "Biên giới", "optionsData": "Village|Paper|Border|Wind", "correctAnswer": "Border" },
+      { "type": 4, "questionText": "Nối các cặp từ tương ứng", "optionsData": "", "correctAnswer": "[{\"en\":\"Mountain\",\"vn\":\"Ngọn núi\"},{\"en\":\"Beach\",\"vn\":\"Bãi biển\"},{\"en\":\"City\",\"vn\":\"Thành phố\"},{\"en\":\"Sea\",\"vn\":\"Biển\"}]" }
+    ]
+  },
+  {
+    "name": "Countries: Basics 4",
+    "imageRes": "ic_pet",
+    "sectionId": 1,
+    "isLocked": true,
+    "questions": [
+      { "type": 1, "questionText": "Australia is famous for the ____ Opera House.", "optionsData": "Sydney|Tokyo|London|New York", "correctAnswer": "Sydney" },
+      { "type": 2, "questionText": "Sắp xếp thành câu đúng", "optionsData": "Asia|is|Thailand|in", "correctAnswer": "Thailand is in Asia" },
+      { "type": 3, "questionText": "Language", "optionsData": "Khí hậu|Đá|Nắng|Ngôn ngữ", "correctAnswer": "Ngôn ngữ" },
+      { "type": 4, "questionText": "Nối các cặp từ tương ứng", "optionsData": "", "correctAnswer": "[{\"en\":\"Passport\",\"vn\":\"Hộ chiếu\"},{\"en\":\"Travel\",\"vn\":\"Du lịch\"},{\"en\":\"Map\",\"vn\":\"Bản đồ\"},{\"en\":\"Hotel\",\"vn\":\"Khách sạn\"}]" },
+      { "type": 1, "questionText": "The ____ of China is very large.", "optionsData": "pillow|bottle|population|pencil", "correctAnswer": "population" },
+      { "type": 2, "questionText": "Sắp xếp thành câu đúng", "optionsData": "is|map|the|This", "correctAnswer": "This is the map" },
+      { "type": 3, "questionText": "Châu Á", "optionsData": "Ocean|Asia|Forest|Rain", "correctAnswer": "Asia" },
+      { "type": 4, "questionText": "Nối các cặp từ tương ứng", "optionsData": "", "correctAnswer": "[{\"en\":\"Asia\",\"vn\":\"Châu Á\"},{\"en\":\"Europe\",\"vn\":\"Châu Âu\"},{\"en\":\"Africa\",\"vn\":\"Châu Phi\"},{\"en\":\"America\",\"vn\":\"Châu Mỹ\"}]" }
+    ]
+  },
+  {
+    "name": "Countries: Basics 5",
+    "imageRes": "ic_pet",
+    "sectionId": 1,
+    "isLocked": true,
+    "questions": [
+      { "type": 1, "questionText": "Thailand is known for its delicious ____ .", "optionsData": "skyscrapers|deserts|snow|food", "correctAnswer": "food" },
+      { "type": 2, "questionText": "Sắp xếp thành câu đúng", "optionsData": "big|is|Indonesia", "correctAnswer": "Indonesia is big" },
+      { "type": 3, "questionText": "Passport", "optionsData": "Hộ chiếu|Đôi giày|Cây|Chợ", "correctAnswer": "Hộ chiếu" },
+      { "type": 4, "questionText": "Nối các cặp từ tương ứng", "optionsData": "", "correctAnswer": "[{\"en\":\"Vietnamese\",\"vn\":\"Tiếng Việt\"},{\"en\":\"Japanese\",\"vn\":\"Tiếng Nhật\"},{\"en\":\"Thai\",\"vn\":\"Tiếng Thái\"},{\"en\":\"French\",\"vn\":\"Tiếng Pháp\"}]" },
+      { "type": 1, "questionText": "Many people visit Egypt to see the ____ .", "optionsData": "cakes|beaches|buses|pyramids", "correctAnswer": "pyramids" },
+      { "type": 2, "questionText": "Sắp xếp thành câu đúng", "optionsData": "red|The|flag|is", "correctAnswer": "The flag is red" },
+      { "type": 3, "questionText": "Biển", "optionsData": "Mountain|Sea|Road|Road", "correctAnswer": "Sea" },
+      { "type": 4, "questionText": "Nối các cặp từ tương ứng", "optionsData": "", "correctAnswer": "[{\"en\":\"Island\",\"vn\":\"Hòn đảo\"},{\"en\":\"Country\",\"vn\":\"Quốc gia\"},{\"en\":\"Sea\",\"vn\":\"Biển\"},{\"en\":\"Map\",\"vn\":\"Bản đồ\"}]" }
+    ]
+  },
+
   {
     "name": "Countries: Interm 1",
     "imageRes": "ic_food",
     "sectionId": 2,
     "isLocked": true,
     "questions": [
-      {
-        "type": 1,
-        "questionText": "Canada has two official languages: English and ____ .",
-        "optionsData": "German|Hindi|French|Thai",
-        "correctAnswer": "French"
-      },
-      {
-        "type": 3,
-        "questionText": "Population",
-        "optionsData": "Thành thị|Dân số|Thời gian|Tôn giáo",
-        "correctAnswer": "Dân số"
-      },
-      {
-        "type": 2,
-        "questionText": "Sắp xếp thành câu đúng",
-        "optionsData": "cities|Vietnam|many|has",
-        "correctAnswer": "Vietnam has many cities"
-      },
-      {
-        "type": 4,
-        "questionText": "Nối các cặp từ tương ứng",
-        "optionsData": "",
-        "correctAnswer": "[{\"en\":\"Population\",\"vn\":\"Dân số\"},{\"en\":\"Tradition\",\"vn\":\"Truyền thống\"},{\"en\":\"Culture\",\"vn\":\"Văn hoá\"},{\"en\":\"Climate\",\"vn\":\"Khí hậu\"}]"
-      },
-      {
-        "type": 1,
-        "questionText": "Brazil is the largest country in ____ .",
-        "optionsData": "South America|Europe|Africa|Oceania",
-        "correctAnswer": "South America"
-      },
-      {
-        "type": 3,
-        "questionText": "Truyền thống",
-        "optionsData": "Tradition|Translation|Station|River",
-        "correctAnswer": "Tradition"
-      }
+      { "type": 1, "questionText": "Canada has two official languages: English and ____ .", "optionsData": "German|Hindi|French|Thai", "correctAnswer": "French" },
+      { "type": 2, "questionText": "Sắp xếp thành câu đúng", "optionsData": "cities|Vietnam|many|has", "correctAnswer": "Vietnam has many cities" },
+      { "type": 3, "questionText": "Population", "optionsData": "Thành thị|Dân số|Thời gian|Tôn giáo", "correctAnswer": "Dân số" },
+      { "type": 4, "questionText": "Nối các cặp từ tương ứng", "optionsData": "", "correctAnswer": "[{\"en\":\"Capital\",\"vn\":\"Thủ đô\"},{\"en\":\"City\",\"vn\":\"Thành phố\"},{\"en\":\"Flag\",\"vn\":\"Lá cờ\"},{\"en\":\"Mountain\",\"vn\":\"Ngọn núi\"}]" },
+      { "type": 1, "questionText": "Brazil is the largest country in ____ .", "optionsData": "South America|Europe|Africa|Oceania", "correctAnswer": "South America" },
+      { "type": 2, "questionText": "Sắp xếp thành câu đúng", "optionsData": "technology|Japan|for|is|famous", "correctAnswer": "Japan is famous for technology" },
+      { "type": 3, "questionText": "Truyền thống", "optionsData": "Tradition|Translation|Station|River", "correctAnswer": "Tradition" },
+      { "type": 4, "questionText": "Nối các cặp từ tương ứng", "optionsData": "", "correctAnswer": "[{\"en\":\"Population\",\"vn\":\"Dân số\"},{\"en\":\"Tradition\",\"vn\":\"Truyền thống\"},{\"en\":\"Culture\",\"vn\":\"Văn hoá\"},{\"en\":\"Climate\",\"vn\":\"Khí hậu\"}]" }
     ]
   },
   {
@@ -131,98 +102,124 @@
     "sectionId": 2,
     "isLocked": true,
     "questions": [
-      {
-        "type": 1,
-        "questionText": "The ____ River is the longest river in the world.",
-        "optionsData": "Amazon|Nile|Mekong|Red",
-        "correctAnswer": "Nile"
-      },
-      {
-        "type": 3,
-        "questionText": "Climate",
-        "optionsData": "Lửa|Cành cây|Đá|Khí hậu",
-        "correctAnswer": "Khí hậu"
-      },
-      {
-        "type": 2,
-        "questionText": "Sắp xếp thành câu đúng",
-        "optionsData": "technology|Japan|for|is|famous",
-        "correctAnswer": "Japan is famous for technology"
-      },
-      {
-        "type": 4,
-        "questionText": "Nối các cặp từ tương ứng",
-        "optionsData": "",
-        "correctAnswer": "[{\"en\":\"Immigrant\",\"vn\":\"Người nhập cư\"},{\"en\":\"Citizen\",\"vn\":\"Công dân\"},{\"en\":\"Tourist\",\"vn\":\"Khách du lịch\"},{\"en\":\"Worker\",\"vn\":\"Người lao động\"}]"
-      },
-      {
-        "type": 3,
-        "questionText": "Government",
-        "optionsData": "Công việc|Hòn đá|Chính phủ|Sự kiện",
-        "correctAnswer": "Chính phủ"
-      },
-      {
-        "type": 2,
-        "questionText": "Sắp xếp thành câu đúng",
-        "optionsData": "tourists|visit|Many|Thailand",
-        "correctAnswer": "Many tourists visit Thailand"
-      }
+      { "type": 1, "questionText": "The ____ River is the longest river in the world.", "optionsData": "Amazon|Nile|Mekong|Red", "correctAnswer": "Nile" },
+      { "type": 2, "questionText": "Sắp xếp thành câu đúng", "optionsData": "tourists|visit|Many|Thailand", "correctAnswer": "Many tourists visit Thailand" },
+      { "type": 3, "questionText": "Climate", "optionsData": "Lửa|Cành cây|Đá|Khí hậu",
+        "correctAnswer": "Khí hậu" },
+      { "type": 4, "questionText": "Nối các cặp từ tương ứng", "optionsData": "", "correctAnswer": "[{\"en\":\"Festival\",\"vn\":\"Lễ hội\"},{\"en\":\"Tourist\",\"vn\":\"Khách du lịch\"},{\"en\":\"Border\",\"vn\":\"Biên giới\"},{\"en\":\"Country\",\"vn\":\"Quốc gia\"}]" },
+      { "type": 1, "questionText": "India is famous for the ____ Mahal.", "optionsData": "Taj|Sun|Gold|Lotus", "correctAnswer": "Taj" },
+      { "type": 2, "questionText": "Sắp xếp thành câu đúng", "optionsData": "the|is|capital|Hanoi|Vietnam|of", "correctAnswer": "Hanoi is the capital of Vietnam" },
+      { "type": 3, "questionText": "Kinh tế", "optionsData": "Emotion|Economy|Education|Energy", "correctAnswer": "Economy" },
+      { "type": 4, "questionText": "Nối các cặp từ tương ứng", "optionsData": "", "correctAnswer": "[{\"en\":\"Government\",\"vn\":\"Chính phủ\"},{\"en\":\"Economy\",\"vn\":\"Kinh tế\"},{\"en\":\"History\",\"vn\":\"Lịch sử\"},{\"en\":\"Language\",\"vn\":\"Ngôn ngữ\"}]" }
     ]
   },
   {
-    "name": "Countries: Advanced",
+    "name": "Countries: Interm 3",
+    "imageRes": "ic_food",
+    "sectionId": 2,
+    "isLocked": true,
+    "questions": [
+      { "type": 1, "questionText": "Russia is the ____ country in the world.", "optionsData": "cheapest|hottest|smallest|largest", "correctAnswer": "largest" },
+      { "type": 2, "questionText": "Sắp xếp thành câu đúng", "optionsData": "country|beautiful|The|beaches|has", "correctAnswer": "The country has beautiful beaches" },
+      { "type": 3, "questionText": "Government", "optionsData": "Công việc|Hòn đá|Chính phủ|Sự kiện", "correctAnswer": "Chính phủ" },
+      { "type": 4, "questionText": "Nối các cặp từ tương ứng", "optionsData": "", "correctAnswer": "[{\"en\":\"France\",\"vn\":\"Pháp\"},{\"en\":\"Thailand\",\"vn\":\"Thái Lan\"},{\"en\":\"Indonesia\",\"vn\":\"Indonesia\"},{\"en\":\"Malaysia\",\"vn\":\"Malaysia\"}]" },
+      { "type": 1, "questionText": "The United Kingdom is made of ____ countries.", "optionsData": "four|two|six|eight", "correctAnswer": "four" },
+      { "type": 2, "questionText": "Sắp xếp thành câu đúng", "optionsData": "France|for|known|its|food|is", "correctAnswer": "France is known for its food" },
+      { "type": 3, "questionText": "Lịch sử", "optionsData": "History|Future|Hill|Forest", "correctAnswer": "History" },
+      { "type": 4, "questionText": "Nối các cặp từ tương ứng", "optionsData": "", "correctAnswer": "[{\"en\":\"Europe\",\"vn\":\"Châu Âu\"},{\"en\":\"Africa\",\"vn\":\"Châu Phi\"},{\"en\":\"Antarctica\",\"vn\":\"Châu Nam Cực\"},{\"en\":\"Asia\",\"vn\":\"Châu Á\"}]" }
+    ]
+  },
+  {
+    "name": "Countries: Interm 4",
+    "imageRes": "ic_food",
+    "sectionId": 2,
+    "isLocked": true,
+    "questions": [
+      { "type": 1, "questionText": "The Sahara Desert is mostly located in ____ .", "optionsData": "Europe|Asia|Africa|Australia", "correctAnswer": "Africa" },
+      { "type": 2, "questionText": "Sắp xếp thành câu đúng", "optionsData": "countries|map|The|all|shows", "correctAnswer": "The map shows all countries" },
+      { "type": 3, "questionText": "Culture", "optionsData": "Đường phố|Biển|Khoáng sản|Văn hóa", "correctAnswer": "Văn hóa" },
+      { "type": 4, "questionText": "Nối các cặp từ tương ứng", "optionsData": "", "correctAnswer": "[{\"en\":\"River\",\"vn\":\"Sông\"},{\"en\":\"Ocean\",\"vn\":\"Đại dương\"},{\"en\":\"Hill\",\"vn\":\"Đồi\"},{\"en\":\"Desert\",\"vn\":\"Sa mạc\"}]" },
+      { "type": 1, "questionText": "South Korea is well known for its ____ industry.", "optionsData": "mining|farming|technology|fishing", "correctAnswer": "technology" },
+      { "type": 2, "questionText": "Sắp xếp thành câu đúng", "optionsData": "large|China|population|has|a", "correctAnswer": "China has a large population" },
+      { "type": 3, "questionText": "Lễ hội", "optionsData": "Flower|Festival|Field|Family", "correctAnswer": "Festival" },
+      { "type": 4, "questionText": "Nối các cặp từ tương ứng", "optionsData": "", "correctAnswer": "[{\"en\":\"Immigrant\",\"vn\":\"Người nhập cư\"},{\"en\":\"Citizen\",\"vn\":\"Công dân\"},{\"en\":\"Tourist\",\"vn\":\"Khách du lịch\"},{\"en\":\"Worker\",\"vn\":\"Người lao động\"}]" }
+    ]
+  },
+  {
+    "name": "Countries: Interm 5",
+    "imageRes": "ic_food",
+    "sectionId": 2,
+    "isLocked": true,
+    "questions": [
+      { "type": 1, "questionText": "Germany is famous for its ____ Festival.", "optionsData": "Fire Lantern|Lantern|Cherry Blossom|Oktoberfest", "correctAnswer": "Oktoberfest" },
+      { "type": 2, "questionText": "Sắp xếp thành câu đúng", "optionsData": "languages|People|speak|many", "correctAnswer": "People speak many languages" },
+      { "type": 3, "questionText": "Tourist", "optionsData": "Khách du lịch|Giáo viên|Người lái xe|Người nông dân", "correctAnswer": "Khách du lịch" },
+      { "type": 4, "questionText": "Nối các cặp từ tương ứng", "optionsData": "", "correctAnswer": "[{\"en\":\"Capital\",\"vn\":\"Thủ đô\"},{\"en\":\"Currency\",\"vn\":\"Tiền tệ\"},{\"en\":\"Population\",\"vn\":\"Dân số\"},{\"en\":\"Leader\",\"vn\":\"Lãnh đạo\"}]" },
+      { "type": 1, "questionText": "New Zealand is famous for beautiful ____ .", "optionsData": "factories|landscapes|deserts|traffic", "correctAnswer": "landscapes" },
+      { "type": 2, "questionText": "Sắp xếp thành câu đúng", "optionsData": "belongs|Japan|This|to|island", "correctAnswer": "This island belongs to Japan" },
+      { "type": 3, "questionText": "Địa lý", "optionsData": "Geology|Geometry|Geography|Geopolitics", "correctAnswer": "Geography" },
+      { "type": 4, "questionText": "Nối các cặp từ tương ứng", "optionsData": "", "correctAnswer": "[{\"en\":\"Border\",\"vn\":\"Biên giới\"},{\"en\":\"Region\",\"vn\":\"Khu vực\"},{\"en\":\"Province\",\"vn\":\"Tỉnh\"},{\"en\":\"Capital\",\"vn\":\"Thủ đô\"}]" }
+    ]
+  },
+
+  {
+    "name": "Countries: Advanced 1",
     "imageRes": "ic_travel",
     "sectionId": 3,
     "isLocked": true,
     "questions": [
-      {
-        "type": 1,
-        "questionText": "Switzerland has ____ official languages.",
-        "optionsData": "four|one|two|three",
-        "correctAnswer": "four"
-      },
-      {
-        "type": 3,
-        "questionText": "Sovereignty",
-        "optionsData": "Chủ quyền|Quyền lực|Lãnh đạo|Kinh nghiệm",
-        "correctAnswer": "Chủ quyền"
-      },
-      {
-        "type": 2,
-        "questionText": "Sắp xếp thành câu đúng",
-        "optionsData": "the|controls|government|the|country|whole",
-        "correctAnswer": "The government controls the whole country"
-      },
-      {
-        "type": 4,
-        "questionText": "Nối các cặp từ tương ứng",
-        "optionsData": "",
-        "correctAnswer": "[{\"en\":\"Sovereignty\",\"vn\":\"Chủ quyền\"},{\"en\":\"Diplomacy\",\"vn\":\"Ngoại giao\"},{\"en\":\"Geography\",\"vn\":\"Địa lý\"},{\"en\":\"Infrastructure\",\"vn\":\"Cơ sở hạ tầng\"}]"
-      },
-      {
-        "type": 1,
-        "questionText": "The smallest country in the world by area is ____ .",
-        "optionsData": "Vatican City|Monaco|Malta|Iceland",
-        "correctAnswer": "Vatican City"
-      },
-      {
-        "type": 3,
-        "questionText": "Ngoại giao",
-        "optionsData": "Economy|Diplomacy|History|Strategy",
-        "correctAnswer": "Diplomacy"
-      },
-      {
-        "type": 2,
-        "questionText": "Sắp xếp thành câu đúng",
-        "optionsData": "relations|politics|shape|global|International",
-        "correctAnswer": "International relations shape global politics"
-      },
-      {
-        "type": 4,
-        "questionText": "Nối các cặp từ tương ứng",
-        "optionsData": "",
-        "correctAnswer": "[{\"en\":\"Diplomatic mission\",\"vn\":\"Phái đoàn ngoại giao\"},{\"en\":\"Foreign policy\",\"vn\":\"Chính sách đối ngoại\"},{\"en\":\"National security\",\"vn\":\"An ninh quốc gia\"},{\"en\":\"Border control\",\"vn\":\"Kiểm soát biên giới\"}]"
-      }
+      { "type": 1, "questionText": "Switzerland has ____ official languages.", "optionsData": "four|one|two|three", "correctAnswer": "four" },
+      { "type": 2, "questionText": "Sắp xếp thành câu đúng", "optionsData": "the|controls|government|the|country|whole", "correctAnswer": "The government controls the whole country" },
+      { "type": 3, "questionText": "Sovereignty", "optionsData": "Chủ quyền|Quyền lực|Lãnh đạo|Kinh nghiệm", "correctAnswer": "Chủ quyền" },
+      { "type": 4, "questionText": "Nối các cặp từ tương ứng", "optionsData": "", "correctAnswer": "[{\"en\":\"Sovereignty\",\"vn\":\"Chủ quyền\"},{\"en\":\"Diplomacy\",\"vn\":\"Ngoại giao\"},{\"en\":\"Geography\",\"vn\":\"Địa lý\"},{\"en\":\"Infrastructure\",\"vn\":\"Cơ sở hạ tầng\"}]" }
+    ]
+  },
+  {
+    "name": "Countries: Advanced 2",
+    "imageRes": "ic_travel",
+    "sectionId": 3,
+    "isLocked": true,
+    "questions": [
+      { "type": 1, "questionText": "The smallest country in the world by area is ____ .", "optionsData": "Vatican City|Monaco|Malta|Iceland", "correctAnswer": "Vatican City" },
+      { "type": 2, "questionText": "Sắp xếp thành câu đúng", "optionsData": "countries|vary|Cultural|across|differences", "correctAnswer": "Cultural differences vary across countries" },
+      { "type": 3, "questionText": "Ngoại giao", "optionsData": "Economy|Diplomacy|History|Strategy", "correctAnswer": "Diplomacy" },
+      { "type": 4, "questionText": "Nối các cặp từ tương ứng", "optionsData": "", "correctAnswer": "[{\"en\":\"Migration\",\"vn\":\"Di cư\"},{\"en\":\"Population density\",\"vn\":\"Mật độ dân số\"},{\"en\":\"Cultural identity\",\"vn\":\"Bản sắc văn hóa\"},{\"en\":\"National anthem\",\"vn\":\"Quốc ca\"}]" }
+    ]
+  },
+  {
+    "name": "Countries: Advanced 3",
+    "imageRes": "ic_travel",
+    "sectionId": 3,
+    "isLocked": true,
+    "questions": [
+      { "type": 1, "questionText": "The longest land border in the world is between the USA and ____ .", "optionsData": "Russia|Mexico|Canada|China", "correctAnswer": "Canada" },
+      { "type": 2, "questionText": "Sắp xếp thành câu đúng", "optionsData": "development|influences|Geography|country’s|a", "correctAnswer": "Geography influences a country’s development" },
+      { "type": 3, "questionText": "Infrastructure", "optionsData": "Cơ sở hạ tầng|Ảnh hưởng|Định hướng|Phân tích", "correctAnswer": "Cơ sở hạ tầng" },
+      { "type": 4, "questionText": "Nối các cặp từ tương ứng", "optionsData": "", "correctAnswer": "[{\"en\":\"Geopolitics\",\"vn\":\"Địa chính trị\"},{\"en\":\"International relations\",\"vn\":\"Quan hệ quốc tế\"},{\"en\":\"Urbanization\",\"vn\":\"Đô thị hóa\"},{\"en\":\"Immigration\",\"vn\":\"Di cư\"}]" }
+    ]
+  },
+  {
+    "name": "Countries: Advanced 4",
+    "imageRes": "ic_travel",
+    "sectionId": 3,
+    "isLocked": true,
+    "questions": [
+      { "type": 1, "questionText": "The country with the most time zones is ____ .", "optionsData": "Russia|USA|China|France", "correctAnswer": "France" },
+      { "type": 2, "questionText": "Sắp xếp thành câu đúng", "optionsData": "policies|Immigration|growth|population|affect", "correctAnswer": "Immigration policies affect population growth" },
+      { "type": 3, "questionText": "Địa chính trị", "optionsData": "Geopolitics|Geology|Demographics|Social", "correctAnswer": "Geopolitics" },
+      { "type": 4, "questionText": "Nối các cặp từ tương ứng", "optionsData": "", "correctAnswer": "[{\"en\":\"Colonialism\",\"vn\":\"Chủ nghĩa thực dân\"},{\"en\":\"Independence\",\"vn\":\"Độc lập\"},{\"en\":\"Constitution\",\"vn\":\"Hiến pháp\"},{\"en\":\"Territory\",\"vn\":\"Lãnh thổ\"}]" }
+    ]
+  },
+  {
+    "name": "Countries: Advanced 5",
+    "imageRes": "ic_travel",
+    "sectionId": 3,
+    "isLocked": true,
+    "questions": [
+      { "type": 1, "questionText": "The country with the highest GDP per capita is often listed as ____ .", "optionsData": "Indonesia|Luxembourg|Japan|Brazil", "correctAnswer": "Luxembourg" },
+      { "type": 2, "questionText": "Sắp xếp thành câu đúng", "optionsData": "relations|politics|shape|global|International", "correctAnswer": "International relations shape global politics" },
+      { "type": 3, "questionText": "Migration", "optionsData": "Tăng trưởng|Lễ hội|Phong tục|Di cư", "correctAnswer": "Di cư" },
+      { "type": 4, "questionText": "Nối các cặp từ tương ứng", "optionsData": "", "correctAnswer": "[{\"en\":\"Diplomatic mission\",\"vn\":\"Phái đoàn ngoại giao\"},{\"en\":\"Foreign policy\",\"vn\":\"Chính sách đối ngoại\"},{\"en\":\"National security\",\"vn\":\"An ninh quốc gia\"},{\"en\":\"Border control\",\"vn\":\"Kiểm soát biên giới\"}]" }
     ]
   }
 ]

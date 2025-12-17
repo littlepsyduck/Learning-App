@@ -4,6 +4,7 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 import androidx.room.ColumnInfo;
+import androidx.room.Ignore;
 
 @Entity(tableName = "lesson_progress",
         foreignKeys = @ForeignKey(entity = Lesson.class,
@@ -26,6 +27,7 @@ public class LessonProgress {
     public LessonProgress() {
     }
 
+    @Ignore
     public LessonProgress(int lessonId, int totalXP, int correctAnswers, int totalQuestions, long timeSpent) {
         this.lessonId = lessonId;
         this.totalXP = totalXP;
@@ -41,5 +43,9 @@ public class LessonProgress {
         return (int) ((correctAnswers * 100.0) / totalQuestions);
     }
 }
+
+
+
+
 
 

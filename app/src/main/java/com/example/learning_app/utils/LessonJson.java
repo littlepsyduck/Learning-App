@@ -6,6 +6,7 @@ import java.util.List;
 public class LessonJson {
     public String name;
     public String imageRes;
+    public String topic;
     public int sectionId;
     public boolean isLocked;
 

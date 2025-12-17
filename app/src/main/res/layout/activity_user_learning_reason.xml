@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:padding="16dp"
+    tools:context=".UserLearningReasonActivity">
+
+    <LinearLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="8dp">
+
+        <ImageView
+            android:id="@+id/ivBack"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_back_arrow" />
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="12dp"
+            android:layout_weight="1"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:max="100"
+            android:progress="0"
+            android:progressDrawable="@drawable/custom_progress_bar" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvQuestion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/topBar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="32dp"
+        android:text="Why are you learning a language?"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/tvQuestion"
+        android:layout_above="@+id/btnContinue"
+        android:layout_marginTop="24dp"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/listContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/item_job"
+                style="@style/OnboardingListItem">
+                <ImageView style="@style/OnboardingListItemIcon" android:src="@drawable/ic_job" />
+                <TextView style="@style/OnboardingListItemText" android:text="Job Opportunities" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/item_culture"
+                style="@style/OnboardingListItem">
+                <ImageView style="@style/OnboardingListItemIcon" android:src="@drawable/ic_culture" />
+                <TextView style="@style/OnboardingListItemText" android:text="Culture" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/item_brain"
+                style="@style/OnboardingListItem">
+                <ImageView style="@style/OnboardingListItemIcon" android:src="@drawable/ic_brain" />
+                <TextView style="@style/OnboardingListItemText" android:text="Brain Training" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/item_family"
+                style="@style/OnboardingListItem">
+                <ImageView style="@style/OnboardingListItemIcon" android:src="@drawable/ic_family" />
+                <TextView style="@style/OnboardingListItemText" android:text="Family &amp; Friends" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/item_travel"
+                style="@style/OnboardingListItem">
+                <ImageView style="@style/OnboardingListItemIcon" android:src="@drawable/ic_travel" />
+                <TextView style="@style/OnboardingListItemText" android:text="Travel" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/item_school"
+                style="@style/OnboardingListItem">
+                <ImageView style="@style/OnboardingListItemIcon" android:src="@drawable/ic_school" />
+                <TextView style="@style/OnboardingListItemText" android:text="School" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/item_other"
+                style="@style/OnboardingListItem">
+                <ImageView style="@style/OnboardingListItemIcon" android:src="@drawable/ic_other" />
+                <TextView style="@style/OnboardingListItemText" android:text="Other" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/btnContinue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/button_background_disabled"
+        android:text="CONTINUE"
+        android:textColor="#AFAFAF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:enabled="false" /> </RelativeLayout>

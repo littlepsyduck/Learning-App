@@ -14,7 +14,7 @@ import com.example.learning_app.entities.Question;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Lesson.class, Question.class, LessonProgress.class}, version = 3, exportSchema = false)
+@Database(entities = {Lesson.class, Question.class, LessonProgress.class}, version = 4, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract LearningDao learningDao();

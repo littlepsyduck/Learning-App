@@ -59,6 +59,18 @@ public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.LessonView
                     if (listener != null) listener.onLessonClick(lesson);
                 });
             }
+            
+            if (position > 0) {
+                holder.lineTop.setVisibility(android.view.View.VISIBLE);
+            } else {
+                holder.lineTop.setVisibility(android.view.View.GONE);
+            }
+            
+            if (position < mLessons.size() - 1) {
+                holder.lineBottom.setVisibility(android.view.View.VISIBLE);
+            } else {
+                holder.lineBottom.setVisibility(android.view.View.GONE);
+            }
         }
     }
 
@@ -69,9 +81,14 @@ public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.LessonView
 
     class LessonViewHolder extends RecyclerView.ViewHolder {
         private final ImageView imgLesson;
+        private final android.view.View lineTop;
+        private final android.view.View lineBottom;
+        
         private LessonViewHolder(View itemView) {
             super(itemView);
             imgLesson = itemView.findViewById(R.id.imgLesson);
+            lineTop = itemView.findViewById(R.id.lineTop);
+            lineBottom = itemView.findViewById(R.id.lineBottom);
         }
     }
 }

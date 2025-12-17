@@ -4,17 +4,42 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:minHeight="100dp"
     android:paddingVertical="8dp">
+    
+    <!-- Đường nối phía trên (chỉ hiển thị nếu không phải item đầu tiên) -->
+    <View
+        android:id="@+id/lineTop"
+        android:layout_width="4dp"
+        android:layout_height="0dp"
+        android:background="#E0E0E0"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/imgLesson"
+        app:layout_constraintStart_toStartOf="@id/imgLesson"
+        app:layout_constraintEnd_toEndOf="@id/imgLesson" />
+    
     <ImageView
         android:id="@+id/imgLesson"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:src="@drawable/btn_lesson_locked"
         android:scaleType="fitCenter"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lineTop"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Đường nối phía dưới (chỉ hiển thị nếu không phải item cuối cùng) -->
+    <View
+        android:id="@+id/lineBottom"
+        android:layout_width="4dp"
+        android:layout_height="0dp"
+        android:background="#E0E0E0"
+        android:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@id/imgLesson"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/imgLesson"
+        app:layout_constraintEnd_toEndOf="@id/imgLesson" />
 
     <LinearLayout
         android:id="@+id/layoutStars"
@@ -22,6 +47,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginTop="4dp"
+        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/imgLesson"
         app:layout_constraintStart_toStartOf="@id/imgLesson"
         app:layout_constraintEnd_toEndOf="@id/imgLesson">

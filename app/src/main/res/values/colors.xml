@@ -2,4 +2,17 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="duo_green">#58CC02</color>
+    <color name="duo_grey">#777777</color>
+    <color name="duo_border_grey">#E5E5E5</color>
+    <color name="reg_dark_background">#2D3940</color> <color name="reg_input_background">#4A5B64</color>
+    <color name="reg_text_hint">#9DA8AE</color>
+    <color name="reg_text_primary">#FFFFFF</color>
+    <color name="reg_error_red">#FF4B4B</color>
+    <color name="reg_button_disabled">#4A5B64</color>
+
+    <color name="duo_purple">#673AB7</color>
+    <color name="freeze_blue">#4A90E2</color>
+    <color name="streak_fire">#FF9500</color>
 </resources>

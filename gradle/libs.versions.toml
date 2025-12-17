@@ -15,6 +15,12 @@ gson = "2.13.2"
 lifecycle = "2.8.7"
 cardview = "1.0.0"
 flexbox = "3.0.0"
+firebase-bom = "33.7.0"
+firebase-auth = "23.0.0"
+firebase-firestore = "25.0.0"
+google-services = "4.4.2"
+glide = "4.16.0"
+circleimageview = "3.1.0"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -33,7 +39,13 @@ lifecycle-livedata = { group = "androidx.lifecycle", name = "lifecycle-livedata"
 lifecycle-runtime = { group = "androidx.lifecycle", name = "lifecycle-runtime", version.ref = "lifecycle" }
 cardview = { group = "androidx.cardview", name = "cardview", version.ref = "cardview" }
 flexbox = { group = "com.google.android.flexbox", name = "flexbox", version.ref = "flexbox" }
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase-bom" }
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebase-auth" }
+firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebase-firestore" }
+glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
+circleimageview = { group = "de.hdodenhof", name = "circleimageview", version.ref = "circleimageview" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
+google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
 

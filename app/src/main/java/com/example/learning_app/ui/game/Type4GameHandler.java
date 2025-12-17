@@ -19,9 +19,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Handler cho game Type 4: Matching pair
- */
 public class Type4GameHandler extends BaseGameHandler {
     
     private ImageView ivCharacter;
@@ -31,8 +28,8 @@ public class Type4GameHandler extends BaseGameHandler {
     private TextView selectedLeftCard = null;
     private TextView selectedRightCard = null;
     private int matchedCount = 0;
+    private boolean isGameDisabled = false;
     
-    // Class để lưu cặp từ matching
     private static class MatchingPair {
         String english;
         String vietnamese;
@@ -55,13 +52,11 @@ public class Type4GameHandler extends BaseGameHandler {
         gameView = LayoutInflater.from(context)
                 .inflate(R.layout.layout_question_type4, null);
         
-        // Get views
         ivCharacter = gameView.findViewById(R.id.ivCharacter);
         tvInstruction = gameView.findViewById(R.id.tvInstruction);
         leftColumn = gameView.findViewById(R.id.leftColumn);
         rightColumn = gameView.findViewById(R.id.rightColumn);
         
-        // Set character image - xen kẽ 2 ảnh
         int characterIndex = getNextCharacterImageIndex();
         int characterResId = (characterIndex % 2 == 0) 
                 ? context.getResources().getIdentifier("character_duo_1", "drawable", context.getPackageName())
@@ -70,10 +65,8 @@ public class Type4GameHandler extends BaseGameHandler {
             ivCharacter.setImageResource(characterResId);
         }
         
-        // Set instruction
         tvInstruction.setText(question.questionText);
         
-        // Parse JSON từ correctAnswer
         matchingPairs.clear();
         matchedCount = 0;
         selectedLeftCard = null;
@@ -92,7 +85,6 @@ public class Type4GameHandler extends BaseGameHandler {
             return gameView;
         }
         
-        // Shuffle các từ để hiển thị ngẫu nhiên
         List<String> leftWords = new ArrayList<>();
         List<String> rightWords = new ArrayList<>();
         for (MatchingPair pair : matchingPairs) {
@@ -102,7 +94,6 @@ public class Type4GameHandler extends BaseGameHandler {
         Collections.shuffle(leftWords);
         Collections.shuffle(rightWords);
         
-        // Tạo các card cho cột trái
         leftColumn.removeAllViews();
         for (String word : leftWords) {
             TextView card = createMatchingCard(word, true);
@@ -115,7 +106,6 @@ public class Type4GameHandler extends BaseGameHandler {
             }
         }
         
-        // Tạo các card cho cột phải
         rightColumn.removeAllViews();
         for (String word : rightWords) {
             TextView card = createMatchingCard(word, false);
@@ -137,21 +127,27 @@ public class Type4GameHandler extends BaseGameHandler {
     }
     
     @Override
-    public void resetGame() {
-        matchedCount = 0;
-        selectedLeftCard = null;
-        selectedRightCard = null;
-        for (MatchingPair pair : matchingPairs) {
-            pair.isMatched = false;
-            if (pair.leftCard != null) {
-                pair.leftCard.setBackgroundResource(R.drawable.bg_word_button);
-                pair.leftCard.setAlpha(1.0f);
-                pair.leftCard.setEnabled(true);
-            }
-            if (pair.rightCard != null) {
-                pair.rightCard.setBackgroundResource(R.drawable.bg_word_button);
-                pair.rightCard.setAlpha(1.0f);
-                pair.rightCard.setEnabled(true);
+    public ContinueButtonResult handleContinueButton(boolean isRetryMode, boolean alreadyChecked) {
+        return new ContinueButtonResult(false, true);
+    }
+    
+    @Override
+    public void disableGameInteraction() {
+        isGameDisabled = true;
+        if (leftColumn != null) {
+            disableColumnInteraction(leftColumn);
+        }
+        if (rightColumn != null) {
+            disableColumnInteraction(rightColumn);
+        }
+    }
+    
+    private void disableColumnInteraction(LinearLayout column) {
+        for (int i = 0; i < column.getChildCount(); i++) {
+            View child = column.getChildAt(i);
+            if (child instanceof TextView) {
+                child.setClickable(false);
+                child.setEnabled(false);
             }
         }
     }
@@ -159,11 +155,11 @@ public class Type4GameHandler extends BaseGameHandler {
     private TextView createMatchingCard(String text, boolean isLeft) {
         TextView card = new TextView(context);
         card.setText(text);
-        card.setPadding(16, 16, 16, 16); // Tăng padding vertical để rộng chiều dọc hơn
+        card.setPadding(20, 16, 20, 16);
         card.setBackgroundResource(R.drawable.bg_word_button);
         card.setTextColor(context.getResources().getColor(android.R.color.black));
         card.setTextSize(16);
-        card.setMinHeight(56); // Tăng minHeight để rộng chiều dọc hơn
+        card.setMinHeight(56);
         card.setGravity(android.view.Gravity.CENTER);
         card.setClickable(true);
         card.setFocusable(true);
@@ -181,12 +177,11 @@ public class Type4GameHandler extends BaseGameHandler {
     }
     
     private void onMatchingCardClick(TextView card, boolean isLeft) {
-        // Nếu card đã được match, không cho click
+        if (isGameDisabled) return;
+        
         for (MatchingPair pair : matchingPairs) {
             if ((isLeft && pair.leftCard == card) || (!isLeft && pair.rightCard == card)) {
-                if (pair.isMatched) {
-                    return;
-                }
+                if (pair.isMatched) return;
             }
         }
         
@@ -225,11 +220,8 @@ public class Type4GameHandler extends BaseGameHandler {
         }
         
         if (matchedPair != null) {
-            // Đúng! Đổi màu xanh và mờ đi
             selectedLeftCard.setBackgroundResource(R.drawable.bg_matching_card_correct);
             selectedRightCard.setBackgroundResource(R.drawable.bg_matching_card_correct);
-            selectedLeftCard.setAlpha(0.5f);
-            selectedRightCard.setAlpha(0.5f);
             selectedLeftCard.setEnabled(false);
             selectedRightCard.setEnabled(false);
             matchedPair.isMatched = true;
@@ -238,14 +230,12 @@ public class Type4GameHandler extends BaseGameHandler {
             selectedLeftCard = null;
             selectedRightCard = null;
             
-            if (matchedCount >= matchingPairs.size()) {
-                // Đã match hết, gọi callback
-                if (callback != null) {
-                    callback.onGameCompleted();
-                }
+            if (matchedCount >= matchingPairs.size() && callback != null) {
+                callback.showFeedback("Nice!", true);
+                callback.enableContinueButton(true);
+                callback.onGameCompleted();
             }
         } else {
-            // Sai! Đổi màu đỏ và reset
             selectedLeftCard.setBackgroundResource(R.drawable.bg_matching_card_incorrect);
             selectedRightCard.setBackgroundResource(R.drawable.bg_matching_card_incorrect);
             
