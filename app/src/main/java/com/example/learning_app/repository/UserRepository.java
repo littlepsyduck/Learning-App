@@ -69,7 +69,6 @@ public class UserRepository {
                         if (task.isSuccessful()) {
                             FirebaseUser firebaseUser = mAuth.getCurrentUser();
                             if (firebaseUser != null && firebaseUser.isEmailVerified()) {
-                                updateLastDate(firebaseUser.getUid());
                                 loadUserProfile(firebaseUser.getUid());
                                 loginResult.setValue(true);
                             } else {
@@ -135,16 +134,30 @@ public class UserRepository {
                             DocumentSnapshot document = task.getResult();
                             if (document.exists()) {
                                 User user = document.toObject(User.class);
-                                currentUserLiveData.setValue(user);
+                                
+                                String today = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
+                                String resetDate = user.getDailyChallengeResetDate();
+                                if (resetDate == null || !today.equals(resetDate)) {
+                                    Map<String, Object> updates = new HashMap<>();
+                                    updates.put("hearts", 5);
+                                    updates.put("perfectLessonCount", 0);
+                                    updates.put("dailyChallengeResetDate", today);
+                                    db.collection("users").document(uid).update(updates)
+                                            .addOnSuccessListener(aVoid -> {
+                                                // After updating, re-fetch the user profile to get the latest data
+                                                loadUserProfile(uid);
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                // If update fails, still load the stale data to not block UI
+                                                currentUserLiveData.setValue(user);
+                                            });
+                                } else {
+                                    currentUserLiveData.setValue(user);
+                                }
                             }
                         }
                     }
                 });
-    }
-
-    private void updateLastDate(String uid) {
-        String today = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
-        db.collection("users").document(uid).update("lastDate", today);
     }
 
     public void updateUserProfile(String uid, String fullName, String username, int age, String avatarUrl, String password) {
@@ -189,7 +202,7 @@ public class UserRepository {
         mAuth.sendPasswordResetEmail(email);
     }
 
-    public void claimLessonRewards(String uid, int xpGained) {
+    public void claimLessonRewards(String uid, int xpGained, int accuracy) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         SimpleDateFormat sdfCalendar = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         String today = sdf.format(new Date());
@@ -204,6 +217,15 @@ public class UserRepository {
                             if (user != null) {
                                 Map<String, Object> updates = new HashMap<>();
                                 updates.put("xp", FieldValue.increment(xpGained));
+                                
+                                int currentHearts = user.getHearts();
+                                if (currentHearts == 0 && !doc.contains("hearts")) {
+                                    currentHearts = 5;
+                                }
+                                
+                                if (currentHearts > 0) {
+                                    updates.put("hearts", currentHearts - 1);
+                                }
 
                                 boolean isFirstLessonToday = user.getLastLessonDate() == null || !user.getLastLessonDate().equals(today);
                                 
@@ -219,6 +241,10 @@ public class UserRepository {
                                         studyDates.add(todayCalendar);
                                         updates.put("studyDates", studyDates);
                                     }
+                                }
+
+                                if (accuracy > 90) {
+                                    updates.put("perfectLessonCount", FieldValue.increment(1));
                                 }
 
                                 db.collection("users").document(uid).update(updates)
@@ -309,4 +335,3 @@ public class UserRepository {
                 });
     }
 }
-

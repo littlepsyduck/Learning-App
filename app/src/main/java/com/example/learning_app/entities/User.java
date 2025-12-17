@@ -18,6 +18,8 @@ public class User {
     private int freeze;
     private int hearts;
     private String lastLessonDate;
+    private int perfectLessonCount;
+    private String dailyChallengeResetDate;
 
     public User() {
     }
@@ -41,6 +43,8 @@ public class User {
         this.freeze = 0;
         this.hearts = 5;
         this.lastLessonDate = "";
+        this.perfectLessonCount = 0;
+        this.dailyChallengeResetDate = "";
     }
 
     public String getUid() {
@@ -177,5 +181,21 @@ public class User {
 
     public void setLastLessonDate(String lastLessonDate) {
         this.lastLessonDate = lastLessonDate;
+    }
+
+    public int getPerfectLessonCount() {
+        return perfectLessonCount;
+    }
+
+    public void setPerfectLessonCount(int perfectLessonCount) {
+        this.perfectLessonCount = perfectLessonCount;
+    }
+
+    public String getDailyChallengeResetDate() {
+        return dailyChallengeResetDate;
+    }
+
+    public void setDailyChallengeResetDate(String dailyChallengeResetDate) {
+        this.dailyChallengeResetDate = dailyChallengeResetDate;
     }
 }

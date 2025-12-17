@@ -9,7 +9,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.learning_app.R;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.CalendarViewHolder> {
@@ -50,6 +53,12 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         } catch (Exception e) {
             holder.tvDay.setText("?");
         }
+        
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String todayStr = sdf.format(new Date());
+        if (fullDate.equals(todayStr)) {
+            holder.tvDay.setTextColor(Color.parseColor("#9C27B0"));
+        }
 
         if (statusMap != null && statusMap.containsKey(fullDate)) {
             Integer status = statusMap.get(fullDate);
@@ -83,6 +92,3 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         }
     }
 }
-
-
-

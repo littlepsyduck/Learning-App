@@ -1,11 +1,13 @@
 package com.example.learning_app.ui;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,6 +39,8 @@ public class StreakActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_streak);
+
+        viewModel = new ViewModelProvider(this).get(ProgressViewModel.class);
 
         TextView txtStreakBig = findViewById(R.id.tvStreakBig);
         TextView txtStreakSmall = findViewById(R.id.tvStreakSmall);
@@ -90,8 +94,17 @@ public class StreakActivity extends AppCompatActivity {
                 tabPersonal.setBackground(null);
             });
         }
+        
+        AppCompatButton btnFindFriends = findViewById(R.id.btnFindFriends);
+        if (btnFindFriends != null) {
+            btnFindFriends.setOnClickListener(v -> {
+                Intent intent = new Intent(StreakActivity.this, UserDashboardActivity.class);
+                intent.putExtra("SELECTED_TAB", "friends");
+                startActivity(intent);
+                finish();
+            });
+        }
 
-        viewModel = new ViewModelProvider(this).get(ProgressViewModel.class);
         viewModel.reloadUserProfile();
         
         userObserver = user -> {
@@ -108,7 +121,11 @@ public class StreakActivity extends AppCompatActivity {
     }
 
     private void loadStudyDatesAndUpdateCalendar() {
-        User currentUser = viewModel.getCurrentUser().getValue();
+        User currentUser = null;
+        if (viewModel != null && viewModel.getCurrentUser() != null) {
+             currentUser = viewModel.getCurrentUser().getValue();
+        }
+        
         if (currentUser != null) {
             loadStudyDatesAndUpdateCalendar(currentUser);
         } else {
@@ -187,4 +204,3 @@ public class StreakActivity extends AppCompatActivity {
         }
     }
 }
-

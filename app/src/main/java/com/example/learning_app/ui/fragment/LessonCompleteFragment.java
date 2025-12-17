@@ -23,6 +23,7 @@ public class LessonCompleteFragment extends DialogFragment {
 
     private ProgressViewModel viewModel;
     private int totalXP;
+    private int accuracy;
     private OnClaimClickListener listener;
     private String lastLessonDateBeforeClaim;
 
@@ -45,6 +46,7 @@ public class LessonCompleteFragment extends DialogFragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             totalXP = getArguments().getInt("totalXP", 0);
+            accuracy = getArguments().getInt("accuracy", 0);
         }
         viewModel = new ViewModelProvider(requireActivity()).get(ProgressViewModel.class);
         
@@ -82,7 +84,6 @@ public class LessonCompleteFragment extends DialogFragment {
 
         if (getArguments() == null) return;
 
-        int accuracy = getArguments().getInt("accuracy", 0);
         String timeSpent = getArguments().getString("timeSpent", "0:00");
 
         ImageView ivCharacterFinish = view.findViewById(R.id.ivCharacterFinish);
@@ -106,7 +107,7 @@ public class LessonCompleteFragment extends DialogFragment {
             
             boolean isFirstLessonToday = lastLessonDateBeforeClaim == null || !lastLessonDateBeforeClaim.equals(today);
             
-            viewModel.claimLessonRewards(totalXP);
+            viewModel.claimLessonRewards(totalXP, accuracy);
             
             if (isFirstLessonToday) {
                 // Dismiss fragment trước

@@ -67,10 +67,6 @@ public class UserViewModel extends AndroidViewModel {
         repository.sendPasswordResetEmail(email);
     }
 
-    public void claimLessonRewards(String uid, int xpGained) {
-        repository.claimLessonRewards(uid, xpGained);
-    }
-
     public void decrementHeart(String uid) {
         repository.decrementHeart(uid);
     }
@@ -83,4 +79,3 @@ public class UserViewModel extends AndroidViewModel {
         repository.checkStreakStatus(uid);
     }
 }
-

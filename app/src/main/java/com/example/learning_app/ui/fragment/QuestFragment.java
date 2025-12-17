@@ -33,6 +33,9 @@ public class QuestFragment extends Fragment {
         TextView txtProgressStreak = view.findViewById(R.id.txtProgressStreak);
         ProgressBar progressBarStreak = view.findViewById(R.id.progressBarStreak);
         ImageView imgChestStreak = view.findViewById(R.id.imgChestStreak);
+        TextView txtProgressAccuracy = view.findViewById(R.id.txtProgressAccuracy);
+        ProgressBar progressBarAccuracy = view.findViewById(R.id.progressBarAccuracy);
+        ImageView imgChestAccuracy = view.findViewById(R.id.imgChestAccuracy);
 
         viewModel.getCurrentUser().observe(getViewLifecycleOwner(), user -> {
             if (user != null) {
@@ -63,6 +66,19 @@ public class QuestFragment extends Fragment {
                 } else {
                     imgChestStreak.setImageResource(R.drawable.ic_chest);
                 }
+
+                int currentPerfectLessons = user.getPerfectLessonCount();
+                int targetPerfectLessons = 2;
+
+                txtProgressAccuracy.setText("Hoàn thành " + currentPerfectLessons + " / " + targetPerfectLessons + " bài với độ chính xác >90%");
+                progressBarAccuracy.setMax(targetPerfectLessons);
+                progressBarAccuracy.setProgress(currentPerfectLessons);
+
+                if (currentPerfectLessons >= targetPerfectLessons) {
+                    imgChestAccuracy.setImageResource(R.drawable.ic_chest3_open);
+                } else {
+                    imgChestAccuracy.setImageResource(R.drawable.ic_chest);
+                }
             }
         });
 
@@ -77,6 +93,3 @@ public class QuestFragment extends Fragment {
         }
     }
 }
-
-
-

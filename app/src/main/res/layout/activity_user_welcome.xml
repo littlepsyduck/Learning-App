@@ -19,7 +19,7 @@
             android:id="@+id/ivLogoCharacters"
             android:layout_width="wrap_content"
             android:layout_height="250dp"
-            android:src="@drawable/img"
+            android:src="@drawable/ic_duolin"
             android:contentDescription="@string/content_desc_logo" />
 
         <TextView

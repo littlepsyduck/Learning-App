@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,12 +22,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.learning_app.R;
 import com.example.learning_app.entities.Lesson;
+import com.example.learning_app.entities.User;
 import com.example.learning_app.ui.adapter.LessonAdapter;
 import com.example.learning_app.ui.fragment.FriendsFragment;
 import com.example.learning_app.ui.fragment.LeaderboardFragment;
 import com.example.learning_app.ui.fragment.QuestFragment;
 import com.example.learning_app.ui.fragment.UserProfileFragment;
 import com.example.learning_app.viewmodel.LessonViewModel;
+import com.example.learning_app.viewmodel.ProgressViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -39,16 +42,18 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView rvLessons;
     private TextView tvSectionTitle, tvLessonName;
     private LessonViewModel mLessonViewModel;
+    private ProgressViewModel mProgressViewModel;
     private BottomNavigationView bottomNav;
+    private User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        FirebaseUser firebaseUser = mAuth.getCurrentUser();
         
-        if (currentUser == null || !currentUser.isEmailVerified()) {
+        if (firebaseUser == null) {
             Intent intent = new Intent(MainActivity.this, UserWelcomeActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
@@ -69,6 +74,14 @@ public class MainActivity extends AppCompatActivity {
             setupBottomNavigation();
         }
 
+        LinearLayout streakContainer = findViewById(R.id.streakContainer);
+        if (streakContainer != null) {
+            streakContainer.setOnClickListener(v -> {
+                Intent intent = new Intent(MainActivity.this, StreakActivity.class);
+                startActivity(intent);
+            });
+        }
+
         // Đảo ngược layout để scroll từ dưới lên
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setReverseLayout(true);
@@ -85,20 +98,40 @@ public class MainActivity extends AppCompatActivity {
 
         // Get ViewModel instance
         mLessonViewModel = new ViewModelProvider(this).get(LessonViewModel.class);
+        mProgressViewModel = new ViewModelProvider(this).get(ProgressViewModel.class);
 
         // Import data from JSON if database is empty
         mLessonViewModel.importDataFromJson();
 
         // Observe LiveData from ViewModel
         observeLessons();
+
+        // Observe User
+        mProgressViewModel.getCurrentUser().observe(this, user -> {
+            currentUser = user;
+            if (user != null) {
+                updateTopBar(user);
+            }
+        });
+        mProgressViewModel.reloadUserProfile();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // LiveData sẽ tự động cập nhật khi có thay đổi trong database
-        // Không cần observe lại vì đã observe trong onCreate
-        // Chỉ cần đảm bảo ViewModel đã được khởi tạo
+        if (mProgressViewModel != null) {
+            mProgressViewModel.reloadUserProfile();
+        }
+    }
+
+    private void updateTopBar(User user) {
+        TextView txtStreak = findViewById(R.id.txtStreakMain);
+        TextView txtXP = findViewById(R.id.txtXPMain);
+        TextView txtHearts = findViewById(R.id.txtHeartsMain);
+        
+        if (txtStreak != null) txtStreak.setText(String.valueOf(user.getStreak()));
+        if (txtXP != null) txtXP.setText(String.valueOf(user.getXp()));
+        if (txtHearts != null) txtHearts.setText(String.valueOf(user.getHearts()));
     }
 
     private void showStartDialog(Lesson lesson) {
@@ -119,6 +152,12 @@ public class MainActivity extends AppCompatActivity {
         tvSubtitle.setText("Section " + lesson.sectionId);
 
         btnStart.setOnClickListener(v -> {
+            if (currentUser != null && currentUser.getHearts() <= 0) {
+                 Toast.makeText(MainActivity.this, "Bạn đã hết tim! Hãy chờ hồi phục hoặc mua thêm.", Toast.LENGTH_SHORT).show();
+                 dialog.dismiss();
+                 return;
+            }
+
             dialog.dismiss();
             // Mở LessonActivity
             Intent intent = new Intent(MainActivity.this, LessonActivity.class);
@@ -222,4 +261,3 @@ public class MainActivity extends AppCompatActivity {
     }
 
 }
-
