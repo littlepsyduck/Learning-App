@@ -27,6 +27,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.UserView
     private final List<User> userList;
     private final Set<String> friendIds;
     private final Set<String> pendingRequestIds;
+    private final Set<String> incomingRequestIds;
     private final Context context;
     private final OnAddFriendClickListener listener;
 
@@ -34,11 +35,12 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.UserView
         void onAddFriendClick(User user);
     }
 
-    public FriendsAdapter(Context context, List<User> userList, Set<String> friendIds, Set<String> pendingRequestIds, OnAddFriendClickListener listener) {
+    public FriendsAdapter(Context context, List<User> userList, Set<String> friendIds, Set<String> pendingRequestIds, Set<String> incomingRequestIds, OnAddFriendClickListener listener) {
         this.context = context;
         this.userList = userList;
         this.friendIds = friendIds;
         this.pendingRequestIds = pendingRequestIds;
+        this.incomingRequestIds = incomingRequestIds;
         this.listener = listener;
     }
 
@@ -63,7 +65,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.UserView
     class UserViewHolder extends RecyclerView.ViewHolder {
         private final CircleImageView ivAvatar;
         private final TextView tvFullName, tvUsername, tvAvatarLetter;
-        private final ImageView btnAdd, ivSent, ivIsFriend;
+        private final ImageView btnAdd, ivSent, ivIsFriend, ivRequestReceived;
 
         UserViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -74,6 +76,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.UserView
             btnAdd = itemView.findViewById(R.id.btnAdd);
             ivSent = itemView.findViewById(R.id.ivSent);
             ivIsFriend = itemView.findViewById(R.id.ivIsFriend);
+            ivRequestReceived = itemView.findViewById(R.id.ivRequestReceived);
         }
 
         void bind(final User user) {
@@ -95,12 +98,16 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.UserView
             btnAdd.setVisibility(View.GONE);
             ivSent.setVisibility(View.GONE);
             ivIsFriend.setVisibility(View.GONE);
+            ivRequestReceived.setVisibility(View.GONE);
 
             if (friendIds.contains(user.getUid())) {
                 ivIsFriend.setVisibility(View.VISIBLE);
             } else if (pendingRequestIds.contains(user.getUid())) {
                 ivSent.setVisibility(View.VISIBLE);
-            } else {
+            } else if (incomingRequestIds.contains(user.getUid())) {
+                ivRequestReceived.setVisibility(View.VISIBLE);
+            }
+            else {
                 btnAdd.setVisibility(View.VISIBLE);
             }
 

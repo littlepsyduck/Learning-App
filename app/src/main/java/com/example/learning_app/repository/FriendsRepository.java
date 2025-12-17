@@ -1,6 +1,7 @@
 package com.example.learning_app.repository;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
 
 public class FriendsRepository {
 
+    private static final String TAG = "FriendsRepository";
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private MutableLiveData<List<User>> allUsersLiveData;
@@ -102,12 +104,17 @@ public class FriendsRepository {
 
     public void loadFriends() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser == null) return;
+        if (currentUser == null) {
+            Log.d(TAG, "loadFriends: No current user.");
+            return;
+        }
+        Log.d(TAG, "Loading friends for user: " + currentUser.getUid());
 
         db.collection("users").document(currentUser.getUid()).collection("friends")
                 .addSnapshotListener((snapshots, e) -> {
                     if (e != null) {
                         errorMessage.setValue("Failed to load friends: " + e.getMessage());
+                        Log.e(TAG, "Error loading friends", e);
                         return;
                     }
 
@@ -119,7 +126,10 @@ public class FriendsRepository {
                                 friends.add(friend);
                             }
                         }
+                        Log.d(TAG, "Successfully loaded " + friends.size() + " friends.");
                         friendsLiveData.setValue(friends);
+                    } else {
+                        Log.d(TAG, "loadFriends: Snapshots is null");
                     }
                 });
     }
@@ -130,7 +140,6 @@ public class FriendsRepository {
 
         db.collection("friend_requests")
                 .whereEqualTo("receiverId", currentUser.getUid())
-                .whereEqualTo("status", "PENDING")
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .addSnapshotListener((snapshots, e) -> {
                     if (e != null) {
@@ -141,14 +150,18 @@ public class FriendsRepository {
                     if (snapshots != null) {
                         List<FriendRequest> requests = new ArrayList<>();
                         Map<FriendRequest, String> requestsWithIds = new HashMap<>();
+                        int pendingCount = 0;
                         for (QueryDocumentSnapshot doc : snapshots) {
                             FriendRequest request = doc.toObject(FriendRequest.class);
                             requests.add(request);
                             requestsWithIds.put(request, doc.getId());
+                            if ("PENDING".equals(request.getStatus())) {
+                                pendingCount++;
+                            }
                         }
                         friendRequestsLiveData.setValue(requests);
                         friendRequestsWithIdsLiveData.setValue(requestsWithIds);
-                        friendRequestsCountLiveData.setValue(requests.size());
+                        friendRequestsCountLiveData.setValue(pendingCount);
                     }
                 });
     }
@@ -194,6 +207,7 @@ public class FriendsRepository {
 
             WriteBatch batch = db.batch();
 
+            // Add sender to current user's friend list
             DocumentReference friendInMyListRef = db.collection("users").document(currentUid)
                     .collection("friends").document(senderUid);
             Map<String, Object> senderData = new HashMap<>();
@@ -203,8 +217,8 @@ public class FriendsRepository {
             senderData.put("avatarUrl", senderUserProfile.getAvatarUrl());
             senderData.put("xp", senderUserProfile.getXp());
             batch.set(friendInMyListRef, senderData);
-            batch.update(db.collection("users").document(currentUid), "friendsCount", FieldValue.increment(1));
 
+            // Add current user to sender's friend list
             DocumentReference meInFriendListRef = db.collection("users").document(senderUid)
                     .collection("friends").document(currentUid);
             Map<String, Object> myData = new HashMap<>();
@@ -214,7 +228,8 @@ public class FriendsRepository {
             myData.put("avatarUrl", currentUserProfile.getAvatarUrl());
             myData.put("xp", currentUserProfile.getXp());
             batch.set(meInFriendListRef, myData);
-            batch.update(db.collection("users").document(senderUid), "friendsCount", FieldValue.increment(1));
+            // We are not updating the other user's friendscount from the client
+            // to avoid needing insecure rules. This can be handled by a cloud function later.
 
             if (requestDocId != null) {
                 batch.update(db.collection("friend_requests").document(requestDocId), "status", "ACCEPTED");
@@ -267,6 +282,30 @@ public class FriendsRepository {
                             }
                             callback.onResult(pendingIds);
                         }
+                    }
+                });
+    }
+
+    public void getIncomingPendingRequestSenderIds(OnPendingRequestIdsCallback callback) {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) {
+            callback.onResult(new HashSet<>());
+            return;
+        }
+
+        db.collection("friend_requests")
+                .whereEqualTo("receiverId", currentUser.getUid())
+                .whereEqualTo("status", "PENDING")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Set<String> senderIds = new HashSet<>();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            senderIds.add(document.getString("senderId"));
+                        }
+                        callback.onResult(senderIds);
+                    } else {
+                        callback.onResult(new HashSet<>());
                     }
                 });
     }

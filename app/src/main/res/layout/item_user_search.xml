@@ -99,6 +99,15 @@
             android:visibility="gone"
             app:tint="@color/duo_purple" />
 
+        <ImageView
+            android:id="@+id/ivRequestReceived"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="8dp"
+            android:src="@drawable/ic_menu_done"
+            android:visibility="gone"
+            app:tint="@color/duo_green" />
+
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

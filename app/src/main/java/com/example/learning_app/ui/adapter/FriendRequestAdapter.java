@@ -61,6 +61,7 @@ public class FriendRequestAdapter extends RecyclerView.Adapter<FriendRequestAdap
         private final TextView tvName;
         private final ImageView btnAccept;
         private final ImageView btnDecline;
+        private final TextView tvStatus;
 
         RequestViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -68,6 +69,7 @@ public class FriendRequestAdapter extends RecyclerView.Adapter<FriendRequestAdap
             tvName = itemView.findViewById(R.id.tvName);
             btnAccept = itemView.findViewById(R.id.btnAccept);
             btnDecline = itemView.findViewById(R.id.btnDecline);
+            tvStatus = itemView.findViewById(R.id.tvStatus);
         }
 
         void bind(final FriendRequest request) {
@@ -88,17 +90,28 @@ public class FriendRequestAdapter extends RecyclerView.Adapter<FriendRequestAdap
                 ivAvatar.setImageResource(R.color.duo_purple);
             }
 
-            btnAccept.setOnClickListener(v -> {
-                if (getAdapterPosition() != RecyclerView.NO_POSITION) {
-                    listener.onAccept(requestList.get(getAdapterPosition()), getAdapterPosition());
-                }
-            });
+            if ("PENDING".equals(request.getStatus())) {
+                btnAccept.setVisibility(View.VISIBLE);
+                btnDecline.setVisibility(View.VISIBLE);
+                tvStatus.setVisibility(View.GONE);
 
-            btnDecline.setOnClickListener(v -> {
-                if (getAdapterPosition() != RecyclerView.NO_POSITION) {
-                    listener.onDecline(requestList.get(getAdapterPosition()), getAdapterPosition());
-                }
-            });
+                btnAccept.setOnClickListener(v -> {
+                    if (getAdapterPosition() != RecyclerView.NO_POSITION) {
+                        listener.onAccept(requestList.get(getAdapterPosition()), getAdapterPosition());
+                    }
+                });
+
+                btnDecline.setOnClickListener(v -> {
+                    if (getAdapterPosition() != RecyclerView.NO_POSITION) {
+                        listener.onDecline(requestList.get(getAdapterPosition()), getAdapterPosition());
+                    }
+                });
+            } else {
+                btnAccept.setVisibility(View.GONE);
+                btnDecline.setVisibility(View.GONE);
+                tvStatus.setVisibility(View.VISIBLE);
+                tvStatus.setText(request.getStatus());
+            }
         }
     }
 }

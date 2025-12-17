@@ -73,5 +73,9 @@ public class FriendsViewModel extends AndroidViewModel {
     public void getPendingRequestIds(FriendsRepository.OnPendingRequestIdsCallback callback) {
         repository.getPendingRequestIds(callback);
     }
+
+    public void getIncomingPendingRequestSenderIds(FriendsRepository.OnPendingRequestIdsCallback callback) {
+        repository.getIncomingPendingRequestSenderIds(callback);
+    }
 }
 

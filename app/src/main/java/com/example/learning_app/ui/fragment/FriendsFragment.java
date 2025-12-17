@@ -44,6 +44,7 @@ public class FriendsFragment extends Fragment {
     private List<User> displayedUsers = new ArrayList<>();
     private Set<String> friendIds = new HashSet<>();
     private Set<String> pendingRequestIds = new HashSet<>();
+    private Set<String> incomingRequestIds = new HashSet<>();
     private User currentUserProfile;
 
     @Nullable
@@ -119,7 +120,7 @@ public class FriendsFragment extends Fragment {
     }
 
     private void setupRecyclerView() {
-        userAdapter = new FriendsAdapter(getContext(), displayedUsers, friendIds, pendingRequestIds, user -> sendFriendRequest(user));
+        userAdapter = new FriendsAdapter(getContext(), displayedUsers, friendIds, pendingRequestIds, incomingRequestIds, user -> sendFriendRequest(user));
         rvUsers.setLayoutManager(new LinearLayoutManager(getContext()));
         rvUsers.setAdapter(userAdapter);
     }
@@ -135,6 +136,14 @@ public class FriendsFragment extends Fragment {
             public void onResult(Set<String> pendingIds) {
                 pendingRequestIds.clear();
                 pendingRequestIds.addAll(pendingIds);
+                userAdapter.notifyDataSetChanged();
+            }
+        });
+        friendsViewModel.getIncomingPendingRequestSenderIds(new FriendsRepository.OnPendingRequestIdsCallback() {
+            @Override
+            public void onResult(Set<String> senderIds) {
+                incomingRequestIds.clear();
+                incomingRequestIds.addAll(senderIds);
                 userAdapter.notifyDataSetChanged();
             }
         });

@@ -14,7 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.Observer;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -33,7 +33,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class UserProfileFragment extends Fragment {
 
-    private TextView tvFullName, tvUsername, tvJoinDate, tvFriends, tvAvatarLetter, tvStreakValue;
+    private TextView tvFullName, tvUsername, tvJoinDate, tvFriends, tvAvatarLetter, tvStreakValue, tvNoFriends;
     private CircleImageView ivAvatar;
     private ImageView ivSettings;
     private View viewRequestBadge, streakSection;
@@ -72,6 +72,7 @@ public class UserProfileFragment extends Fragment {
         btnFriendRequests = view.findViewById(R.id.btnFriendRequests);
         btnAddFriends = view.findViewById(R.id.btnAddFriends);
         rvFriendsList = view.findViewById(R.id.rvFriendsList);
+        tvNoFriends = view.findViewById(R.id.tvNoFriends);
 
         setupRecyclerView();
         setupClickListeners();
@@ -87,7 +88,7 @@ public class UserProfileFragment extends Fragment {
     private void setupRecyclerView() {
         friendList = new ArrayList<>();
         friendsAdapter = new CurrentFriendsAdapter(getContext(), friendList);
-        rvFriendsList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        rvFriendsList.setLayoutManager(new GridLayoutManager(getContext(), 3));
         rvFriendsList.setAdapter(friendsAdapter);
     }
 
@@ -135,6 +136,14 @@ public class UserProfileFragment extends Fragment {
                     friendList.clear();
                     friendList.addAll(friends);
                     friendsAdapter.notifyDataSetChanged();
+
+                    if (friends.isEmpty()) {
+                        tvNoFriends.setVisibility(View.VISIBLE);
+                        rvFriendsList.setVisibility(View.GONE);
+                    } else {
+                        tvNoFriends.setVisibility(View.GONE);
+                        rvFriendsList.setVisibility(View.VISIBLE);
+                    }
                 }
             }
         });
