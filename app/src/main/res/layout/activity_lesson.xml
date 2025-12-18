@@ -100,7 +100,7 @@
             android:visibility="gone" />
 
         <!-- Nút Continue -->
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnContinue"
             android:layout_width="match_parent"
             android:layout_height="56dp"

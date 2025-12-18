@@ -73,7 +73,7 @@
 
     </LinearLayout>
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnCommitted"
         android:layout_width="match_parent"
         android:layout_height="60dp"

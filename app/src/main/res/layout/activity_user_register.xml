@@ -32,7 +32,7 @@
             android:progressDrawable="@drawable/custom_progress_bar" />
     </LinearLayout>
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnContinue"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

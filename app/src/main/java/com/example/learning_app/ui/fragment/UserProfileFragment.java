@@ -14,7 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.Observer;
-import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -88,7 +88,7 @@ public class UserProfileFragment extends Fragment {
     private void setupRecyclerView() {
         friendList = new ArrayList<>();
         friendsAdapter = new CurrentFriendsAdapter(getContext(), friendList);
-        rvFriendsList.setLayoutManager(new GridLayoutManager(getContext(), 3));
+        rvFriendsList.setLayoutManager(new LinearLayoutManager(getContext()));
         rvFriendsList.setAdapter(friendsAdapter);
     }
 
@@ -109,13 +109,23 @@ public class UserProfileFragment extends Fragment {
 
         ivSettings.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), UserSettingsActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent, 1001);
         });
 
         streakSection.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), StreakActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent, 1001);
         });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1001 && resultCode == android.app.Activity.RESULT_OK) {
+            if (userViewModel.getCurrentFirebaseUser() != null) {
+                userViewModel.loadUserProfile(userViewModel.getCurrentFirebaseUser().getUid());
+            }
+        }
     }
 
     private void setupObservers() {

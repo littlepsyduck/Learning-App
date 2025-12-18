@@ -51,16 +51,19 @@ public class CurrentFriendsAdapter extends RecyclerView.Adapter<CurrentFriendsAd
         private final CircleImageView ivAvatar;
         private final TextView tvFullName;
         private final TextView tvAvatarLetter;
+        private final TextView tvFriendXp;
 
         FriendViewHolder(@NonNull View itemView) {
             super(itemView);
             ivAvatar = itemView.findViewById(R.id.ivAvatar);
             tvFullName = itemView.findViewById(R.id.tvFullName);
             tvAvatarLetter = itemView.findViewById(R.id.tvAvatarLetter);
+            tvFriendXp = itemView.findViewById(R.id.tvFriendXp);
         }
 
         void bind(final User friend) {
             tvFullName.setText(friend.getFullName());
+            tvFriendXp.setText(friend.getXp() + " XP");
 
             if (friend.getAvatarUrl() != null && !friend.getAvatarUrl().isEmpty()) {
                 try {

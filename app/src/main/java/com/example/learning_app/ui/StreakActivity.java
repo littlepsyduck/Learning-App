@@ -115,7 +115,10 @@ public class StreakActivity extends AppCompatActivity {
         };
         viewModel.getCurrentUser().observe(this, userObserver);
 
-        if (btnClose != null) btnClose.setOnClickListener(v -> finish());
+        if (btnClose != null) btnClose.setOnClickListener(v -> {
+            setResult(RESULT_OK);
+            finish();
+        });
     }
 
     private void loadStudyDatesAndUpdateCalendar() {

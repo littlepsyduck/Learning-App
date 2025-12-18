@@ -1,29 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center_horizontal"
-    android:orientation="vertical"
-    android:padding="8dp">
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:padding="16dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/ivAvatar"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
         android:src="@color/duo_purple"
         app:civ_border_color="@color/duo_border_grey"
-        app:civ_border_width="2dp" />
+        app:civ_border_width="1dp" />
 
     <TextView
         android:id="@+id/tvAvatarLetter"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_marginTop="-64dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
         android:gravity="center"
         android:textColor="@android:color/white"
-        android:textSize="30sp"
+        android:textSize="24sp"
         android:textStyle="bold"
         tools:text="A" />
 
@@ -31,8 +35,23 @@
         android:id="@+id/tvFullName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:textAlignment="center"
-        android:textColor="@color/duo_grey"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="16dp"
+        android:layout_toEndOf="@id/ivAvatar"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
         tools:text="Friend Name" />
-</LinearLayout>
+
+    <TextView
+        android:id="@+id/tvFriendXp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:textColor="@color/duo_grey"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        tools:text="123 XP" />
+
+</RelativeLayout>

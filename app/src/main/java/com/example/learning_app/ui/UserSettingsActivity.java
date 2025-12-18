@@ -182,6 +182,7 @@ public class UserSettingsActivity extends AppCompatActivity {
                     passwordToUpdate
             );
             Toast.makeText(this, "Đã lưu thay đổi!", Toast.LENGTH_SHORT).show();
+            setResult(RESULT_OK);
             finish();
         }
     }
