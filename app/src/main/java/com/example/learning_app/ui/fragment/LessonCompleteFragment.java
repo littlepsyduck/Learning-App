@@ -1,6 +1,7 @@
 package com.example.learning_app.ui.fragment;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.learning_app.R;
 import com.example.learning_app.entities.User;
+import com.example.learning_app.ui.game.DailyStreakActivity;
 import com.example.learning_app.viewmodel.ProgressViewModel;
 
 public class LessonCompleteFragment extends DialogFragment {
@@ -26,6 +28,7 @@ public class LessonCompleteFragment extends DialogFragment {
     private int accuracy;
     private OnClaimClickListener listener;
     private String lastLessonDateBeforeClaim;
+    private int currentStreak;
 
     public interface OnClaimClickListener {
         void onClaimClick();
@@ -53,8 +56,11 @@ public class LessonCompleteFragment extends DialogFragment {
         viewModel.getCurrentUser().observe(this, new Observer<User>() {
             @Override
             public void onChanged(User user) {
-                if (user != null && lastLessonDateBeforeClaim == null) {
-                    lastLessonDateBeforeClaim = user.getLastLessonDate();
+                if (user != null) {
+                    if (lastLessonDateBeforeClaim == null) {
+                        lastLessonDateBeforeClaim = user.getLastLessonDate();
+                    }
+                    currentStreak = user.getStreak();
                 }
             }
         });
@@ -102,81 +108,28 @@ public class LessonCompleteFragment extends DialogFragment {
         tvTime.setText(timeSpent);
 
         btnClaimXP.setOnClickListener(v -> {
+            btnClaimXP.setEnabled(false);
             java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault());
             String today = sdf.format(new java.util.Date());
             
             boolean isFirstLessonToday = lastLessonDateBeforeClaim == null || !lastLessonDateBeforeClaim.equals(today);
             
-            viewModel.claimLessonRewards(totalXP, accuracy);
-            
-            if (isFirstLessonToday) {
-                // Dismiss fragment trước
-                dismiss();
-                
-                // Sau đó check streak và show dialog nếu cần
-                android.os.Handler handler = new android.os.Handler(android.os.Looper.getMainLooper());
-                handler.postDelayed(() -> {
-                    if (getActivity() != null && !getActivity().isFinishing()) {
-                        Observer<User> userObserver = new Observer<User>() {
-                            @Override
-                            public void onChanged(User user) {
-                                if (user != null) {
-                                    viewModel.getCurrentUser().removeObserver(this);
-                                    
-                                    if (user.getStreak() > 0) {
-                                        // Show streak dialog
-                                        StreakDialogFragment streakDialog = StreakDialogFragment.newInstance(user.getStreak());
-                                        streakDialog.setOnContinueClickListener(() -> {
-                                            if (listener != null) {
-                                                listener.onClaimClick();
-                                            }
-                                        });
-                                        if (getActivity() != null && !getActivity().isFinishing()) {
-                                            streakDialog.show(getActivity().getSupportFragmentManager(), "StreakDialogFragment");
-                                        } else {
-                                            // Activity đã finish, gọi listener trực tiếp
-                                            if (listener != null) {
-                                                listener.onClaimClick();
-                                            }
-                                        }
-                                    } else {
-                                        // Không có streak, finish activity ngay
-                                        if (listener != null) {
-                                            listener.onClaimClick();
-                                        }
-                                    }
-                                } else {
-                                    viewModel.getCurrentUser().removeObserver(this);
-                                    // User null, finish activity
-                                    if (listener != null) {
-                                        listener.onClaimClick();
-                                    }
-                                }
-                            }
-                        };
-                        viewModel.getCurrentUser().observe(getActivity(), userObserver);
-                        
-                        // Timeout sau 2 giây nếu không có response
-                        handler.postDelayed(() -> {
-                            viewModel.getCurrentUser().removeObserver(userObserver);
-                            if (listener != null) {
-                                listener.onClaimClick();
-                            }
-                        }, 2000);
-                    } else {
-                        // Activity đã finish, gọi listener trực tiếp
-                        if (listener != null) {
-                            listener.onClaimClick();
-                        }
+            viewModel.claimLessonRewards(totalXP, accuracy, () -> {
+                if (isFirstLessonToday) {
+                    dismiss();
+                    Intent intent = new Intent(getActivity(), DailyStreakActivity.class);
+                    intent.putExtra("currentStreak", currentStreak + 1); 
+                    startActivity(intent);
+                    if (listener != null) {
+                        listener.onClaimClick();
                     }
-                }, 500);
-            } else {
-                // Không phải bài học đầu tiên, finish ngay
-                dismiss();
-                if (listener != null) {
-                    listener.onClaimClick();
+                } else {
+                    dismiss();
+                    if (listener != null) {
+                        listener.onClaimClick();
+                    }
                 }
-            }
+            });
         });
     }
 

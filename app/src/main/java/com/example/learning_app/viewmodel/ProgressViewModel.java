@@ -32,10 +32,10 @@ public class ProgressViewModel extends AndroidViewModel {
         }
     }
 
-    public void claimLessonRewards(int xpGained, int accuracy) {
+    public void claimLessonRewards(int xpGained, int accuracy, Runnable onFinished) {
         FirebaseUser firebaseUser = mAuth.getCurrentUser();
         if (firebaseUser != null) {
-            userRepository.claimLessonRewards(firebaseUser.getUid(), xpGained, accuracy);
+            userRepository.claimLessonRewards(firebaseUser.getUid(), xpGained, accuracy, onFinished);
         }
     }
 

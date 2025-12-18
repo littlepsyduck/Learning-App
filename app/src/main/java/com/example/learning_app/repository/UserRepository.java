@@ -127,35 +127,51 @@ public class UserRepository {
 
     public void loadUserProfile(String uid) {
         db.collection("users").document(uid).get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful() && task.getResult() != null) {
-                            DocumentSnapshot document = task.getResult();
-                            if (document.exists()) {
-                                User user = document.toObject(User.class);
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            User user = document.toObject(User.class);
+                            
+                            String today = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
+                            String resetDate = user.getDailyChallengeResetDate();
+
+                            if (resetDate == null || !today.equals(resetDate)) {
+                                Map<String, Object> updates = new HashMap<>();
+                                updates.put("hearts", 5);
+                                updates.put("perfectLessonCount", 0);
+                                updates.put("dailyChallengeResetDate", today);
                                 
-                                String today = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
-                                String resetDate = user.getDailyChallengeResetDate();
-                                if (resetDate == null || !today.equals(resetDate)) {
-                                    Map<String, Object> updates = new HashMap<>();
-                                    updates.put("hearts", 5);
-                                    updates.put("perfectLessonCount", 0);
-                                    updates.put("dailyChallengeResetDate", today);
-                                    db.collection("users").document(uid).update(updates)
-                                            .addOnSuccessListener(aVoid -> {
-                                                // After updating, re-fetch the user profile to get the latest data
-                                                loadUserProfile(uid);
-                                            })
-                                            .addOnFailureListener(e -> {
-                                                // If update fails, still load the stale data to not block UI
-                                                currentUserLiveData.setValue(user);
-                                            });
-                                } else {
-                                    currentUserLiveData.setValue(user);
-                                }
+                                db.collection("users").document(uid).update(updates).addOnCompleteListener(updateTask -> {
+                                    if (updateTask.isSuccessful()) {
+                                        // After daily reset, load the updated profile to ensure data consistency
+                                        loadUserProfile(uid, null);
+                                    } else {
+                                        // If update fails, still load the stale data to not block UI
+                                        currentUserLiveData.postValue(user);
+                                    }
+                                });
+                            } else {
+                                // If no reset is needed, just post the user data
+                                currentUserLiveData.postValue(user);
                             }
                         }
+                    }
+                });
+    }
+
+    public void loadUserProfile(String uid, Runnable onFinished) {
+        db.collection("users").document(uid).get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            User user = document.toObject(User.class);
+                            currentUserLiveData.postValue(user);
+                        }
+                    }
+                    if (onFinished != null) {
+                        onFinished.run();
                     }
                 });
     }
@@ -202,7 +218,7 @@ public class UserRepository {
         mAuth.sendPasswordResetEmail(email);
     }
 
-    public void claimLessonRewards(String uid, int xpGained, int accuracy) {
+    public void claimLessonRewards(String uid, int xpGained, int accuracy, Runnable onFinished) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         SimpleDateFormat sdfCalendar = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         String today = sdf.format(new Date());
@@ -250,11 +266,15 @@ public class UserRepository {
                                 db.collection("users").document(uid).update(updates)
                                         .addOnCompleteListener(updateTask -> {
                                             if (updateTask.isSuccessful()) {
-                                                loadUserProfile(uid);
+                                                loadUserProfile(uid, onFinished);
+                                            } else if (onFinished != null) {
+                                                onFinished.run();
                                             }
                                         });
                             }
                         }
+                    } else if (onFinished != null) {
+                        onFinished.run();
                     }
                 });
     }

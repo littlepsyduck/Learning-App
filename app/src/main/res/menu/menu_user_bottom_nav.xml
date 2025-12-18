@@ -12,7 +12,7 @@
         android:icon="@drawable/ic_chest" android:title="Chest"/>
     <item
         android:id="@+id/nav_shop"
-        android:icon="@drawable/ic_mic" android:title="Speech"/>
+        android:icon="@drawable/ic_friend" android:title="Friend"/>
     <item
         android:id="@+id/nav_profile"
         android:icon="@drawable/ic_profile" android:title="Profile"/>
