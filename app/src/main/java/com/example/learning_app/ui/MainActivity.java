@@ -13,7 +13,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -24,10 +23,6 @@ import com.example.learning_app.R;
 import com.example.learning_app.entities.Lesson;
 import com.example.learning_app.entities.User;
 import com.example.learning_app.ui.adapter.LessonAdapter;
-import com.example.learning_app.ui.fragment.FriendsFragment;
-import com.example.learning_app.ui.fragment.LeaderboardFragment;
-import com.example.learning_app.ui.fragment.QuestFragment;
-import com.example.learning_app.ui.fragment.UserProfileFragment;
 import com.example.learning_app.viewmodel.LessonViewModel;
 import com.example.learning_app.viewmodel.ProgressViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -46,9 +41,8 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView bottomNav;
     private User currentUser;
     
-    // Performance optimization: Debounce sync calls
     private long lastSyncTime = 0;
-    private static final long SYNC_COOLDOWN_MS = 30000; // 30 seconds cooldown between syncs
+    private static final long SYNC_COOLDOWN_MS = 30000;
     private boolean isInitialSyncDone = false;
 
     @Override
@@ -87,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
-        // Đảo ngược layout để scroll từ dưới lên
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setReverseLayout(true);
         layoutManager.setStackFromEnd(true);
@@ -101,20 +94,12 @@ public class MainActivity extends AppCompatActivity {
         });
         rvLessons.setAdapter(adapter);
 
-        // Get ViewModel instance
         mLessonViewModel = new ViewModelProvider(this).get(LessonViewModel.class);
         mProgressViewModel = new ViewModelProvider(this).get(ProgressViewModel.class);
 
-        // Import data from JSON if database is empty
         mLessonViewModel.importDataFromJson();
-        
-        // Sync lesson progress from Firestore (initial sync)
         syncProgressIfNeeded();
-
-        // Observe LiveData from ViewModel
         observeLessons();
-
-        // Observe User
         mProgressViewModel.getCurrentUser().observe(this, user -> {
             currentUser = user;
             if (user != null) {
@@ -130,13 +115,9 @@ public class MainActivity extends AppCompatActivity {
         if (mProgressViewModel != null) {
             mProgressViewModel.reloadUserProfile();
         }
-        // Sync lesson progress when returning to MainActivity (with debouncing)
         syncProgressIfNeeded();
     }
     
-    /**
-     * Sync progress from Firestore with debouncing to avoid excessive network calls
-     */
     private void syncProgressIfNeeded() {
         if (mLessonViewModel == null) {
             return;
@@ -145,9 +126,6 @@ public class MainActivity extends AppCompatActivity {
         long currentTime = System.currentTimeMillis();
         long timeSinceLastSync = currentTime - lastSyncTime;
         
-        // Only sync if:
-        // 1. It's the first sync (initial load), OR
-        // 2. At least SYNC_COOLDOWN_MS milliseconds have passed since last sync
         if (!isInitialSyncDone || timeSinceLastSync >= SYNC_COOLDOWN_MS) {
             mLessonViewModel.syncProgressFromFirestore();
             lastSyncTime = currentTime;
@@ -190,17 +168,14 @@ public class MainActivity extends AppCompatActivity {
             }
 
             dialog.dismiss();
-            // Mở LessonActivity
             Intent intent = new Intent(MainActivity.this, LessonActivity.class);
             intent.putExtra("lessonId", lesson.id);
             startActivity(intent);
-            // Không finish MainActivity để có thể quay về sau
         });
 
         dialog.show();
     }
 
-    // Observe LiveData from ViewModel
     private void observeLessons() {
         LiveData<List<Lesson>> lessonsLiveData = mLessonViewModel.getAllLessons();
         
@@ -285,7 +260,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
-                finish(); // Finish MainActivity to maintain consistent back stack
+                finish();
                 return true;
             }
             return false;

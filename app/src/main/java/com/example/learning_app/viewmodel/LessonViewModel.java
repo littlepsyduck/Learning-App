@@ -22,7 +22,6 @@ public class LessonViewModel extends AndroidViewModel {
         mAllLessons = mRepository.getAllLessons();
     }
 
-    // Return LiveData so the UI can observe it
     public LiveData<List<Lesson>> getAllLessons() {
         return mAllLessons;
     }

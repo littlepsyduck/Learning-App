@@ -36,9 +36,6 @@ public class LessonProgressRepository {
         return errorMessage;
     }
 
-    /**
-     * Save lesson completed status to Firestore using Transaction for atomic updates
-     */
     public void saveLessonCompleted(String userId, int lessonId, boolean isCompleted) {
         com.google.firebase.firestore.DocumentReference docRef = db.collection("users")
                 .document(userId)
@@ -140,7 +137,7 @@ public class LessonProgressRepository {
             
             // Update the specific lesson
             String lessonIdStr = String.valueOf(lessonId);
-            if (!isLocked) { // If unlocked, save it
+            if (!isLocked) {
                 unlockedLessons.put(lessonIdStr, true);
             } else {
                 unlockedLessons.remove(lessonIdStr);
@@ -207,7 +204,6 @@ public class LessonProgressRepository {
                                 }
                             }
                             
-                            // Also check for flat fields like "completedLessons.1"
                             for (String key : data.keySet()) {
                                 if (key.startsWith("completedLessons.")) {
                                     String lessonIdStr = key.substring("completedLessons.".length());
@@ -224,7 +220,6 @@ public class LessonProgressRepository {
                                 }
                             }
                             
-                            // Extract unlocked lessons - handle both nested map and flat fields
                             Object unlockedObj = data.get("unlockedLessons");
                             if (unlockedObj instanceof Map) {
                                 Map<String, Object> unlockedMap = (Map<String, Object>) unlockedObj;
@@ -243,7 +238,6 @@ public class LessonProgressRepository {
                                 }
                             }
                             
-                            // Also check for flat fields like "unlockedLessons.1"
                             for (String key : data.keySet()) {
                                 if (key.startsWith("unlockedLessons.")) {
                                     String lessonIdStr = key.substring("unlockedLessons.".length());

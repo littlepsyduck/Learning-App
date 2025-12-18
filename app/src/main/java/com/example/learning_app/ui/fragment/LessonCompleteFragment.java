@@ -65,7 +65,6 @@ public class LessonCompleteFragment extends DialogFragment {
             }
         });
 
-        // Load user profile to ensure we have the latest data for streak calculation
         viewModel.reloadUserProfile();
     }
 

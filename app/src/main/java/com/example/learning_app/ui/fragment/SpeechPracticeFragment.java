@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,14 +45,13 @@ public class SpeechPracticeFragment extends Fragment {
     private CardView cardUserSpeech;
     private CardView cardMatchResult;
     private ProgressBar progressBar;
-    private android.widget.ImageView ivCharacter;
+    private ImageView ivCharacter;
 
     private TextToSpeech textToSpeech;
     private String currentSentence;
     private boolean isTTSInitialized = false;
     private int characterIndex = 0;
 
-    // Practice sentences - có thể extend từ lessons sau
     private final List<String> practiceSentences = new ArrayList<>(Arrays.asList(
             "Hello, how are you?",
             "My name is Duolingo.",
@@ -80,7 +80,7 @@ public class SpeechPracticeFragment extends Fragment {
         initViews(view);
         initializeTTS();
         setupClickListeners();
-        loadNewSentence(); // This will also set initial character icon
+        loadNewSentence();
     }
 
     private void initViews(View view) {
@@ -177,7 +177,7 @@ public class SpeechPracticeFragment extends Fragment {
         progressBar.setVisibility(View.GONE);
 
         if (requestCode == REQUEST_CODE_SPEECH_INPUT) {
-            if (resultCode == -1 && data != null) { // Activity.RESULT_OK = -1
+            if (resultCode == -1 && data != null) {
                 ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                 if (result != null && !result.isEmpty()) {
                     String userSpeech = result.get(0);
@@ -192,15 +192,9 @@ public class SpeechPracticeFragment extends Fragment {
     }
 
     private void processSpeechResult(String userSpeech) {
-        // Display user speech in separate card
         cardUserSpeech.setVisibility(View.VISIBLE);
         tvSpeechResult.setText(userSpeech);
 
-        // Debug logging
-        android.util.Log.d("SpeechPractice", "Current sentence: " + currentSentence);
-        android.util.Log.d("SpeechPractice", "User speech: " + userSpeech);
-
-        // Exact match comparison (no fuzzy matching as requested)
         if (currentSentence == null || currentSentence.isEmpty()) {
             cardMatchResult.setVisibility(View.VISIBLE);
             tvMatchResult.setText("Error: No sentence to compare");
@@ -212,9 +206,6 @@ public class SpeechPracticeFragment extends Fragment {
         String trimmedUserSpeech = userSpeech.trim();
         boolean isMatch = currentSentence.equalsIgnoreCase(trimmedUserSpeech);
 
-        android.util.Log.d("SpeechPractice", "Match result: " + isMatch);
-
-        // Display match result in separate card
         cardMatchResult.setVisibility(View.VISIBLE);
 
         if (isMatch) {
@@ -234,11 +225,9 @@ public class SpeechPracticeFragment extends Fragment {
             return;
         }
 
-        // Get random sentence
         Random random = new Random();
         currentSentence = practiceSentences.get(random.nextInt(practiceSentences.size()));
 
-        // Update character icon (alternate between character_duo_1 and character_duo_2)
         characterIndex++;
         int characterResId = (characterIndex % 2 == 0)
                 ? getResources().getIdentifier("character_duo_1", "drawable", requireContext().getPackageName())
@@ -247,7 +236,6 @@ public class SpeechPracticeFragment extends Fragment {
             ivCharacter.setImageResource(characterResId);
         }
 
-        // Update UI
         tvPracticeText.setText(currentSentence);
         cardUserSpeech.setVisibility(View.GONE);
         cardMatchResult.setVisibility(View.GONE);

@@ -29,7 +29,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class FriendsRepository {
 
@@ -130,7 +129,6 @@ public class FriendsRepository {
                         }
                         Log.d(TAG, "Found " + friendIds.size() + " friend IDs, loading their profiles...");
                         
-                        // Now load the actual user data from the users collection to get latest info
                         if (friendIds.isEmpty()) {
                             friendsLiveData.setValue(new ArrayList<>());
                             return;
@@ -149,8 +147,6 @@ public class FriendsRepository {
             return;
         }
         
-        // Firestore whereIn() supports up to 10 items per query
-        // Split into batches of 10 for efficient batch reads
         int batchSize = 10;
         List<Task<QuerySnapshot>> batchTasks = new ArrayList<>();
         
@@ -158,14 +154,11 @@ public class FriendsRepository {
             int end = Math.min(i + batchSize, friendIds.size());
             List<String> batchIds = new ArrayList<>(friendIds.subList(i, end));
             
-            // Use whereIn query for batch read (more efficient than individual gets)
-            // This reduces from N queries to N/10 queries
             batchTasks.add(db.collection("users")
                     .whereIn(FieldPath.documentId(), batchIds)
                     .get());
         }
         
-        // Wait for all batches to complete
         Tasks.whenAllComplete(batchTasks).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 List<User> friends = new ArrayList<>();
@@ -279,7 +272,6 @@ public class FriendsRepository {
             senderData.put("xp", senderUserProfile.getXp());
             batch.set(friendInMyListRef, senderData);
 
-            // Add current user to sender's friend list
             DocumentReference meInFriendListRef = db.collection("users").document(senderUid)
                     .collection("friends").document(currentUid);
             Map<String, Object> myData = new HashMap<>();

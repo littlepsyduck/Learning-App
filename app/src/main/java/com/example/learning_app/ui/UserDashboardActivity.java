@@ -5,7 +5,6 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import com.example.learning_app.R;
-import com.example.learning_app.ui.fragment.FriendsFragment;
 import com.example.learning_app.ui.fragment.LeaderboardFragment;
 import com.example.learning_app.ui.fragment.QuestFragment;
 import com.example.learning_app.ui.fragment.SpeechPracticeFragment;
@@ -86,7 +85,7 @@ public class UserDashboardActivity extends AppCompatActivity {
                 Intent intent = new Intent(UserDashboardActivity.this, MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
-                finish(); // Finish DashboardActivity to maintain consistent back stack
+                finish();
                 return true;
             } else if (itemId == R.id.nav_chest) {
                 selectedFragment = new QuestFragment();

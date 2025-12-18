@@ -176,7 +176,6 @@ public class UserSettingsActivity extends AppCompatActivity {
                 ivAvatarPreview.setVisibility(View.VISIBLE);
                 tvFileSelected.setText("Avatar hiện tại");
             } catch (Exception e) {
-                // Bỏ qua lỗi nếu ảnh cũ là link http
             }
         }
     }
@@ -208,19 +207,16 @@ public class UserSettingsActivity extends AppCompatActivity {
                     return;
                 }
                 
-                // Check if current password is provided
                 if (currentPassword.isEmpty()) {
                     Toast.makeText(this, "Vui lòng nhập mật khẩu hiện tại để đổi mật khẩu!", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 
-                // Update password with re-authentication
                 FirebaseUser firebaseUser = userViewModel.getCurrentFirebaseUser();
                 if (firebaseUser != null && firebaseUser.getEmail() != null) {
                     userViewModel.updatePassword(firebaseUser.getEmail(), currentPassword, newPassword);
                 }
             } else {
-                // If no password change, just show success message after profile update
                 Toast.makeText(this, "Đã lưu thay đổi!", Toast.LENGTH_SHORT).show();
                 setResult(RESULT_OK);
                 finish();
@@ -252,6 +248,4 @@ public class UserSettingsActivity extends AppCompatActivity {
                 .setNegativeButton("HỦY", null).show();
     }
 }
-
-
 

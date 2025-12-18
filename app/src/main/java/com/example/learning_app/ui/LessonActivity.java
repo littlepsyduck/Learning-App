@@ -45,8 +45,8 @@ public class LessonActivity extends AppCompatActivity {
     private int totalCorrectAnswers = 0;
     private int completedQuestions = 0;
     private long startTime;
-    private int streak = 0; // Số câu trả lời đúng liên tiếp
-    private boolean isRetryMode = false; // Đang ở chế độ làm lại câu sai
+    private int streak = 0;
+    private boolean isRetryMode = false;
 
     // UI Components
     private ProgressBar progressBar;
@@ -57,10 +57,7 @@ public class LessonActivity extends AppCompatActivity {
     private Button btnContinue;
     private ImageView btnClose;
 
-    // Current game handler
     private BaseGameHandler currentGameHandler;
-    
-    // Observer for lessons
     private Observer<List<Lesson>> lessonsObserver;
 
     @Override
@@ -86,10 +83,7 @@ public class LessonActivity extends AppCompatActivity {
         // Initialize ViewModel
         viewModel = new ViewModelProvider(this).get(LessonViewModel.class);
 
-        // Initialize UI
         initViews();
-
-        // Start timer
         startTime = System.currentTimeMillis();
 
         // Load questions
@@ -170,9 +164,7 @@ public class LessonActivity extends AppCompatActivity {
     }
 
     private void showQuestion(int index) {
-        // Kiểm tra nếu đã làm xong tất cả câu hỏi
         if (!isRetryMode && index >= questions.size()) {
-            // Nếu có câu hỏi sai, chuyển sang chế độ làm lại
             if (!wrongQuestions.isEmpty()) {
                 startRetryMode();
                 return;
@@ -181,11 +173,9 @@ public class LessonActivity extends AppCompatActivity {
                 return;
             }
         }
-        
-        // Nếu đang ở chế độ làm lại
+
         if (isRetryMode) {
             if (index >= wrongQuestions.size()) {
-                // Đã vượt quá danh sách, tìm câu tiếp theo chưa hoàn thành
                 int nextIndex = findNextUncompletedRetryQuestion(0);
                 if (nextIndex == -1) {
                     showLessonComplete();
@@ -210,7 +200,6 @@ public class LessonActivity extends AppCompatActivity {
             question = wrongQuestions.get(index);
         } else {
             if (index >= questions.size()) {
-                // Đã làm xong tất cả câu hỏi
                 if (!wrongQuestions.isEmpty()) {
                     startRetryMode();
                     return;
@@ -223,13 +212,8 @@ public class LessonActivity extends AppCompatActivity {
         }
         currentQuestionIndex = index;
 
-        // Update progress - tính dựa trên số câu đã hoàn thành (đã ấn Continue)
         updateProgress();
-
-        // Update streak
         tvStreak.setText(streak + " IN A ROW");
-
-        // Clear previous question
         questionContainer.removeAllViews();
         
         currentGameHandler = GameHandlerFactory.createHandler(this, question, new BaseGameHandler.GameCallback() {
@@ -276,8 +260,6 @@ public class LessonActivity extends AppCompatActivity {
         if (currentGameHandler != null) {
             View gameView = currentGameHandler.createGameView();
             questionContainer.addView(gameView);
-            
-            // Reset continue button
             btnContinue.setEnabled(false);
             btnContinue.setText("CONTINUE");
             tvFeedback.setVisibility(View.GONE);
@@ -405,10 +387,8 @@ public class LessonActivity extends AppCompatActivity {
     
     private void startRetryMode() {
         isRetryMode = true;
-        // Tìm câu đầu tiên chưa hoàn thành
         int firstUncompletedIndex = findNextUncompletedRetryQuestion(0);
         if (firstUncompletedIndex == -1) {
-            // Tất cả câu đã hoàn thành, chuyển sang finish
             showLessonComplete();
             return;
         }
@@ -471,14 +451,12 @@ public class LessonActivity extends AppCompatActivity {
 
     private void unlockNextLesson() {
         viewModel.updateLessonCompleted(lessonId, true);
-        
-        // Remove observer cũ nếu có để tránh duplicate
+
         if (lessonsObserver != null) {
             viewModel.getAllLessons().removeObserver(lessonsObserver);
-        }
-        
-        // Tạo observer mới
-        lessonsObserver = new Observer<List<Lesson>>() {
+                }
+
+                lessonsObserver = new Observer<List<Lesson>>() {
             @Override
             public void onChanged(List<Lesson> lessons) {
                 if (lessons != null && !lessons.isEmpty()) {
@@ -492,25 +470,22 @@ public class LessonActivity extends AppCompatActivity {
                         }
                     }
                     
-                    if (currentLesson == null) {
-                        // Remove observer nếu không tìm thấy lesson
-                        if (lessonsObserver != null) {
+                           if (currentLesson == null) {
+                               if (lessonsObserver != null) {
                             viewModel.getAllLessons().removeObserver(lessonsObserver);
                             lessonsObserver = null;
                         }
                         return;
-                    }
-                    
-                    // Unlock lesson tiếp theo trong cùng section
-                    if (currentIndex >= 0 && currentIndex < lessons.size() - 1) {
+                           }
+
+                           if (currentIndex >= 0 && currentIndex < lessons.size() - 1) {
                         Lesson nextLesson = lessons.get(currentIndex + 1);
                         if (nextLesson.sectionId == currentLesson.sectionId && nextLesson.isLocked) {
                             viewModel.updateLessonLocked(nextLesson.id, false);
                         }
-                    }
-                    
-                    // Kiểm tra xem đã hoàn thành tất cả lesson trong section hiện tại chưa
-                    boolean allLessonsInSectionCompleted = true;
+                           }
+
+                           boolean allLessonsInSectionCompleted = true;
                     Lesson firstLessonInNextSection = null;
                     
                     for (Lesson lesson : lessons) {
@@ -521,25 +496,22 @@ public class LessonActivity extends AppCompatActivity {
                             }
                         } else if (lesson.sectionId == currentLesson.sectionId + 1 && firstLessonInNextSection == null) {
                             firstLessonInNextSection = lesson;
-                        }
-                    }
-                    
-                    // Nếu đã hoàn thành tất cả lesson trong section, unlock lesson đầu tiên của section tiếp theo
-                    if (allLessonsInSectionCompleted && firstLessonInNextSection != null && firstLessonInNextSection.isLocked) {
+                               }
+                           }
+
+                           if (allLessonsInSectionCompleted && firstLessonInNextSection != null && firstLessonInNextSection.isLocked) {
                         viewModel.updateLessonLocked(firstLessonInNextSection.id, false);
-                    }
-                    
-                    // Remove observer sau khi xử lý xong để tránh trigger nhiều lần
-                    if (lessonsObserver != null) {
+                           }
+
+                           if (lessonsObserver != null) {
                         viewModel.getAllLessons().removeObserver(lessonsObserver);
                         lessonsObserver = null;
                     }
                 }
-            }
-        };
-        
-        // Observe LiveData
-        viewModel.getAllLessons().observe(this, lessonsObserver);
+                   }
+               };
+
+               viewModel.getAllLessons().observe(this, lessonsObserver);
     }
 
     @Override
@@ -560,7 +532,6 @@ public class LessonActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Cleanup observer để tránh memory leak
         if (lessonsObserver != null && viewModel != null) {
             viewModel.getAllLessons().removeObserver(lessonsObserver);
             lessonsObserver = null;
