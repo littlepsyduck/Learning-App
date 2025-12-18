@@ -135,24 +135,51 @@ public class UserRepository {
                             
                             String today = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
                             String resetDate = user.getDailyChallengeResetDate();
+                            
+                            // Check for new month to reset monthly freezes
+                            SimpleDateFormat monthFormat = new SimpleDateFormat("MM/yyyy", Locale.getDefault());
+                            String currentMonth = monthFormat.format(new Date());
+                            String lastLessonDate = user.getLastLessonDate();
+                            boolean isNewMonth = false;
+                            
+                            if (lastLessonDate != null && !lastLessonDate.isEmpty()) {
+                                try {
+                                    Date lastDateObj = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).parse(lastLessonDate);
+                                    if (lastDateObj != null) {
+                                        String lastMonth = monthFormat.format(lastDateObj);
+                                        if (!currentMonth.equals(lastMonth)) {
+                                            isNewMonth = true;
+                                        }
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            Map<String, Object> updates = new HashMap<>();
+                            boolean needsUpdate = false;
 
                             if (resetDate == null || !today.equals(resetDate)) {
-                                Map<String, Object> updates = new HashMap<>();
                                 updates.put("hearts", 5);
                                 updates.put("perfectLessonCount", 0);
                                 updates.put("dailyChallengeResetDate", today);
-                                
+                                needsUpdate = true;
+                            }
+                            
+                            if (isNewMonth) {
+                                updates.put("monthlyFreezesUsed", 0);
+                                needsUpdate = true;
+                            }
+                            
+                            if (needsUpdate) {
                                 db.collection("users").document(uid).update(updates).addOnCompleteListener(updateTask -> {
                                     if (updateTask.isSuccessful()) {
-                                        // After daily reset, load the updated profile to ensure data consistency
                                         loadUserProfile(uid, null);
                                     } else {
-                                        // If update fails, still load the stale data to not block UI
                                         currentUserLiveData.postValue(user);
                                     }
                                 });
                             } else {
-                                // If no reset is needed, just post the user data
                                 currentUserLiveData.postValue(user);
                             }
                         }
@@ -243,19 +270,68 @@ public class UserRepository {
                                     updates.put("hearts", currentHearts - 1);
                                 }
 
-                                boolean isFirstLessonToday = user.getLastLessonDate() == null || !user.getLastLessonDate().equals(today);
+                                String lastLessonDate = user.getLastLessonDate();
+                                boolean isFirstLessonToday = lastLessonDate == null || !lastLessonDate.equals(today);
                                 
                                 if (isFirstLessonToday) {
-                                    updates.put("streak", FieldValue.increment(1));
                                     updates.put("lastLessonDate", today);
+                                    
+                                    // Streak Logic Update
+                                    if (lastLessonDate == null || lastLessonDate.isEmpty()) {
+                                        // First lesson ever
+                                        updates.put("streak", 1);
+                                    } else {
+                                        try {
+                                            Date lastDate = sdf.parse(lastLessonDate);
+                                            Date todayDate = sdf.parse(today);
+                                            long diffInMillis = todayDate.getTime() - lastDate.getTime();
+                                            long diffInDays = diffInMillis / (1000 * 60 * 60 * 24);
+
+                                            if (diffInDays == 1) {
+                                                // Consecutive day
+                                                updates.put("streak", FieldValue.increment(1));
+                                            } else if (diffInDays == 2) {
+                                                // Missed one day - Check freeze
+                                                int freezesUsed = user.getMonthlyFreezesUsed();
+                                                int currentFreezes = user.getFreeze();
+                                                
+                                                if (currentFreezes > 0 && freezesUsed < 2) {
+                                                    // Use freeze
+                                                    updates.put("freeze", FieldValue.increment(-1));
+                                                    updates.put("monthlyFreezesUsed", FieldValue.increment(1));
+                                                    updates.put("streak", FieldValue.increment(1)); // Continue streak
+                                                    
+                                                    // Add missed day to frozenDates
+                                                    Calendar cal = Calendar.getInstance();
+                                                    cal.setTime(todayDate);
+                                                    cal.add(Calendar.DAY_OF_MONTH, -1); // Yesterday was missed
+                                                    String missedDateCalendar = sdfCalendar.format(cal.getTime());
+                                                    
+                                                    List<String> frozenDates = user.getFrozenDates();
+                                                    if (frozenDates == null) frozenDates = new ArrayList<>();
+                                                    if (!frozenDates.contains(missedDateCalendar)) {
+                                                        updates.put("frozenDates", FieldValue.arrayUnion(missedDateCalendar));
+                                                    }
+                                                } else {
+                                                    // No freezes left or limit reached - Reset streak
+                                                    updates.put("streak", 1);
+                                                }
+                                            } else {
+                                                // Missed more than 1 day - Reset streak
+                                                updates.put("streak", 1);
+                                            }
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                            updates.put("streak", 1);
+                                        }
+                                    }
                                     
                                     List<String> studyDates = (List<String>) doc.get("studyDates");
                                     if (studyDates == null) {
                                         studyDates = new ArrayList<>();
                                     }
                                     if (!studyDates.contains(todayCalendar)) {
-                                        studyDates.add(todayCalendar);
-                                        updates.put("studyDates", studyDates);
+                                        updates.put("studyDates", FieldValue.arrayUnion(todayCalendar));
                                     }
                                 }
 
@@ -316,6 +392,8 @@ public class UserRepository {
     }
 
     public void checkStreakStatus(String uid) {
+        // Legacy logic commented out as streak status is now handled in claimLessonRewards
+        /*
         db.collection("users").document(uid).get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult() != null) {
@@ -353,5 +431,6 @@ public class UserRepository {
                         }
                     }
                 });
+        */
     }
 }

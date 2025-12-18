@@ -59,7 +59,7 @@ public class StreakActivity extends AppCompatActivity {
 
         rvCalendar.setLayoutManager(new GridLayoutManager(this, 7));
         currentCalendar = Calendar.getInstance();
-
+        
         loadStudyDatesAndUpdateCalendar();
 
         if (btnPrevMonth != null) {

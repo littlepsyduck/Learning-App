@@ -1,5 +1,8 @@
 package com.example.learning_app.entities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class User {
     private String uid;
     private String username;
@@ -20,8 +23,11 @@ public class User {
     private String lastLessonDate;
     private int perfectLessonCount;
     private String dailyChallengeResetDate;
+    private int monthlyFreezesUsed;
+    private List<String> frozenDates;
 
     public User() {
+        this.frozenDates = new ArrayList<>();
     }
 
     public User(String uid, String fullName, String username, String email, String password, int age,
@@ -45,6 +51,8 @@ public class User {
         this.lastLessonDate = "";
         this.perfectLessonCount = 0;
         this.dailyChallengeResetDate = "";
+        this.monthlyFreezesUsed = 0;
+        this.frozenDates = new ArrayList<>();
     }
 
     public String getUid() {
@@ -197,5 +205,21 @@ public class User {
 
     public void setDailyChallengeResetDate(String dailyChallengeResetDate) {
         this.dailyChallengeResetDate = dailyChallengeResetDate;
+    }
+
+    public int getMonthlyFreezesUsed() {
+        return monthlyFreezesUsed;
+    }
+
+    public void setMonthlyFreezesUsed(int monthlyFreezesUsed) {
+        this.monthlyFreezesUsed = monthlyFreezesUsed;
+    }
+
+    public List<String> getFrozenDates() {
+        return frozenDates;
+    }
+
+    public void setFrozenDates(List<String> frozenDates) {
+        this.frozenDates = frozenDates;
     }
 }
