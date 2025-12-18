@@ -24,6 +24,7 @@ import com.bumptech.glide.Glide;
 import com.example.learning_app.R;
 import com.example.learning_app.entities.User;
 import com.example.learning_app.viewmodel.UserViewModel;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -32,7 +33,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class UserSettingsActivity extends AppCompatActivity {
 
-    private EditText etFullName, etUsername, etPassword, etAge, etEmail;
+    private EditText etFullName, etUsername, etCurrentPassword, etNewPassword, etAge, etEmail;
     private Button btnSave, btnLogout, btnDelete, btnChooseFile;
     private ImageView ivBack;
     private TextView tvFileSelected;
@@ -79,13 +80,30 @@ public class UserSettingsActivity extends AppCompatActivity {
                 }
             }
         });
+
+        userViewModel.getPasswordUpdateResult().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean success) {
+                if (success != null) {
+                    if (success) {
+                        Toast.makeText(UserSettingsActivity.this, "Đã lưu thay đổi!", Toast.LENGTH_SHORT).show();
+                        setResult(RESULT_OK);
+                        finish();
+                    } else {
+                        String error = userViewModel.getErrorMessage().getValue();
+                        Toast.makeText(UserSettingsActivity.this, error != null ? error : "Đổi mật khẩu thất bại!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
     }
 
     private void initViews() {
         ivBack = findViewById(R.id.ivBack);
         etFullName = findViewById(R.id.etFullName);
         etUsername = findViewById(R.id.etUsername);
-        etPassword = findViewById(R.id.etPassword);
+        etCurrentPassword = findViewById(R.id.etCurrentPassword);
+        etNewPassword = findViewById(R.id.etNewPassword);
         etAge = findViewById(R.id.etAge);
         etEmail = findViewById(R.id.etEmail);
         btnSave = findViewById(R.id.btnSave);
@@ -169,21 +187,44 @@ public class UserSettingsActivity extends AppCompatActivity {
         int newAge = 0;
         try { newAge = Integer.parseInt(etAge.getText().toString().trim()); } catch (Exception e) {}
 
-        String newPass = etPassword.getText().toString().trim();
-        String passwordToUpdate = newPass.isEmpty() ? null : newPass;
+        String currentPassword = etCurrentPassword.getText().toString().trim();
+        String newPassword = etNewPassword.getText().toString().trim();
 
         if (userViewModel.getCurrentFirebaseUser() != null) {
+            // Update profile info
             userViewModel.updateUserProfile(
                     userViewModel.getCurrentFirebaseUser().getUid(),
                     newFullName,
                     newUsername,
                     newAge,
-                    encodedImageBase64,
-                    passwordToUpdate
+                    encodedImageBase64
             );
-            Toast.makeText(this, "Đã lưu thay đổi!", Toast.LENGTH_SHORT).show();
-            setResult(RESULT_OK);
-            finish();
+
+            // Update password separately if provided
+            if (!newPassword.isEmpty()) {
+                // Validate new password
+                if (newPassword.length() < 6) {
+                    Toast.makeText(this, "Mật khẩu mới phải có ít nhất 6 ký tự!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                
+                // Check if current password is provided
+                if (currentPassword.isEmpty()) {
+                    Toast.makeText(this, "Vui lòng nhập mật khẩu hiện tại để đổi mật khẩu!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                
+                // Update password with re-authentication
+                FirebaseUser firebaseUser = userViewModel.getCurrentFirebaseUser();
+                if (firebaseUser != null && firebaseUser.getEmail() != null) {
+                    userViewModel.updatePassword(firebaseUser.getEmail(), currentPassword, newPassword);
+                }
+            } else {
+                // If no password change, just show success message after profile update
+                Toast.makeText(this, "Đã lưu thay đổi!", Toast.LENGTH_SHORT).show();
+                setResult(RESULT_OK);
+                finish();
+            }
         }
     }
 

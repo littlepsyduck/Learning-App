@@ -110,6 +110,7 @@ public class FriendsRepository {
         }
         Log.d(TAG, "Loading friends for user: " + currentUser.getUid());
 
+        // First, get the list of friend IDs from the friends subcollection
         db.collection("users").document(currentUser.getUid()).collection("friends")
                 .addSnapshotListener((snapshots, e) -> {
                     if (e != null) {
@@ -119,19 +120,58 @@ public class FriendsRepository {
                     }
 
                     if (snapshots != null) {
-                        List<User> friends = new ArrayList<>();
+                        List<String> friendIds = new ArrayList<>();
                         for (DocumentSnapshot doc : snapshots.getDocuments()) {
+                            String friendId = doc.getId();
+                            if (friendId != null) {
+                                friendIds.add(friendId);
+                            }
+                        }
+                        Log.d(TAG, "Found " + friendIds.size() + " friend IDs, loading their profiles...");
+                        
+                        // Now load the actual user data from the users collection to get latest info
+                        if (friendIds.isEmpty()) {
+                            friendsLiveData.setValue(new ArrayList<>());
+                            return;
+                        }
+                        
+                        loadFriendsFromUsersCollection(friendIds);
+                    } else {
+                        Log.d(TAG, "loadFriends: Snapshots is null");
+                    }
+                });
+    }
+    
+    private void loadFriendsFromUsersCollection(List<String> friendIds) {
+        List<Task<DocumentSnapshot>> tasks = new ArrayList<>();
+        for (String friendId : friendIds) {
+            tasks.add(db.collection("users").document(friendId).get());
+        }
+        
+        Tasks.whenAllComplete(tasks).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                List<User> friends = new ArrayList<>();
+                for (Task<?> t : tasks) {
+                    if (t.isSuccessful() && t.getResult() instanceof DocumentSnapshot) {
+                        DocumentSnapshot doc = (DocumentSnapshot) t.getResult();
+                        if (doc != null && doc.exists()) {
                             User friend = doc.toObject(User.class);
                             if (friend != null) {
                                 friends.add(friend);
                             }
                         }
-                        Log.d(TAG, "Successfully loaded " + friends.size() + " friends.");
-                        friendsLiveData.setValue(friends);
-                    } else {
-                        Log.d(TAG, "loadFriends: Snapshots is null");
+                    } else if (!t.isSuccessful()) {
+                        Log.w(TAG, "Failed to load a friend profile: " + t.getException());
                     }
-                });
+                }
+                Log.d(TAG, "Successfully loaded " + friends.size() + " friends with latest data.");
+                friendsLiveData.setValue(friends);
+            } else {
+                errorMessage.setValue("Failed to load friend profiles: " + 
+                        (task.getException() != null ? task.getException().getMessage() : "Unknown error"));
+                Log.e(TAG, "Error loading friend profiles", task.getException());
+            }
+        });
     }
 
     public void loadFriendRequests() {

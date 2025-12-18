@@ -152,11 +152,17 @@
             <TextView
                 style="@style/RegistrationLabel"
                 android:layout_marginTop="16dp"
-                android:text="Password" />
+                android:text="Đổi mật khẩu" />
             <EditText
-                android:id="@+id/etPassword"
+                android:id="@+id/etCurrentPassword"
                 style="@style/RegistrationEditText"
-                android:hint="Để trống nếu không đổi"
+                android:hint="Mật khẩu hiện tại (bắt buộc nếu đổi)"
+                android:inputType="textPassword" />
+            <EditText
+                android:id="@+id/etNewPassword"
+                style="@style/RegistrationEditText"
+                android:layout_marginTop="8dp"
+                android:hint="Mật khẩu mới (để trống nếu không đổi)"
                 android:inputType="textPassword" />
 
             <TextView

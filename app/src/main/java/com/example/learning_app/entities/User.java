@@ -8,7 +8,6 @@ public class User {
     private String username;
     private String fullName;
     private String email;
-    private String password;
     private int age;
     private String whyLearn;
     private String status;
@@ -30,13 +29,12 @@ public class User {
         this.frozenDates = new ArrayList<>();
     }
 
-    public User(String uid, String fullName, String username, String email, String password, int age,
+    public User(String uid, String fullName, String username, String email, int age,
             String whyLearn, String status, String joinDate, String lastDate) {
         this.uid = uid;
         this.fullName = fullName;
         this.username = username;
         this.email = email;
-        this.password = password;
         this.age = age;
         this.whyLearn = whyLearn;
         this.status = status;
@@ -85,14 +83,6 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public int getAge() {

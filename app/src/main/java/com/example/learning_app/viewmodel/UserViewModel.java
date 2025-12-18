@@ -34,6 +34,10 @@ public class UserViewModel extends AndroidViewModel {
         return repository.getErrorMessage();
     }
 
+    public LiveData<Boolean> getPasswordUpdateResult() {
+        return repository.getPasswordUpdateResult();
+    }
+
     public FirebaseUser getCurrentFirebaseUser() {
         return repository.getCurrentFirebaseUser();
     }
@@ -51,8 +55,12 @@ public class UserViewModel extends AndroidViewModel {
         repository.loadUserProfile(uid);
     }
 
-    public void updateUserProfile(String uid, String fullName, String username, int age, String avatarUrl, String password) {
-        repository.updateUserProfile(uid, fullName, username, age, avatarUrl, password);
+    public void updateUserProfile(String uid, String fullName, String username, int age, String avatarUrl) {
+        repository.updateUserProfile(uid, fullName, username, age, avatarUrl);
+    }
+
+    public void updatePassword(String email, String currentPassword, String newPassword) {
+        repository.updatePassword(email, currentPassword, newPassword);
     }
 
     public void deleteUserAccount(String uid) {

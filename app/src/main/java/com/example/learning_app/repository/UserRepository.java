@@ -8,7 +8,9 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.learning_app.entities.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -31,6 +33,7 @@ public class UserRepository {
     private MutableLiveData<User> currentUserLiveData;
     private MutableLiveData<Boolean> loginResult;
     private MutableLiveData<Boolean> registerResult;
+    private MutableLiveData<Boolean> passwordUpdateResult;
     private MutableLiveData<String> errorMessage;
 
     public UserRepository(Application application) {
@@ -39,6 +42,7 @@ public class UserRepository {
         currentUserLiveData = new MutableLiveData<>();
         loginResult = new MutableLiveData<>();
         registerResult = new MutableLiveData<>();
+        passwordUpdateResult = new MutableLiveData<>();
         errorMessage = new MutableLiveData<>();
     }
 
@@ -56,6 +60,10 @@ public class UserRepository {
 
     public LiveData<String> getErrorMessage() {
         return errorMessage;
+    }
+
+    public LiveData<Boolean> getPasswordUpdateResult() {
+        return passwordUpdateResult;
     }
 
     public FirebaseUser getCurrentFirebaseUser() {
@@ -98,7 +106,7 @@ public class UserRepository {
                             FirebaseUser firebaseUser = mAuth.getCurrentUser();
                             if (firebaseUser != null) {
                                 firebaseUser.sendEmailVerification();
-                                saveUserToFirestore(firebaseUser.getUid(), fullName, username, email, password, age, whyLearn, status);
+                                saveUserToFirestore(firebaseUser.getUid(), fullName, username, email, age, whyLearn, status);
                                 registerResult.setValue(true);
                             }
                         } else {
@@ -110,9 +118,9 @@ public class UserRepository {
     }
 
     private void saveUserToFirestore(String uid, String fullName, String username, String email,
-                                     String password, int age, String whyLearn, String status) {
+                                     int age, String whyLearn, String status) {
         String currentDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
-        User newUser = new User(uid, fullName, username, email, password, age, whyLearn, status, currentDate, currentDate);
+        User newUser = new User(uid, fullName, username, email, age, whyLearn, status, currentDate, currentDate);
 
         db.collection("users").document(uid)
                 .set(newUser)
@@ -204,16 +212,13 @@ public class UserRepository {
                 });
     }
 
-    public void updateUserProfile(String uid, String fullName, String username, int age, String avatarUrl, String password) {
+    public void updateUserProfile(String uid, String fullName, String username, int age, String avatarUrl) {
         Map<String, Object> updates = new HashMap<>();
         updates.put("fullName", fullName);
         updates.put("age", age);
         updates.put("username", username);
         if (avatarUrl != null) {
             updates.put("avatarUrl", avatarUrl);
-        }
-        if (password != null && !password.isEmpty()) {
-            updates.put("password", password);
         }
 
         db.collection("users").document(uid).update(updates)
@@ -227,6 +232,40 @@ public class UserRepository {
                         }
                     }
                 });
+    }
+
+    public void updatePassword(String email, String currentPassword, String newPassword) {
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null && email != null) {
+            // Create credential with current password for re-authentication
+            AuthCredential credential = EmailAuthProvider.getCredential(email, currentPassword);
+            
+            // Re-authenticate user first
+            user.reauthenticate(credential)
+                    .addOnCompleteListener(reAuthTask -> {
+                        if (reAuthTask.isSuccessful()) {
+                            // Re-authentication successful, now update password
+                            user.updatePassword(newPassword)
+                                    .addOnCompleteListener(updateTask -> {
+                                        if (updateTask.isSuccessful()) {
+                                            errorMessage.setValue(null);
+                                            passwordUpdateResult.setValue(true);
+                                        } else {
+                                            errorMessage.setValue("Failed to update password: " + 
+                                                    (updateTask.getException() != null ? updateTask.getException().getMessage() : "Unknown error"));
+                                            passwordUpdateResult.setValue(false);
+                                        }
+                                    });
+                        } else {
+                            // Re-authentication failed
+                            errorMessage.setValue("Mật khẩu hiện tại không đúng. Vui lòng thử lại!");
+                            passwordUpdateResult.setValue(false);
+                        }
+                    });
+        } else {
+            errorMessage.setValue("No user logged in");
+            passwordUpdateResult.setValue(false);
+        }
     }
 
     public void deleteUserAccount(String uid) {
