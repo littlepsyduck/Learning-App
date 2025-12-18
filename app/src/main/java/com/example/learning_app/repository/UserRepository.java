@@ -97,7 +97,7 @@ public class UserRepository {
     }
 
     public void register(String email, String password, String fullName, String username, int age,
-                        String whyLearn, String status) {
+            String whyLearn, String status) {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -106,11 +106,13 @@ public class UserRepository {
                             FirebaseUser firebaseUser = mAuth.getCurrentUser();
                             if (firebaseUser != null) {
                                 firebaseUser.sendEmailVerification();
-                                saveUserToFirestore(firebaseUser.getUid(), fullName, username, email, age, whyLearn, status);
+                                saveUserToFirestore(firebaseUser.getUid(), fullName, username, email, age, whyLearn,
+                                        status);
                                 registerResult.setValue(true);
                             }
                         } else {
-                            errorMessage.setValue(task.getException() != null ? task.getException().getMessage() : "Lỗi đăng ký");
+                            errorMessage.setValue(
+                                    task.getException() != null ? task.getException().getMessage() : "Lỗi đăng ký");
                             registerResult.setValue(false);
                         }
                     }
@@ -118,7 +120,7 @@ public class UserRepository {
     }
 
     private void saveUserToFirestore(String uid, String fullName, String username, String email,
-                                     int age, String whyLearn, String status) {
+            int age, String whyLearn, String status) {
         String currentDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
         User newUser = new User(uid, fullName, username, email, age, whyLearn, status, currentDate, currentDate);
 
@@ -128,7 +130,8 @@ public class UserRepository {
                     @Override
                     public void onComplete(Task<Void> task) {
                         if (!task.isSuccessful()) {
-                            errorMessage.setValue("Failed to save data: " + (task.getException() != null ? task.getException().getMessage() : ""));
+                            errorMessage.setValue("Failed to save data: "
+                                    + (task.getException() != null ? task.getException().getMessage() : ""));
                         }
                     }
                 });
@@ -141,19 +144,20 @@ public class UserRepository {
                         DocumentSnapshot document = task.getResult();
                         if (document.exists()) {
                             User user = document.toObject(User.class);
-                            
+
                             String today = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
                             String resetDate = user.getDailyChallengeResetDate();
-                            
+
                             // Check for new month to reset monthly freezes
                             SimpleDateFormat monthFormat = new SimpleDateFormat("MM/yyyy", Locale.getDefault());
                             String currentMonth = monthFormat.format(new Date());
                             String lastLessonDate = user.getLastLessonDate();
                             boolean isNewMonth = false;
-                            
+
                             if (lastLessonDate != null && !lastLessonDate.isEmpty()) {
                                 try {
-                                    Date lastDateObj = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).parse(lastLessonDate);
+                                    Date lastDateObj = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                                            .parse(lastLessonDate);
                                     if (lastDateObj != null) {
                                         String lastMonth = monthFormat.format(lastDateObj);
                                         if (!currentMonth.equals(lastMonth)) {
@@ -174,20 +178,21 @@ public class UserRepository {
                                 updates.put("dailyChallengeResetDate", today);
                                 needsUpdate = true;
                             }
-                            
+
                             if (isNewMonth) {
                                 updates.put("monthlyFreezesUsed", 0);
                                 needsUpdate = true;
                             }
-                            
+
                             if (needsUpdate) {
-                                db.collection("users").document(uid).update(updates).addOnCompleteListener(updateTask -> {
-                                    if (updateTask.isSuccessful()) {
-                                        loadUserProfile(uid, null);
-                                    } else {
-                                        currentUserLiveData.postValue(user);
-                                    }
-                                });
+                                db.collection("users").document(uid).update(updates)
+                                        .addOnCompleteListener(updateTask -> {
+                                            if (updateTask.isSuccessful()) {
+                                                loadUserProfile(uid, null);
+                                            } else {
+                                                currentUserLiveData.postValue(user);
+                                            }
+                                        });
                             } else {
                                 currentUserLiveData.postValue(user);
                             }
@@ -228,7 +233,8 @@ public class UserRepository {
                         if (task.isSuccessful()) {
                             loadUserProfile(uid);
                         } else {
-                            errorMessage.setValue("Failed to save: " + (task.getException() != null ? task.getException().getMessage() : ""));
+                            errorMessage.setValue("Failed to save: "
+                                    + (task.getException() != null ? task.getException().getMessage() : ""));
                         }
                     }
                 });
@@ -239,7 +245,7 @@ public class UserRepository {
         if (user != null && email != null) {
             // Create credential with current password for re-authentication
             AuthCredential credential = EmailAuthProvider.getCredential(email, currentPassword);
-            
+
             // Re-authenticate user first
             user.reauthenticate(credential)
                     .addOnCompleteListener(reAuthTask -> {
@@ -251,8 +257,10 @@ public class UserRepository {
                                             errorMessage.setValue(null);
                                             passwordUpdateResult.setValue(true);
                                         } else {
-                                            errorMessage.setValue("Failed to update password: " + 
-                                                    (updateTask.getException() != null ? updateTask.getException().getMessage() : "Unknown error"));
+                                            errorMessage.setValue("Failed to update password: " +
+                                                    (updateTask.getException() != null
+                                                            ? updateTask.getException().getMessage()
+                                                            : "Unknown error"));
                                             passwordUpdateResult.setValue(false);
                                         }
                                     });
@@ -300,22 +308,22 @@ public class UserRepository {
                             if (user != null) {
                                 Map<String, Object> updates = new HashMap<>();
                                 updates.put("xp", FieldValue.increment(xpGained));
-                                
+
                                 int currentHearts = user.getHearts();
                                 if (currentHearts == 0 && !doc.contains("hearts")) {
                                     currentHearts = 5;
                                 }
-                                
+
                                 if (currentHearts > 0) {
                                     updates.put("hearts", currentHearts - 1);
                                 }
 
                                 String lastLessonDate = user.getLastLessonDate();
                                 boolean isFirstLessonToday = lastLessonDate == null || !lastLessonDate.equals(today);
-                                
+
                                 if (isFirstLessonToday) {
                                     updates.put("lastLessonDate", today);
-                                    
+
                                     // Streak Logic Update
                                     if (lastLessonDate == null || lastLessonDate.isEmpty()) {
                                         // First lesson ever
@@ -334,23 +342,25 @@ public class UserRepository {
                                                 // Missed one day - Check freeze
                                                 int freezesUsed = user.getMonthlyFreezesUsed();
                                                 int currentFreezes = user.getFreeze();
-                                                
+
                                                 if (currentFreezes > 0 && freezesUsed < 2) {
                                                     // Use freeze
                                                     updates.put("freeze", FieldValue.increment(-1));
                                                     updates.put("monthlyFreezesUsed", FieldValue.increment(1));
                                                     updates.put("streak", FieldValue.increment(1)); // Continue streak
-                                                    
+
                                                     // Add missed day to frozenDates
                                                     Calendar cal = Calendar.getInstance();
                                                     cal.setTime(todayDate);
                                                     cal.add(Calendar.DAY_OF_MONTH, -1); // Yesterday was missed
                                                     String missedDateCalendar = sdfCalendar.format(cal.getTime());
-                                                    
+
                                                     List<String> frozenDates = user.getFrozenDates();
-                                                    if (frozenDates == null) frozenDates = new ArrayList<>();
+                                                    if (frozenDates == null)
+                                                        frozenDates = new ArrayList<>();
                                                     if (!frozenDates.contains(missedDateCalendar)) {
-                                                        updates.put("frozenDates", FieldValue.arrayUnion(missedDateCalendar));
+                                                        updates.put("frozenDates",
+                                                                FieldValue.arrayUnion(missedDateCalendar));
                                                     }
                                                 } else {
                                                     // No freezes left or limit reached - Reset streak
@@ -365,7 +375,7 @@ public class UserRepository {
                                             updates.put("streak", 1);
                                         }
                                     }
-                                    
+
                                     List<String> studyDates = (List<String>) doc.get("studyDates");
                                     if (studyDates == null) {
                                         studyDates = new ArrayList<>();
@@ -394,7 +404,6 @@ public class UserRepository {
                     }
                 });
     }
-    
 
     public void decrementHeart(String uid) {
         db.collection("users").document(uid).get()
@@ -432,45 +441,48 @@ public class UserRepository {
     }
 
     public void checkStreakStatus(String uid) {
-        // Legacy logic commented out as streak status is now handled in claimLessonRewards
+        // Legacy logic commented out as streak status is now handled in
+        // claimLessonRewards
         /*
-        db.collection("users").document(uid).get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null) {
-                        DocumentSnapshot doc = task.getResult();
-                        if (doc.exists()) {
-                            User user = doc.toObject(User.class);
-                            if (user != null && user.getLastLessonDate() != null && !user.getLastLessonDate().isEmpty()) {
-                                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-                                String today = sdf.format(new Date());
-                                String lastDate = user.getLastLessonDate();
-
-                                try {
-                                    Date lastLessonDate = sdf.parse(lastDate);
-                                    Date todayDate = sdf.parse(today);
-                                    if (lastLessonDate != null && todayDate != null) {
-                                        long diffInMillis = todayDate.getTime() - lastLessonDate.getTime();
-                                        long diffInDays = diffInMillis / (1000 * 60 * 60 * 24);
-
-                                        if (diffInDays > 1) {
-                                            if (user.getFreeze() > 0) {
-                                                Map<String, Object> updates = new HashMap<>();
-                                                updates.put("freeze", FieldValue.increment(-1));
-                                                db.collection("users").document(uid).update(updates);
-                                            } else {
-                                                Map<String, Object> updates = new HashMap<>();
-                                                updates.put("streak", 0);
-                                                db.collection("users").document(uid).update(updates);
-                                            }
-                                        }
-                                    }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                    }
-                });
-        */
+         * db.collection("users").document(uid).get()
+         * .addOnCompleteListener(task -> {
+         * if (task.isSuccessful() && task.getResult() != null) {
+         * DocumentSnapshot doc = task.getResult();
+         * if (doc.exists()) {
+         * User user = doc.toObject(User.class);
+         * if (user != null && user.getLastLessonDate() != null &&
+         * !user.getLastLessonDate().isEmpty()) {
+         * SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy",
+         * Locale.getDefault());
+         * String today = sdf.format(new Date());
+         * String lastDate = user.getLastLessonDate();
+         * 
+         * try {
+         * Date lastLessonDate = sdf.parse(lastDate);
+         * Date todayDate = sdf.parse(today);
+         * if (lastLessonDate != null && todayDate != null) {
+         * long diffInMillis = todayDate.getTime() - lastLessonDate.getTime();
+         * long diffInDays = diffInMillis / (1000 * 60 * 60 * 24);
+         * 
+         * if (diffInDays > 1) {
+         * if (user.getFreeze() > 0) {
+         * Map<String, Object> updates = new HashMap<>();
+         * updates.put("freeze", FieldValue.increment(-1));
+         * db.collection("users").document(uid).update(updates);
+         * } else {
+         * Map<String, Object> updates = new HashMap<>();
+         * updates.put("streak", 0);
+         * db.collection("users").document(uid).update(updates);
+         * }
+         * }
+         * }
+         * } catch (Exception e) {
+         * e.printStackTrace();
+         * }
+         * }
+         * }
+         * }
+         * });
+         */
     }
 }

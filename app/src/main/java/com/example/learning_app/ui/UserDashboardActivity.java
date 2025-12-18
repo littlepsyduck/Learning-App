@@ -8,6 +8,7 @@ import com.example.learning_app.R;
 import com.example.learning_app.ui.fragment.FriendsFragment;
 import com.example.learning_app.ui.fragment.LeaderboardFragment;
 import com.example.learning_app.ui.fragment.QuestFragment;
+import com.example.learning_app.ui.fragment.SpeechPracticeFragment;
 import com.example.learning_app.ui.fragment.UserProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -20,10 +21,10 @@ public class UserDashboardActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        
+
         if (currentUser == null || !currentUser.isEmailVerified()) {
             Intent intent = new Intent(UserDashboardActivity.this, UserWelcomeActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -31,7 +32,7 @@ public class UserDashboardActivity extends AppCompatActivity {
             finish();
             return;
         }
-        
+
         setContentView(R.layout.activity_user_dashboard);
 
         loggedInUsername = getIntent().getStringExtra("USERNAME");
@@ -41,19 +42,19 @@ public class UserDashboardActivity extends AppCompatActivity {
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setItemIconTintList(null);
-        
+
         String selectedTab = getIntent().getStringExtra("SELECTED_TAB");
         Fragment initialFragment = null;
         int selectedItemId = R.id.nav_profile;
-        
+
         if (selectedTab != null) {
             switch (selectedTab) {
                 case "quest":
                     initialFragment = new QuestFragment();
                     selectedItemId = R.id.nav_chest;
                     break;
-                case "friends":
-                    initialFragment = new FriendsFragment();
+                case "speech":
+                    initialFragment = new SpeechPracticeFragment();
                     selectedItemId = R.id.nav_shop;
                     break;
                 case "leaderboard":
@@ -68,9 +69,9 @@ public class UserDashboardActivity extends AppCompatActivity {
         } else {
             initialFragment = createProfileFragment();
         }
-        
+
         bottomNav.setSelectedItemId(selectedItemId);
-        
+
         if (initialFragment != null) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, initialFragment)
@@ -83,14 +84,14 @@ public class UserDashboardActivity extends AppCompatActivity {
 
             if (itemId == R.id.nav_home) {
                 Intent intent = new Intent(UserDashboardActivity.this, MainActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
-                finish();
+                finish(); // Finish DashboardActivity to maintain consistent back stack
                 return true;
             } else if (itemId == R.id.nav_chest) {
                 selectedFragment = new QuestFragment();
             } else if (itemId == R.id.nav_shop) {
-                selectedFragment = new FriendsFragment();
+                selectedFragment = new SpeechPracticeFragment();
             } else if (itemId == R.id.nav_shield) {
                 selectedFragment = new LeaderboardFragment();
             } else if (itemId == R.id.nav_profile) {
@@ -116,4 +117,3 @@ public class UserDashboardActivity extends AppCompatActivity {
         return fragment;
     }
 }
-

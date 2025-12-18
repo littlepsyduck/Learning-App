@@ -20,6 +20,9 @@ public interface LearningDao {
 
     @Query("SELECT * FROM lessons ORDER BY sectionId ASC, id ASC")
     LiveData<List<Lesson>> getAllLessons();
+    
+    @Query("SELECT * FROM lessons ORDER BY sectionId ASC, id ASC")
+    List<Lesson> getAllLessonsSync();
 
     @Query("SELECT * FROM questions WHERE lessonId = :lessonId")
     LiveData<List<Question>> getQuestionsByLesson(int lessonId);
@@ -29,6 +32,11 @@ public interface LearningDao {
 
     @Query("DELETE FROM questions")
     void deleteAllQuestions();
+    
+    // Reset SQLite auto-increment sequence for lessons table
+    // WARNING: This will reset lesson IDs, causing existing Firestore progress to become invalid
+    @Query("DELETE FROM sqlite_sequence WHERE name='lessons'")
+    void resetLessonsSequence();
 
     @Query("SELECT COUNT(*) FROM lessons")
     int getLessonCount();

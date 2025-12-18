@@ -54,5 +54,9 @@ public class LessonViewModel extends AndroidViewModel {
     public void updateLessonLocked(int lessonId, boolean isLocked) {
         mRepository.updateLessonLocked(lessonId, isLocked);
     }
+    
+    public void syncProgressFromFirestore() {
+        mRepository.syncProgressFromFirestore();
+    }
 }
 

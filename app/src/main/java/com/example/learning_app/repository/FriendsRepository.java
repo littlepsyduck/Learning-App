@@ -15,6 +15,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -143,28 +144,47 @@ public class FriendsRepository {
     }
     
     private void loadFriendsFromUsersCollection(List<String> friendIds) {
-        List<Task<DocumentSnapshot>> tasks = new ArrayList<>();
-        for (String friendId : friendIds) {
-            tasks.add(db.collection("users").document(friendId).get());
+        if (friendIds.isEmpty()) {
+            friendsLiveData.setValue(new ArrayList<>());
+            return;
         }
         
-        Tasks.whenAllComplete(tasks).addOnCompleteListener(task -> {
+        // Firestore whereIn() supports up to 10 items per query
+        // Split into batches of 10 for efficient batch reads
+        int batchSize = 10;
+        List<Task<QuerySnapshot>> batchTasks = new ArrayList<>();
+        
+        for (int i = 0; i < friendIds.size(); i += batchSize) {
+            int end = Math.min(i + batchSize, friendIds.size());
+            List<String> batchIds = new ArrayList<>(friendIds.subList(i, end));
+            
+            // Use whereIn query for batch read (more efficient than individual gets)
+            // This reduces from N queries to N/10 queries
+            batchTasks.add(db.collection("users")
+                    .whereIn(FieldPath.documentId(), batchIds)
+                    .get());
+        }
+        
+        // Wait for all batches to complete
+        Tasks.whenAllComplete(batchTasks).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 List<User> friends = new ArrayList<>();
-                for (Task<?> t : tasks) {
-                    if (t.isSuccessful() && t.getResult() instanceof DocumentSnapshot) {
-                        DocumentSnapshot doc = (DocumentSnapshot) t.getResult();
-                        if (doc != null && doc.exists()) {
-                            User friend = doc.toObject(User.class);
-                            if (friend != null) {
-                                friends.add(friend);
+                for (Task<?> batchTask : batchTasks) {
+                    if (batchTask.isSuccessful() && batchTask.getResult() instanceof QuerySnapshot) {
+                        QuerySnapshot querySnapshot = (QuerySnapshot) batchTask.getResult();
+                        for (QueryDocumentSnapshot doc : querySnapshot) {
+                            if (doc != null && doc.exists()) {
+                                User friend = doc.toObject(User.class);
+                                if (friend != null) {
+                                    friends.add(friend);
+                                }
                             }
                         }
-                    } else if (!t.isSuccessful()) {
-                        Log.w(TAG, "Failed to load a friend profile: " + t.getException());
+                    } else if (!batchTask.isSuccessful()) {
+                        Log.w(TAG, "Failed to load a batch of friend profiles: " + batchTask.getException());
                     }
                 }
-                Log.d(TAG, "Successfully loaded " + friends.size() + " friends with latest data.");
+                Log.d(TAG, "Successfully loaded " + friends.size() + " friends with latest data (using batch whereIn query).");
                 friendsLiveData.setValue(friends);
             } else {
                 errorMessage.setValue("Failed to load friend profiles: " + 

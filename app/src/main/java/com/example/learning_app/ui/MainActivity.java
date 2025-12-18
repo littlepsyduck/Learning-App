@@ -45,6 +45,11 @@ public class MainActivity extends AppCompatActivity {
     private ProgressViewModel mProgressViewModel;
     private BottomNavigationView bottomNav;
     private User currentUser;
+    
+    // Performance optimization: Debounce sync calls
+    private long lastSyncTime = 0;
+    private static final long SYNC_COOLDOWN_MS = 30000; // 30 seconds cooldown between syncs
+    private boolean isInitialSyncDone = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         
         if (firebaseUser == null) {
             Intent intent = new Intent(MainActivity.this, UserWelcomeActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             finish();
             return;
@@ -102,6 +107,9 @@ public class MainActivity extends AppCompatActivity {
 
         // Import data from JSON if database is empty
         mLessonViewModel.importDataFromJson();
+        
+        // Sync lesson progress from Firestore (initial sync)
+        syncProgressIfNeeded();
 
         // Observe LiveData from ViewModel
         observeLessons();
@@ -121,6 +129,29 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         if (mProgressViewModel != null) {
             mProgressViewModel.reloadUserProfile();
+        }
+        // Sync lesson progress when returning to MainActivity (with debouncing)
+        syncProgressIfNeeded();
+    }
+    
+    /**
+     * Sync progress from Firestore with debouncing to avoid excessive network calls
+     */
+    private void syncProgressIfNeeded() {
+        if (mLessonViewModel == null) {
+            return;
+        }
+        
+        long currentTime = System.currentTimeMillis();
+        long timeSinceLastSync = currentTime - lastSyncTime;
+        
+        // Only sync if:
+        // 1. It's the first sync (initial load), OR
+        // 2. At least SYNC_COOLDOWN_MS milliseconds have passed since last sync
+        if (!isInitialSyncDone || timeSinceLastSync >= SYNC_COOLDOWN_MS) {
+            mLessonViewModel.syncProgressFromFirestore();
+            lastSyncTime = currentTime;
+            isInitialSyncDone = true;
         }
     }
 
@@ -246,14 +277,15 @@ public class MainActivity extends AppCompatActivity {
                 if (itemId == R.id.nav_chest) {
                     intent.putExtra("SELECTED_TAB", "quest");
                 } else if (itemId == R.id.nav_shop) {
-                    intent.putExtra("SELECTED_TAB", "friends");
+                    intent.putExtra("SELECTED_TAB", "speech");
                 } else if (itemId == R.id.nav_shield) {
                     intent.putExtra("SELECTED_TAB", "leaderboard");
                 } else if (itemId == R.id.nav_profile) {
                     intent.putExtra("SELECTED_TAB", "profile");
                 }
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
+                finish(); // Finish MainActivity to maintain consistent back stack
                 return true;
             }
             return false;

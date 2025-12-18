@@ -13,6 +13,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -539,6 +540,21 @@ public class LessonActivity extends AppCompatActivity {
         
         // Observe LiveData
         viewModel.getAllLessons().observe(this, lessonsObserver);
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Show confirmation dialog before exiting lesson
+        new AlertDialog.Builder(this)
+                .setTitle("Thoát bài học?")
+                .setMessage("Tiến trình của bạn sẽ không được lưu. Bạn có chắc muốn thoát?")
+                .setPositiveButton("Thoát", (dialog, which) -> {
+                    setResult(RESULT_CANCELED);
+                    super.onBackPressed(); // Call parent implementation to finish activity
+                })
+                .setNegativeButton("Ở lại", null) // Cancel dialog, stay in lesson
+                .setCancelable(true)
+                .show();
     }
 
     @Override
