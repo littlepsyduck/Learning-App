@@ -99,25 +99,10 @@ public class FriendRequestsFragment extends Fragment implements FriendRequestAda
 
     @Override
     public void onAccept(FriendRequest request, int position) {
-        String requestDocId = requestDocIdMap.get(request);
-        if (requestDocId == null) {
-            for (Map.Entry<FriendRequest, String> entry : requestDocIdMap.entrySet()) {
-                if (entry.getKey().getSenderId().equals(request.getSenderId()) &&
-                    entry.getKey().getReceiverId().equals(request.getReceiverId())) {
-                    requestDocId = entry.getValue();
-                    break;
-                }
-            }
-        }
+        String requestDocId = findRequestDocId(request);
         if (requestDocId != null) {
             friendsViewModel.acceptFriendRequest(request, requestDocId);
             Toast.makeText(getContext(), "Accepted " + request.getSenderName() + "'s request", Toast.LENGTH_SHORT).show();
-            requestList.remove(position);
-            adapter.notifyItemRemoved(position);
-            adapter.notifyItemRangeChanged(position, requestList.size());
-            if (requestList.isEmpty()) {
-                tvEmptyState.setVisibility(View.VISIBLE);
-            }
         } else {
             Toast.makeText(getContext(), "Could not find request document ID.", Toast.LENGTH_SHORT).show();
         }
@@ -125,6 +110,16 @@ public class FriendRequestsFragment extends Fragment implements FriendRequestAda
 
     @Override
     public void onDecline(FriendRequest request, int position) {
+        String requestDocId = findRequestDocId(request);
+        if (requestDocId != null) {
+            friendsViewModel.declineFriendRequest(requestDocId);
+            Toast.makeText(getContext(), "Declined request", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getContext(), "Could not find request to update.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private String findRequestDocId(FriendRequest request) {
         String requestDocId = requestDocIdMap.get(request);
         if (requestDocId == null) {
             for (Map.Entry<FriendRequest, String> entry : requestDocIdMap.entrySet()) {
@@ -135,18 +130,7 @@ public class FriendRequestsFragment extends Fragment implements FriendRequestAda
                 }
             }
         }
-        if (requestDocId != null) {
-            friendsViewModel.declineFriendRequest(requestDocId);
-            Toast.makeText(getContext(), "Declined request", Toast.LENGTH_SHORT).show();
-            requestList.remove(position);
-            adapter.notifyItemRemoved(position);
-            adapter.notifyItemRangeChanged(position, requestList.size());
-            if (requestList.isEmpty()) {
-                tvEmptyState.setVisibility(View.VISIBLE);
-            }
-        } else {
-            Toast.makeText(getContext(), "Could not find request to update.", Toast.LENGTH_SHORT).show();
-        }
+        return requestDocId;
     }
 }
 

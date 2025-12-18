@@ -140,6 +140,7 @@ public class FriendsRepository {
 
         db.collection("friend_requests")
                 .whereEqualTo("receiverId", currentUser.getUid())
+                .whereEqualTo("status", "PENDING")
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .addSnapshotListener((snapshots, e) -> {
                     if (e != null) {
