@@ -59,6 +59,10 @@ public class DailyStreakActivity extends AppCompatActivity {
                 // Past days of the week within the current streak
                 ivStatus.setImageResource(R.drawable.ic_check_circle);
                 ivStatus.setColorFilter(ContextCompat.getColor(this, R.color.streak_fire));
+            } else if (i == todayIndex && currentStreak > 0) {
+                // Today, if they have a streak, show it as completed
+                ivStatus.setImageResource(R.drawable.ic_check_circle);
+                ivStatus.setColorFilter(ContextCompat.getColor(this, R.color.streak_fire));
             } else {
                 // Future days or days not in the current streak
                 ivStatus.setImageResource(R.drawable.ic_check_circle_outline);

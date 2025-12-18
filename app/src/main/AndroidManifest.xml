@@ -53,6 +53,9 @@
         <activity
             android:name=".ui.StreakActivity"
             android:exported="false" />
+        <activity
+            android:name=".ui.game.DailyStreakActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

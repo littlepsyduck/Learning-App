@@ -170,7 +170,7 @@ public class StreakActivity extends AppCompatActivity {
     private void updateCalendarUI(Map<String, Integer> statusMap) {
         if (tvMonthYear == null || rvCalendar == null) return;
 
-        SimpleDateFormat sdf = new SimpleDateFormat("'tháng' MM 'năm' yyyy", new Locale("vi", "VN"));
+        SimpleDateFormat sdf = new SimpleDateFormat("MMMM yyyy", Locale.ENGLISH);
         tvMonthYear.setText(sdf.format(currentCalendar.getTime()));
 
         List<String> daysList = new ArrayList<>();

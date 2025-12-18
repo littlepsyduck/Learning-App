@@ -9,7 +9,7 @@
         android:icon="@drawable/ic_trophy" android:title="League"/>
     <item
         android:id="@+id/nav_chest"
-        android:icon="@drawable/ic_chest" android:title="Chest"/>
+        android:icon="@drawable/ic_chest" android:title="Challenge"/>
     <item
         android:id="@+id/nav_shop"
         android:icon="@drawable/ic_friend" android:title="Friend"/>

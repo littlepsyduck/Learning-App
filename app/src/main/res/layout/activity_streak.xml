@@ -46,7 +46,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="CÁ NHÂN"
+                android:text="PERSONAL"
                 android:textColor="#FFFFFF"
                 android:textStyle="bold"
                 android:paddingBottom="12dp"
@@ -57,7 +57,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="BẠN BÈ"
+                android:text="FRIENDS"
                 android:textColor="#CCFFFFFF"
                 android:textStyle="bold"
                 android:paddingBottom="12dp"/>
@@ -98,7 +98,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ngày streak!"
+                    android:text="day streak!"
                     android:textColor="#FFFFFF"
                     android:textSize="24sp"
                     android:textStyle="bold" />
@@ -127,7 +127,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
-                        android:text="Hôm nay bạn đã nối dài streak sớm hơn mọi khi 9 tiếng!"
+                        android:text="You extended your streak 9 hours earlier than usual today!"
                         android:textColor="#CFD8DC"
                         android:textSize="16sp"/>
                 </LinearLayout>
@@ -170,7 +170,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="6dp"/>
                         </LinearLayout>
-                        <TextView android:text="Ngày học" android:textColor="#90A4AE" android:textSize="12sp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                        <TextView android:text="Study Day" android:textColor="#90A4AE" android:textSize="12sp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
@@ -205,7 +205,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="6dp"/>
                         </LinearLayout>
-                        <TextView android:text="Số freeze còn lại" android:textColor="#90A4AE" android:textSize="12sp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                        <TextView android:text="Streak Freezes" android:textColor="#90A4AE" android:textSize="12sp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
@@ -233,7 +233,7 @@
                             android:id="@+id/tvMonthYear"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="tháng 12 năm 2025"
+                            android:text="December 2025"
                             android:textColor="#FFFFFF"
                             android:textStyle="bold"
                             android:textSize="18sp"
@@ -267,13 +267,13 @@
                         android:orientation="horizontal"
                         android:weightSum="7"
                         android:layout_marginBottom="8dp">
-                        <TextView android:text="T2" android:gravity="center" android:textColor="#90A4AE" android:textStyle="bold" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"/>
-                        <TextView android:text="T3" android:gravity="center" android:textColor="#90A4AE" android:textStyle="bold" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"/>
-                        <TextView android:text="T4" android:gravity="center" android:textColor="#90A4AE" android:textStyle="bold" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"/>
-                        <TextView android:text="T5" android:gravity="center" android:textColor="#90A4AE" android:textStyle="bold" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"/>
-                        <TextView android:text="T6" android:gravity="center" android:textColor="#90A4AE" android:textStyle="bold" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"/>
-                        <TextView android:text="T7" android:gravity="center" android:textColor="#90A4AE" android:textStyle="bold" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"/>
-                        <TextView android:text="CN" android:gravity="center" android:textColor="#90A4AE" android:textStyle="bold" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"/>
+                        <TextView android:text="M" android:gravity="center" android:textColor="#90A4AE" android:textStyle="bold" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"/>
+                        <TextView android:text="T" android:gravity="center" android:textColor="#90A4AE" android:textStyle="bold" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"/>
+                        <TextView android:text="W" android:gravity="center" android:textColor="#90A4AE" android:textStyle="bold" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"/>
+                        <TextView android:text="T" android:gravity="center" android:textColor="#90A4AE" android:textStyle="bold" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"/>
+                        <TextView android:text="F" android:gravity="center" android:textColor="#90A4AE" android:textStyle="bold" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"/>
+                        <TextView android:text="S" android:gravity="center" android:textColor="#90A4AE" android:textStyle="bold" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"/>
+                        <TextView android:text="S" android:gravity="center" android:textColor="#90A4AE" android:textStyle="bold" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"/>
                     </LinearLayout>
 
                     <androidx.recyclerview.widget.RecyclerView
@@ -294,14 +294,14 @@
             android:gravity="center"
             android:padding="40dp">
             <ImageView
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:src="@drawable/ic_duo"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:src="@drawable/ic_duo1"
                 android:layout_marginBottom="16dp"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Học cùng bạn bè vui hơn!"
+                android:text="Learning with friends is more fun!"
                 android:textColor="#FFFFFF"
                 android:textStyle="bold"
                 android:textSize="20sp"
@@ -309,7 +309,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Theo dõi bạn bè để cùng nhau thi đua và giữ streak nhé."
+                android:text="Follow friends to compete and keep your streak together."
                 android:textColor="#CCFFFFFF"
                 android:textSize="16sp"
                 android:gravity="center"
@@ -318,7 +318,7 @@
                 android:id="@+id/btnFindFriends"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TÌM BẠN BÈ"
+                android:text="FIND FRIENDS"
                 android:textColor="#FFFFFF"
                 android:textStyle="bold"
                 android:background="#2196F3"

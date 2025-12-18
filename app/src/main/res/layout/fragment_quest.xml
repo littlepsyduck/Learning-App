@@ -5,44 +5,45 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:fitsSystemWindows="true"
     android:background="#8761D6">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#8761D6"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
-        android:paddingTop="24dp" 
+        android:fitsSystemWindows="true"
+        android:paddingTop="70dp"
         android:paddingBottom="40dp">
 
         <TextView
             android:id="@+id/tvWelcome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="CHÀO MỪNG!"
+            android:text="WELCOME!"
             android:textColor="#FFFFFF"
             android:textSize="28sp"
             android:textStyle="bold"
+            android:layout_marginStart="32dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Hoàn thành nhiệm vụ để nhận thưởng!"
-            android:textColor="#E1BEE7"
-            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="32dp"
+            android:text="Complete quests to get rewards!"
+            android:textColor="#E1BEE7"
             app:layout_constraintEnd_toStartOf="@id/imgDuo"
-            app:layout_constraintTop_toBottomOf="@id/tvWelcome"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvWelcome" />
 
         <ImageView
             android:id="@+id/imgDuo"
             android:layout_width="91dp"
             android:layout_height="119dp"
+            android:layout_marginEnd="20dp"
             android:rotation="15"
             android:src="@drawable/ic_duo"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -55,84 +56,100 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="-30dp"
+        android:clipToPadding="false"
         android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/bg_quest_sheet"
             android:orientation="vertical"
             android:paddingHorizontal="16dp"
-            android:paddingBottom="16dp"
-            android:background="@drawable/bg_rounded_card"
-            android:paddingTop="30dp">
+            android:paddingTop="30dp"
+            android:paddingBottom="100dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp">
+
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="NHIỆM VỤ HÀNG NGÀY"
+                    android:text="DAILY QUESTS"
+                    android:textColor="#4B4B4B"
                     android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:textColor="#4B4B4B"/>
+                    android:textStyle="bold" />
+
                 <TextView
+                    android:id="@+id/tvTimeRemaining"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="🕒 3 GIỜ"
+                    android:text="🕒 3 HOURS"
                     android:textColor="#FFC107"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
+                app:cardBackgroundColor="#FFFFFF"
                 app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
-                app:cardBackgroundColor="#FFFFFF">
+                app:cardElevation="2dp">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:gravity="center_vertical">
+                    android:gravity="center_vertical"
+                    android:padding="16dp">
 
-                    <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/ic_bolt" />
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_bolt" />
 
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
                         <TextView
-                            android:text="Thu thập XP"
-                            android:textStyle="bold"
-                            android:textSize="16sp"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
+                            android:layout_height="wrap_content"
+                            android:text="Earn XP"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
                         <TextView
                             android:id="@+id/txtProgressXP"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
                             android:text="0 / 50 XP"
                             android:textColor="#757575"
-                            android:textSize="14sp"
-                            android:layout_marginTop="2dp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
+                            android:textSize="14sp" />
+
                         <ProgressBar
                             android:id="@+id/progressBarXP"
                             style="?android:attr/progressBarStyleHorizontal"
                             android:layout_width="match_parent"
                             android:layout_height="10dp"
-                            android:progress="0"
+                            android:layout_marginTop="8dp"
                             android:max="50"
-                            android:progressTint="#FFC107"
-                            android:layout_marginTop="8dp"/>
+                            android:progress="0"
+                            android:progressTint="#FFC107" />
                     </LinearLayout>
 
                     <ImageView
                         android:id="@+id/imgChestXP"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:src="@drawable/ic_chest1"
-                        android:layout_marginStart="12dp"/>
+                        android:layout_marginStart="12dp"
+                        android:src="@drawable/ic_chest1" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -140,49 +157,61 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
+                app:cardBackgroundColor="#FFFFFF"
                 app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
-                app:cardBackgroundColor="#FFFFFF">
+                app:cardElevation="2dp">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:gravity="center_vertical">
+                    android:gravity="center_vertical"
+                    android:padding="16dp">
 
-                    <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/ic_fire" />
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_fire" />
 
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
                         <TextView
-                            android:text="Streak mở màn"
-                            android:textStyle="bold"
-                            android:textSize="16sp"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
+                            android:layout_height="wrap_content"
+                            android:text="Start Streak"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
                         <TextView
                             android:id="@+id/txtProgressStreak"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
                             android:text="0 / 1"
                             android:textColor="#757575"
-                            android:textSize="14sp"
-                            android:layout_marginTop="2dp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
+                            android:textSize="14sp" />
+
                         <ProgressBar
                             android:id="@+id/progressBarStreak"
                             style="?android:attr/progressBarStyleHorizontal"
                             android:layout_width="match_parent"
                             android:layout_height="10dp"
-                            android:progress="0"
+                            android:layout_marginTop="8dp"
                             android:max="1"
-                            android:progressTint="#FF9800"
-                            android:layout_marginTop="8dp"/>
+                            android:progress="0"
+                            android:progressTint="#FF9800" />
                     </LinearLayout>
 
                     <ImageView
                         android:id="@+id/imgChestStreak"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:src="@drawable/ic_chest2"
-                        android:layout_marginStart="12dp"/>
+                        android:layout_marginStart="12dp"
+                        android:src="@drawable/ic_chest2" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -191,64 +220,89 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
+                app:cardBackgroundColor="#FFFFFF"
                 app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
-                app:cardBackgroundColor="#FFFFFF">
+                app:cardElevation="2dp">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:gravity="center_vertical">
+                    android:gravity="center_vertical"
+                    android:padding="16dp">
 
-                    <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@drawable/ic_target" />
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_target" />
 
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
                         <TextView
-                            android:text="Hoàn hảo"
-                            android:textStyle="bold"
-                            android:textSize="16sp"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
+                            android:layout_height="wrap_content"
+                            android:text="Perfect"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
                         <TextView
                             android:id="@+id/txtProgressAccuracy"
-                            android:text="Hoàn thành 2 bài với độ chính xác >90%"
-                            android:textColor="#757575"
-                            android:textSize="14sp"
-                            android:layout_marginTop="2dp"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="Complete 2 lessons with >90% accuracy"
+                            android:textColor="#757575"
+                            android:textSize="14sp" />
+
                         <ProgressBar
                             android:id="@+id/progressBarAccuracy"
                             style="?android:attr/progressBarStyleHorizontal"
                             android:layout_width="match_parent"
                             android:layout_height="10dp"
-                            android:progress="0"
+                            android:layout_marginTop="8dp"
                             android:max="2"
-                            android:progressTint="#4CAF50"
-                            android:layout_marginTop="8dp"/>
+                            android:progress="0"
+                            android:progressTint="#4CAF50" />
                     </LinearLayout>
 
                     <ImageView
                         android:id="@+id/imgChestAccuracy"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:src="@drawable/ic_chest" 
-                        android:layout_marginStart="12dp"/>
+                        android:layout_marginStart="12dp"
+                        android:src="@drawable/ic_chest" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
+                app:cardBackgroundColor="#F5F5F5"
                 app:cardCornerRadius="16dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="#F5F5F5">
+                app:cardElevation="0dp">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center">
-                    <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_lock" app:tint="#BDBDBD"/>
-                    <TextView android:text="More quests unlock soon" android:textColor="#BDBDBD" android:textStyle="bold" android:layout_marginStart="8dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_lock"
+                        app:tint="#BDBDBD" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="More quests unlock soon"
+                        android:textColor="#BDBDBD"
+                        android:textStyle="bold" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 

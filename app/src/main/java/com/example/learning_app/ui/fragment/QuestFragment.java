@@ -1,6 +1,7 @@
 package com.example.learning_app.ui.fragment;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +17,14 @@ import com.example.learning_app.R;
 import com.example.learning_app.entities.User;
 import com.example.learning_app.viewmodel.ProgressViewModel;
 
+import java.util.Calendar;
+
 public class QuestFragment extends Fragment {
 
     private ProgressViewModel viewModel;
+    private TextView tvTimeRemaining;
+    private Handler handler;
+    private Runnable updateTimeRunnable;
 
     @Nullable
     @Override
@@ -36,6 +42,10 @@ public class QuestFragment extends Fragment {
         TextView txtProgressAccuracy = view.findViewById(R.id.txtProgressAccuracy);
         ProgressBar progressBarAccuracy = view.findViewById(R.id.progressBarAccuracy);
         ImageView imgChestAccuracy = view.findViewById(R.id.imgChestAccuracy);
+        tvTimeRemaining = view.findViewById(R.id.tvTimeRemaining);
+
+        // Start timer to update remaining time
+        startTimer();
 
         viewModel.getCurrentUser().observe(getViewLifecycleOwner(), user -> {
             if (user != null) {
@@ -70,7 +80,7 @@ public class QuestFragment extends Fragment {
                 int currentPerfectLessons = user.getPerfectLessonCount();
                 int targetPerfectLessons = 2;
 
-                txtProgressAccuracy.setText("Hoàn thành " + currentPerfectLessons + " / " + targetPerfectLessons + " bài với độ chính xác >90%");
+                txtProgressAccuracy.setText("Complete " + currentPerfectLessons + " / " + targetPerfectLessons + " lessons with >90% accuracy");
                 progressBarAccuracy.setMax(targetPerfectLessons);
                 progressBarAccuracy.setProgress(currentPerfectLessons);
 
@@ -84,12 +94,48 @@ public class QuestFragment extends Fragment {
 
         return view;
     }
+
+    private void startTimer() {
+        handler = new Handler();
+        updateTimeRunnable = new Runnable() {
+            @Override
+            public void run() {
+                updateRemainingTime();
+                handler.postDelayed(this, 60000); // Update every minute
+            }
+        };
+        handler.post(updateTimeRunnable);
+    }
+
+    private void updateRemainingTime() {
+        Calendar now = Calendar.getInstance();
+        Calendar midnight = Calendar.getInstance();
+        midnight.set(Calendar.HOUR_OF_DAY, 23);
+        midnight.set(Calendar.MINUTE, 59);
+        midnight.set(Calendar.SECOND, 59);
+
+        long diffInMillis = midnight.getTimeInMillis() - now.getTimeInMillis();
+        long diffInHours = diffInMillis / (60 * 60 * 1000);
+        long diffInMinutes = (diffInMillis / (60 * 1000)) % 60;
+
+        if (tvTimeRemaining != null) {
+            tvTimeRemaining.setText("🕒 " + diffInHours + " HOURS " + diffInMinutes + " MINUTES");
+        }
+    }
     
     @Override
     public void onResume() {
         super.onResume();
         if (viewModel != null) {
             viewModel.reloadUserProfile();
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (handler != null && updateTimeRunnable != null) {
+            handler.removeCallbacks(updateTimeRunnable);
         }
     }
 }
