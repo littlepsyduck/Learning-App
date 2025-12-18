@@ -4,91 +4,104 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
-    android:clipChildren="false"
-    android:clipToPadding="false">
+    android:background="#FFFFFF">
 
-    <!-- Header Title -->
-    <TextView
-        android:id="@+id/tvLeagueTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
-        android:text="Rank"
-        android:textColor="#4B4B4B"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <!-- Time Remaining Subtitle -->
-    <ImageView
-        android:id="@+id/ivClock"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:layout_marginTop="8dp"
-        android:src="@android:drawable/ic_menu_recent_history"
-        app:layout_constraintStart_toStartOf="@+id/tvLeagueTitle"
-        app:layout_constraintTop_toBottomOf="@+id/tvLeagueTitle"
-        app:tint="#AFAFAF" />
-
-    <TextView
-        android:id="@+id/tvTimeRemaining"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:text="3 DAYS"
-        android:textColor="#AFAFAF"
-        android:textSize="12sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/ivClock"
-        app:layout_constraintStart_toEndOf="@+id/ivClock"
-        app:layout_constraintTop_toTopOf="@+id/ivClock" />
-
-    <!-- Trophy Container -->
+    <!-- Header Section Wrapper -->
     <LinearLayout
-        android:id="@+id/trophyContainer"
+        android:id="@+id/header_section"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:gravity="center"
-        android:orientation="horizontal"
+        android:orientation="vertical"
+        android:paddingBottom="16dp"
+        android:background="#FFFFFF"
+        android:elevation="4dp"
         android:clipChildren="false"
         android:clipToPadding="false"
-        app:layout_constraintTop_toBottomOf="@+id/ivClock">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Trophy 1 -->
-        <ImageView
-            android:id="@+id/ivBronze"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginHorizontal="8dp"
-            android:src="@drawable/ic_bronze_light" />
+        <!-- Header Title -->
+        <TextView
+            android:id="@+id/tvLeagueTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:text="Rank"
+            android:textColor="#4B4B4B"
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
-        <!-- Trophy 2 -->
-        <ImageView
-            android:id="@+id/ivSilver"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginHorizontal="8dp"
-            android:src="@drawable/ic_silver_light" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+            <!-- Time Remaining Subtitle -->
+            <ImageView
+                android:id="@+id/ivClock"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@android:drawable/ic_menu_recent_history"
+                app:tint="#AFAFAF" />
 
-        <!-- Trophy 3 -->
-        <ImageView
-            android:id="@+id/ivGold"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginHorizontal="8dp"
-            android:src="@drawable/ic_gold_light" />
+            <TextView
+                android:id="@+id/tvTimeRemaining"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="3 DAYS"
+                android:textColor="#AFAFAF"
+                android:textSize="12sp"
+                android:textStyle="bold"/>
+        </LinearLayout>
 
-        <!-- Main Trophy -->
-        <ImageView
-            android:id="@+id/ivPlatinum"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginHorizontal="8dp"
-            android:src="@drawable/ic_plantinum_light"/>
+        <!-- Trophy Container -->
+        <LinearLayout
+            android:id="@+id/trophyContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:clipChildren="false"
+            android:clipToPadding="false">
+
+            <!-- Trophy 1 -->
+            <ImageView
+                android:id="@+id/ivBronze"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginHorizontal="8dp"
+                android:src="@drawable/ic_bronze_light" />
+
+            <!-- Trophy 2 -->
+            <ImageView
+                android:id="@+id/ivSilver"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginHorizontal="8dp"
+                android:src="@drawable/ic_silver_light" />
+
+            <!-- Trophy 3 -->
+            <ImageView
+                android:id="@+id/ivGold"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginHorizontal="8dp"
+                android:src="@drawable/ic_gold_light" />
+
+            <!-- Main Trophy -->
+            <ImageView
+                android:id="@+id/ivPlatinum"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginHorizontal="8dp"
+                android:src="@drawable/ic_plantinum_light"/>
+        </LinearLayout>
     </LinearLayout>
 
     <!-- Leaderboard List -->
@@ -96,10 +109,9 @@
         android:id="@+id/rvLeaderboard"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="24dp"
         android:background="#FFFFFF"
         app:layout_constraintBottom_toTopOf="@+id/viewBottomNavPlaceholder"
-        app:layout_constraintTop_toBottomOf="@+id/trophyContainer"
+        app:layout_constraintTop_toBottomOf="@+id/header_section"
         tools:listitem="@layout/item_leaderboard_user" />
 
     <!-- Bottom Navigation Placeholder -->
