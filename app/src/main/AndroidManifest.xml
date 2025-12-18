@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Speech Recognition Permissions -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -12,7 +16,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LearningApp">
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.UserWelcomeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,6 +27,39 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.LessonActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        
+        <!-- User Module Activities -->
+        <activity
+            android:name=".ui.UserLearningReasonActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.UserChoosePathActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.UserRegisterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.UserLoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.UserAllDoneActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.UserDashboardActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.UserSettingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.StreakActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.game.DailyStreakActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
