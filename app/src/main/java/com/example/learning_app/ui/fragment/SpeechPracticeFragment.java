@@ -54,17 +54,17 @@ public class SpeechPracticeFragment extends Fragment {
 
     private final List<String> practiceSentences = new ArrayList<>(Arrays.asList(
             "Hello, how are you?",
-            "My name is Duolingo.",
-            "I love learning languages.",
-            "Vietnam is the best country.",
-            "Japan is an island.",
-            "This is my flag.",
-            "I love my country.",
-            "Paris is in France.",
-            "The capital of France is Paris.",
-            "I speak English.",
-            "Learning is fun.",
-            "Practice makes perfect."));
+            "My name is Duolingo",
+            "I love learning languages",
+            "Vietnam is the best country",
+            "Japan is an island",
+            "This is my flag",
+            "I love my country",
+            "Paris is in France",
+            "The capital of France is Paris",
+            "I speak English",
+            "Learning is fun",
+            "Practice makes perfect"));
 
     @Nullable
     @Override
